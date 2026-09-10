@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,17 +6,17 @@
 
 @layer base {
   :root {
-    --background: #F7F7F5;
+    --background: #F7F7F4;
     --surface: #FFFFFF;
-    --surface-secondary: #F1F1EE;
-    --foreground: #111111;
-    --secondary: #4F4F4A;
-    --muted: #888883;
-    --border: #D8D8D3;
-    --border-strong: #B8B8B2;
-    --border-subtle: #DEDED9;
-    --accent: #111111;
-    --highlight: #6558FF;
+    --surface-secondary: #F1F1ED;
+    --foreground: #0C0C0D;
+    --secondary: #55555A;
+    --muted: #85858B;
+    --border: #D9D9D4;
+    --border-strong: #A9A9A4;
+    --border-subtle: #E5E5E0;
+    --accent: #0C0C0D;
+    --spectral: #725CFF;
   }
 
   html {
@@ -33,12 +33,80 @@
   }
 }
 
-/* Subtle Technical Grid Background */
+/* Engineering Grid Background */
 .bg-technical-grid {
-  background-image: 
-    linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+  background-color: #F7F7F4;
+  background-image:
+    linear-gradient(rgba(15, 15, 15, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 15, 15, 0.035) 1px, transparent 1px);
   background-size: 96px 96px;
+}
+
+/* Viewfinder Frame & Camera Registration Corners */
+.viewfinder-frame {
+  position: relative;
+  transition: border-color 180ms ease-out;
+}
+
+.capture-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  transition: all 180ms ease-out;
+}
+
+.capture-corner.tl {
+  top: 14px;
+  left: 14px;
+  border-top: 1.5px solid #85858B;
+  border-left: 1.5px solid #85858B;
+}
+
+.capture-corner.tr {
+  top: 14px;
+  right: 14px;
+  border-top: 1.5px solid #85858B;
+  border-right: 1.5px solid #85858B;
+}
+
+.capture-corner.bl {
+  bottom: 14px;
+  left: 14px;
+  border-bottom: 1.5px solid #85858B;
+  border-left: 1.5px solid #85858B;
+}
+
+.capture-corner.br {
+  bottom: 14px;
+  right: 14px;
+  border-bottom: 1.5px solid #85858B;
+  border-right: 1.5px solid #85858B;
+}
+
+/* Hover camera focus effect: corners animate inward by 2px and darken */
+.viewfinder-frame:hover .capture-corner {
+  border-color: #0C0C0D;
+}
+
+.viewfinder-frame:hover .capture-corner.tl {
+  top: 12px;
+  left: 12px;
+}
+
+.viewfinder-frame:hover .capture-corner.tr {
+  top: 12px;
+  right: 12px;
+}
+
+.viewfinder-frame:hover .capture-corner.bl {
+  bottom: 12px;
+  left: 12px;
+}
+
+.viewfinder-frame:hover .capture-corner.br {
+  bottom: 12px;
+  right: 12px;
 }
 
 /* Reusable UI Primitives */
@@ -49,17 +117,6 @@
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--muted);
-}
-
-.corner-marker {
-  position: relative;
-}
-.corner-marker::before {
-  content: "+";
-  position: absolute;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  color: var(--border-strong);
 }
 
 /* Toast Message */

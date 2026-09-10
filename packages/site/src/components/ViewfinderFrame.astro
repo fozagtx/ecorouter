@@ -1,0 +1,51 @@
+---
+interface Props {
+  frameId?: string;
+  liveTag?: string;
+  scaleTag?: string;
+  refTag?: string;
+  layerTag?: string;
+  class?: string;
+}
+
+const {
+  frameId = "FRAME · 001",
+  liveTag = "LIVE · VIEW",
+  scaleTag = "SCALE · 1:1",
+  refTag = "REF · UI-01",
+  layerTag = "LAYER · RUNTIME",
+  class: className = ""
+} = Astro.props;
+---
+
+<div class={`viewfinder-frame group relative bg-white border border-[#D9D9D4] hover:border-[#A9A9A4] rounded-[4px] p-5 sm:p-7 transition-colors duration-200 ${className}`}>
+  <!-- 4 Inset L-shaped Camera Viewfinder Registration Corners -->
+  <div class="capture-corner tl"></div>
+  <div class="capture-corner tr"></div>
+  <div class="capture-corner bl"></div>
+  <div class="capture-corner br"></div>
+
+  <!-- Top Metadata Annotation Bar -->
+  <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-[#85858B] mb-3 pointer-events-none select-none">
+    <div class="flex items-center gap-1.5">
+      <span class="w-1 h-1 bg-[#725CFF] rounded-[0.5px]"></span>
+      <span>{frameId}</span>
+    </div>
+    <div class="flex items-center gap-1.5 text-[#55555A]">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span>{liveTag}</span>
+    </div>
+  </div>
+
+  <!-- Enclosed Content Slot -->
+  <div class="relative z-10">
+    <slot />
+  </div>
+
+  <!-- Bottom Metadata Annotation Bar -->
+  <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-[#85858B] mt-3.5 pt-2 border-t border-[#D9D9D4]/40 pointer-events-none select-none">
+    <span>{scaleTag}</span>
+    <span class="hidden sm:inline text-[#A9A9A4]">{layerTag}</span>
+    <span>{refTag}</span>
+  </div>
+</div>

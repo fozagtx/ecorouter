@@ -1,87 +1,96 @@
 ---
+import ViewfinderFrame from "./ViewfinderFrame.astro";
 ---
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 mt-3 md:mt-4 mb-12 relative z-20 font-mono">
-  <div class="rounded-[6px] border border-[#D8D8D3] bg-white overflow-hidden shadow-subtle">
-    <!-- Window / Panel Header -->
-    <div class="h-9 px-4 bg-[#F1F1EE] border-b border-[#D8D8D3] flex items-center justify-between text-xs text-[#4F4F4A]">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-[#111111]"></span>
-        <span class="font-medium text-[#111111]">ecorouter.execute()</span>
-        <span class="text-[#888883] text-[11px]">// execution pipeline</span>
+<div class="max-w-5xl mx-auto px-4 sm:px-6 mt-3 md:mt-4 mb-14 relative z-20 font-mono">
+  <ViewfinderFrame
+    frameId="FRAME · 001"
+    liveTag="SYSTEM · ARBITER"
+    scaleTag="SCALE · 1:1"
+    layerTag="LAYER · PIPELINE"
+    refTag="REF · EXEC-01"
+  >
+    <div class="rounded-[4px] border border-[#D9D9D4] bg-white overflow-hidden">
+      <!-- Window / Panel Header -->
+      <div class="h-9 px-4 bg-[#F1F1ED] border-b border-[#D9D9D4] flex items-center justify-between text-xs text-[#55555A]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#0C0C0D]"></span>
+          <span class="font-medium text-[#0C0C0D]">ecorouter.execute()</span>
+          <span class="text-[#85858B] text-[11px]">// execution pipeline</span>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-[#55555A]">
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded-[3px] bg-white text-[#0C0C0D] border border-[#D9D9D4] uppercase tracking-wider text-[10px] font-medium">
+            STATUS: ACTIVE
+          </span>
+        </div>
       </div>
-      <div class="flex items-center gap-2 text-[11px] text-[#4F4F4A]">
-        <span class="inline-flex items-center px-1.5 py-0.5 rounded-[3px] bg-[#ECECE8] text-[#555550] border border-[#D8D8D3] uppercase tracking-wider text-[10px]">
-          STATUS: READY
-        </span>
+
+      <!-- 4-Stage Spreadsheet Execution Flow -->
+      <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#D9D9D4] bg-white text-xs">
+        <!-- Stage 1 -->
+        <div class="p-4 space-y-2 bg-white">
+          <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[#85858B]">
+            <span>01 / PROBE</span>
+            <span class="font-bold text-[#0C0C0D]">402</span>
+          </div>
+          <div class="text-[#0C0C0D] font-semibold text-xs">Parallel Probes</div>
+          <p class="text-[11px] text-[#55555A] leading-normal font-sans">
+            Pings all capability providers concurrently for live 402 terms.
+          </p>
+          <div class="bg-[#F1F1ED] p-2 rounded-[3px] border border-[#D9D9D4] text-[10.5px] space-y-1">
+            <div class="flex justify-between"><span>alpha:</span><span class="text-[#0C0C0D] font-semibold">$0.0012</span></div>
+            <div class="flex justify-between text-[#85858B]"><span>beta:</span><span>$0.0018</span></div>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="p-4 space-y-2 bg-white">
+          <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[#85858B]">
+            <span>02 / VALIDATE</span>
+            <span class="font-bold text-[#0C0C0D]">PASS</span>
+          </div>
+          <div class="text-[#0C0C0D] font-semibold text-xs">Policy Constraint</div>
+          <p class="text-[11px] text-[#55555A] leading-normal font-sans">
+            Validates that challenged fees do not exceed maximum budget cap.
+          </p>
+          <div class="bg-[#F1F1ED] p-2 rounded-[3px] border border-[#D9D9D4] text-[10.5px] space-y-1">
+            <div class="flex justify-between"><span>maxSpend:</span><span class="text-[#0C0C0D] font-semibold">&le; $0.0100</span></div>
+            <div class="flex justify-between text-[#85858B]"><span>eligible:</span><span>2 / 2</span></div>
+          </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="p-4 space-y-2 bg-white">
+          <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[#85858B]">
+            <span>03 / SELECT</span>
+            <span class="font-bold text-[#0C0C0D]">BEST</span>
+          </div>
+          <div class="text-[#0C0C0D] font-semibold text-xs">Price × Quality</div>
+          <p class="text-[11px] text-[#55555A] leading-normal font-sans">
+            Scores eligible endpoints by price and quality score to select winner.
+          </p>
+          <div class="bg-[#F1F1ED] p-2 rounded-[3px] border border-[#D9D9D4] text-[10.5px] space-y-1">
+            <div class="flex justify-between text-[#0C0C0D] font-semibold"><span>winner:</span><span>alpha</span></div>
+            <div class="flex justify-between text-[#85858B]"><span>latency:</span><span>38ms</span></div>
+          </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="p-4 space-y-2 bg-[#F1F1ED]/40">
+          <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[#85858B]">
+            <span>04 / EXECUTE</span>
+            <span class="font-bold text-[#0C0C0D]">200 OK</span>
+          </div>
+          <div class="text-[#0C0C0D] font-semibold text-xs">Settlement &amp; Data</div>
+          <p class="text-[11px] text-[#55555A] leading-normal font-sans">
+            Authorizes micro-payment on-chain and streams payload back.
+          </p>
+          <div class="bg-white p-2 rounded-[3px] border border-[#A9A9A4] text-[10.5px] space-y-1 shadow-subtle">
+            <div class="flex justify-between text-[#0C0C0D]"><span>settled:</span><span class="font-bold">$0.0012</span></div>
+            <div class="flex justify-between text-[#85858B]"><span>elapsed:</span><span>42ms</span></div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- 4-Stage Spreadsheet Execution Flow -->
-    <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#D8D8D3] bg-white text-xs">
-      <!-- Stage 1 -->
-      <div class="p-4 space-y-2 bg-[#FDFDFD]">
-        <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.14em] text-[#888883]">
-          <span>01 / CHALLENGE</span>
-          <span class="font-bold text-[#111111]">402</span>
-        </div>
-        <div class="text-[#111111] font-semibold text-xs">Parallel Probes</div>
-        <p class="text-[11px] text-[#4F4F4A] leading-normal font-sans">
-          Pings all capability providers concurrently for live 402 terms.
-        </p>
-        <div class="bg-[#F1F1EE] p-2 rounded-[3px] border border-[#D8D8D3] text-[10.5px] space-y-1">
-          <div class="flex justify-between"><span>alpha:</span><span class="text-[#111111] font-semibold">$0.0012</span></div>
-          <div class="flex justify-between text-[#888883]"><span>beta:</span><span>$0.0018</span></div>
-        </div>
-      </div>
-
-      <!-- Stage 2 -->
-      <div class="p-4 space-y-2 bg-[#FDFDFD]">
-        <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.14em] text-[#888883]">
-          <span>02 / VALIDATE</span>
-          <span class="font-bold text-[#111111]">PASS</span>
-        </div>
-        <div class="text-[#111111] font-semibold text-xs">Policy Constraint</div>
-        <p class="text-[11px] text-[#4F4F4A] leading-normal font-sans">
-          Validates that challenged fees do not exceed maximum budget cap.
-        </p>
-        <div class="bg-[#F1F1EE] p-2 rounded-[3px] border border-[#D8D8D3] text-[10.5px] space-y-1">
-          <div class="flex justify-between"><span>maxSpend:</span><span class="text-[#111111] font-semibold">&le; $0.0100</span></div>
-          <div class="flex justify-between text-[#888883]"><span>eligible:</span><span>2 / 2</span></div>
-        </div>
-      </div>
-
-      <!-- Stage 3 -->
-      <div class="p-4 space-y-2 bg-[#FDFDFD]">
-        <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.14em] text-[#888883]">
-          <span>03 / SELECT</span>
-          <span class="font-bold text-[#111111]">BEST</span>
-        </div>
-        <div class="text-[#111111] font-semibold text-xs">Price × Quality</div>
-        <p class="text-[11px] text-[#4F4F4A] leading-normal font-sans">
-          Scores eligible endpoints by price and quality score to select winner.
-        </p>
-        <div class="bg-[#F1F1EE] p-2 rounded-[3px] border border-[#D8D8D3] text-[10.5px] space-y-1">
-          <div class="flex justify-between text-[#111111] font-semibold"><span>winner:</span><span>alpha</span></div>
-          <div class="flex justify-between text-[#888883]"><span>latency:</span><span>38ms</span></div>
-        </div>
-      </div>
-
-      <!-- Stage 4 -->
-      <div class="p-4 space-y-2 bg-[#F1F1EE]/50">
-        <div class="flex items-center justify-between text-[10.5px] uppercase tracking-[0.14em] text-[#888883]">
-          <span>04 / EXECUTE</span>
-          <span class="font-bold text-[#111111]">200 OK</span>
-        </div>
-        <div class="text-[#111111] font-semibold text-xs">Settlement &amp; Data</div>
-        <p class="text-[11px] text-[#4F4F4A] leading-normal font-sans">
-          Authorizes micro-payment on-chain and streams payload back.
-        </p>
-        <div class="bg-white p-2 rounded-[3px] border border-[#B8B8B2] text-[10.5px] space-y-1 shadow-subtle">
-          <div class="flex justify-between text-[#111111]"><span>settled:</span><span class="font-bold">$0.0012</span></div>
-          <div class="flex justify-between text-[#888883]"><span>elapsed:</span><span>42ms</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </ViewfinderFrame>
 </div>

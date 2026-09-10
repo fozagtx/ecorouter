@@ -4,35 +4,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#F7F7F5',
+        background: '#F7F7F4',
         surface: {
           DEFAULT: '#FFFFFF',
-          secondary: '#F1F1EE',
+          secondary: '#F1F1ED',
         },
-        foreground: '#111111',
-        secondary: '#4F4F4A',
+        foreground: '#0C0C0D',
+        secondary: '#55555A',
         muted: {
-          DEFAULT: '#F1F1EE',
-          foreground: '#888883',
+          DEFAULT: '#F1F1ED',
+          foreground: '#85858B',
         },
         border: {
-          DEFAULT: '#D8D8D3',
-          strong: '#B8B8B2',
-          subtle: '#DEDED9',
+          DEFAULT: '#D9D9D4',
+          strong: '#A9A9A4',
+          subtle: '#E5E5E0',
         },
         accent: {
-          DEFAULT: '#111111',
+          DEFAULT: '#0C0C0D',
           foreground: '#FFFFFF',
-          highlight: '#6558FF',
+          spectral: '#725CFF',
         },
         brand: {
-          DEFAULT: '#111111',
+          DEFAULT: '#0C0C0D',
           orange: '#d25611',
         },
         destructive: '#C83C3C',
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['Michroma', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
         jetbrains: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },

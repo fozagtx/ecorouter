@@ -16,21 +16,21 @@ const integrations = [
 ];
 ---
 
-<section class="py-8 border-y border-[#D8D8D3] bg-[#F1F1EE] overflow-hidden relative font-mono">
+<section class="py-8 border-y border-[#D9D9D4] bg-[#F1F1ED] overflow-hidden relative font-mono">
   <div class="max-w-6xl mx-auto px-4 mb-3 text-center">
-    <span class="text-[10.5px] uppercase tracking-[0.16em] text-[#888883] font-medium">
+    <span class="text-[10.5px] uppercase tracking-[0.2em] text-[#85858B] font-medium">
       COMPATIBLE WITH HTTP 402 PROVIDERS &amp; AGENT RUNTIMES
     </span>
   </div>
 
   <div class="relative w-full overflow-hidden flex items-center">
     <!-- Fade Gradients -->
-    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#F1F1EE] to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#F1F1EE] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#F1F1ED] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#F1F1ED] to-transparent z-10 pointer-events-none"></div>
 
     <div class="animate-marquee flex items-center gap-3 py-1">
       {integrations.concat(integrations).map((item) => (
-        <div class="flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] bg-white border border-[#D8D8D3] text-xs text-[#111111] shrink-0 hover:border-[#111111] transition-all cursor-default">
+        <div class="flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] bg-white border border-[#D9D9D4] text-xs text-[#0C0C0D] shrink-0 hover:border-[#0C0C0D] transition-all cursor-default">
           <div class="w-4 h-4 shrink-0 flex items-center justify-center">
             <img
               src={`${basePath}/logos/${item.logo}`}
@@ -40,7 +40,7 @@ const integrations = [
             />
           </div>
           <span class="font-medium font-sans">{item.name}</span>
-          <span class="text-[10px] font-mono text-[#888883] uppercase bg-[#F1F1EE] px-1.5 py-0.5 rounded-[2px] border border-[#D8D8D3]">{item.type}</span>
+          <span class="text-[10px] font-mono text-[#85858B] uppercase bg-[#F1F1ED] px-1.5 py-0.5 rounded-[2px] border border-[#D9D9D4]">{item.type}</span>
         </div>
       ))}
     </div>
