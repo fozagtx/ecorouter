@@ -1,57 +1,69 @@
 ---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section id="features" class="py-16 md:py-24 relative">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-16">
     <!-- Section Header -->
     <div class="space-y-2">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84] font-medium">
+      <div class="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#7D7D84] font-medium">
         01 // CORE SYSTEM ARCHITECTURE
       </div>
       <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#0B0B0C]">
-        Deterministic capability routing primitives.
+        Deterministic capability routing primitives
       </h2>
       <p class="text-sm sm:text-base text-[#55555A] max-w-2xl font-normal leading-relaxed">
         Autonomous agents need to purchase external compute, web searches, and indexing without exposing infinite credit lines or hardcoded secrets.
       </p>
     </div>
 
-    <!-- 3 Core Technical Primitives Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <!-- 1 -->
-      <div class="p-5 rounded-[4px] border border-[#D2D2CE] bg-white space-y-2.5">
-        <div class="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84]">
-          <span>PRIMITIVE 01</span>
-          <span class="font-bold text-[#0B0B0C]">PARALLEL</span>
-        </div>
-        <h3 class="text-sm font-semibold text-[#0B0B0C]">HTTP 402 Probing</h3>
-        <p class="text-xs text-[#55555A] leading-relaxed">
-          Queries registered capability endpoints simultaneously for live 402 payment requirements, verifying fees before dispatching funds.
-        </p>
+    <!-- 3 Core Technical Primitives on Curves Backdrop -->
+    <div class="relative rounded-[1px] border border-[#D2D2CE] bg-[#05070E] overflow-hidden p-5 sm:p-8">
+      <div class="absolute inset-0 z-0 pointer-events-none select-none">
+        <img
+          src={`${basePath}/curves-bg.png`}
+          alt="Glowing curved routing plates background"
+          class="w-full h-full object-cover object-top opacity-75"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#05070E] via-[#05070E]/40 to-transparent"></div>
       </div>
 
-      <!-- 2 -->
-      <div class="p-5 rounded-[4px] border border-[#D2D2CE] bg-white space-y-2.5">
-        <div class="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84]">
-          <span>PRIMITIVE 02</span>
-          <span class="font-bold text-[#0B0B0C]">POLICY</span>
+      <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- 1 -->
+        <div class="p-5 rounded-[1px] border border-white/15 bg-black/60 backdrop-blur-sm space-y-2.5 text-white">
+          <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-[#93A4C8]">
+            <span>PRIMITIVE 01</span>
+            <span class="font-bold text-[#4488FF]">PARALLEL</span>
+          </div>
+          <h3 class="text-sm font-semibold text-white">HTTP 402 Probing</h3>
+          <p class="text-xs text-[#C4D2EC] leading-relaxed">
+            Queries registered capability endpoints simultaneously for live 402 payment requirements, verifying fees before dispatching funds.
+          </p>
         </div>
-        <h3 class="text-sm font-semibold text-[#0B0B0C]">Deterministic Spend Caps</h3>
-        <p class="text-xs text-[#55555A] leading-relaxed">
-          Enforces an explicit <code class="text-[#0B0B0C] font-mono bg-[#EFEFEC] px-1 py-0.5 rounded-[2px] border border-[#D2D2CE]">maxSpendUsdc</code> policy per execution. Providers quoting above the limit are rejected.
-        </p>
-      </div>
 
-      <!-- 3 -->
-      <div class="p-5 rounded-[4px] border border-[#D2D2CE] bg-white space-y-2.5">
-        <div class="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84]">
-          <span>PRIMITIVE 03</span>
-          <span class="font-bold text-[#0B0B0C]">LOCAL</span>
+        <!-- 2 -->
+        <div class="p-5 rounded-[1px] border border-white/15 bg-black/60 backdrop-blur-sm space-y-2.5 text-white">
+          <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-[#93A4C8]">
+            <span>PRIMITIVE 02</span>
+            <span class="font-bold text-[#4488FF]">POLICY</span>
+          </div>
+          <h3 class="text-sm font-semibold text-white">Deterministic Spend Caps</h3>
+          <p class="text-xs text-[#C4D2EC] leading-relaxed">
+            Enforces an explicit <code class="text-white font-mono bg-white/10 px-1 py-0.5 rounded-[2px] border border-white/20">maxSpendUsdc</code> policy per execution. Providers quoting above the limit are rejected.
+          </p>
         </div>
-        <h3 class="text-sm font-semibold text-[#0B0B0C]">In-Process &amp; Idempotent</h3>
-        <p class="text-xs text-[#55555A] leading-relaxed">
-          Runs directly in your application. Uses an optional <code class="text-[#0B0B0C] font-mono bg-[#EFEFEC] px-1 py-0.5 rounded-[2px] border border-[#D2D2CE]">executionId</code> for safe deterministic retries.
-        </p>
+
+        <!-- 3 -->
+        <div class="p-5 rounded-[1px] border border-white/15 bg-black/60 backdrop-blur-sm space-y-2.5 text-white">
+          <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-[#93A4C8]">
+            <span>PRIMITIVE 03</span>
+            <span class="font-bold text-[#4488FF]">LOCAL</span>
+          </div>
+          <h3 class="text-sm font-semibold text-white">In-Process &amp; Idempotent</h3>
+          <p class="text-xs text-[#C4D2EC] leading-relaxed">
+            Runs directly in your application. Uses an optional <code class="text-white font-mono bg-white/10 px-1 py-0.5 rounded-[2px] border border-white/20">executionId</code> for safe deterministic retries.
+          </p>
+        </div>
       </div>
     </div>
 
