@@ -2,3 +2,4 @@
 **/*.wasm
 .DS_Store
 packages/sdk/dist/
+**/test_snapshots/

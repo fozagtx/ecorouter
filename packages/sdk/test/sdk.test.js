@@ -60,4 +60,44 @@ test("challenge validation enforces network, asset, policy, and mandate", () => 
   assert.throws(() => validateChallenge({ ...challenge, network: "base" }, mandate, "0.05"));
   assert.throws(() => validateChallenge({ ...challenge, asset: "WRONG" }, mandate, "0.05"));
   assert.throws(() => validateChallenge({ ...challenge, amount: "500001" }, mandate, "0.05"));
+  assert.throws(() => validateChallenge({ ...challenge, payTo: "" }, mandate, "0.05"));
+  assert.throws(() => validateChallenge({ ...challenge, payTo: "   " }, mandate, "0.05"));
+  assert.throws(() => validateChallenge({ ...challenge, amount: "20.5" }, mandate, "0.05"));
+  assert.throws(() => validateChallenge({ ...challenge, amount: "-20000" }, mandate, "0.05"));
+});
+
+test("error classes have explicit names", async () => {
+  const { NoEligibleProviderError, InvalidPaymentChallengeError } = await import("../dist/index.js");
+  assert.equal(new NoEligibleProviderError().name, "NoEligibleProviderError");
+  assert.equal(new InvalidPaymentChallengeError().name, "InvalidPaymentChallengeError");
+});
+
+test("arbiter constructor rejects duplicate provider IDs and local IP endpoints", () => {
+  assert.throws(
+    () =>
+      new Arbiter({
+        account: "CACCOUNT",
+        sessionSecret: "sec",
+        providers: [
+          { id: "p1", capability: "web.search", endpoint: "https://a.example/search", qualityScore: 0.9 },
+          { id: "p1", capability: "web.search", endpoint: "https://b.example/search", qualityScore: 0.9 }
+        ],
+        paymentClient: {}
+      }),
+    /Duplicate provider id/
+  );
+
+  assert.throws(
+    () =>
+      new Arbiter({
+        account: "CACCOUNT",
+        sessionSecret: "sec",
+        providers: [
+          { id: "p1", capability: "web.search", endpoint: "https://[::ffff:127.0.0.1]/search", qualityScore: 0.9 },
+          { id: "p2", capability: "web.search", endpoint: "https://b.example/search", qualityScore: 0.9 }
+        ],
+        paymentClient: {}
+      }),
+    /Provider endpoints must use a public hostname/
+  );
 });

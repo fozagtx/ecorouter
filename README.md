@@ -14,8 +14,11 @@ providers, rejects offers that violate policy or the on-chain mandate, chooses
 the lowest economic-cost provider, coordinates an exact USDC payment, and
 normalizes the response.
 
-Private keys remain in the developer's process. There is no Arbiter server,
-database, account system, remote registry, dashboard, or custodial wallet.
+V1 has two product deliverables: the local TypeScript package in
+[`packages/sdk`](packages/sdk) and the smart account in
+[`contracts/arbiter-account`](contracts/arbiter-account). There is no Arbiter
+server, database, account system, remote registry, dashboard, or custodial
+wallet.
 
 ![Arbiter architecture](docs/assets/architecture.svg)
 
@@ -147,9 +150,10 @@ cargo test --workspace
 cargo build --target wasm32v1-none --release -p arbiter-account
 ```
 
-The Soroban SDK is pinned in [`Cargo.toml`](Cargo.toml). A passing build alone is
-not the security acceptance gate: every case in the PRD's required contract and
-adversarial suites must also pass.
+The Soroban SDK is pinned in [`Cargo.toml`](Cargo.toml) so the resulting
+contract is reproducible. A passing build alone is not the security acceptance
+gate: every case in the PRD's required contract and adversarial suites must also
+pass.
 
 ## Security model
 
@@ -186,9 +190,9 @@ python3 -m http.server 8080 --directory docs
 ```
 
 Then open `http://localhost:8080`. The Pages workflow deploys `docs/` on pushes
-to `main` or `work`, and can also be started with `workflow_dispatch`. Enable
-**GitHub Actions** as the Pages source in the repository settings before the
-first deployment.
+to `main` or `work` that touch `docs/**` or `.github/workflows/pages.yml`, and
+can also be started with `workflow_dispatch`. Enable **GitHub Actions** as the
+Pages source in the repository settings before the first deployment.
 
 ## V1 acceptance path
 

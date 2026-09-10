@@ -56,6 +56,7 @@ pub enum AccountError {
 #[contractimpl]
 impl ArbiterAccount {
     pub fn initialize(env: Env, owner: Address) -> Result<(), AccountError> {
+        owner.require_auth();
         if env.storage().instance().has(&DataKey::Owner) {
             return Err(AccountError::AlreadyInitialized);
         }
@@ -199,7 +200,7 @@ impl ArbiterAccount {
         mandate.spent = new_spent;
         env.storage().instance().set(&DataKey::Mandate, &mandate);
         env.events().publish(
-            (symbol_short!("payment"), symbol_short!("authorized")),
+            (symbol_short!("payment"), Symbol::new(&env, "authorized")),
             (
                 mandate.asset,
                 recipient,
@@ -228,4 +229,36 @@ fn mandate(env: &Env) -> Result<Mandate, AccountError> {
 
 fn arg(args: &Vec<Val>, index: u32) -> Result<Val, AccountError> {
     args.get(index).ok_or(AccountError::UnsupportedInvocation)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use soroban_sdk::{testutils::Address as _, Env};
+
+    #[test]
+    fn test_initialize() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let contract_id = env.register(ArbiterAccount, ());
+        let client = ArbiterAccountClient::new(&env, &contract_id);
+
+        let owner = Address::generate(&env);
+        client.initialize(&owner);
+
+        assert_eq!(
+            client.try_initialize(&owner),
+            Err(Ok(AccountError::AlreadyInitialized))
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_initialize_requires_auth() {
+        let env = Env::default();
+        let contract_id = env.register(ArbiterAccount, ());
+        let client = ArbiterAccountClient::new(&env, &contract_id);
+        let owner = Address::generate(&env);
+        client.initialize(&owner);
+    }
 }

@@ -32,6 +32,10 @@ export class HttpWebSearchProvider implements WebSearchProviderAdapter {
   }
 }
 function BufferFromBase64(value: string): string {
-  if (typeof globalThis.atob === "function") return globalThis.atob(value.replace(/-/g, "+").replace(/_/g, "/"));
+  if (typeof globalThis.atob === "function") {
+    const binary = globalThis.atob(value.replace(/-/g, "+").replace(/_/g, "/"));
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
   throw new Error("base64 decoding is unavailable");
 }
