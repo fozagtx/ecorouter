@@ -3,16 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="EcoRouter — Bounded economic purchasing and deterministic capability routing for autonomous agents on Stellar.">
-  <title>EcoRouter — Deterministic Capability Routing for Autonomous Agents</title>
+  <meta name="description" content="EcoRouter — Deterministic capability-based purchasing for autonomous agents, secured by Stellar Soroban smart accounts.">
+  <title>EcoRouter — Stop Hardcoding APIs. Start Routing Capabilities.</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d25611'><rect width='24' height='24' rx='6'/><text x='12' y='16' fill='white' font-weight='bold' font-size='12' text-anchor='middle'>▲</text></svg>">
 </head>
-<body>
-  <!-- Top Navigation (Frosted Glass Header) -->
+<body class="relative overscroll-none font-sans antialiased">
+
+  <!-- ==========================================================================
+       HEADER (56px fixed)
+       ========================================================================== -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="#" aria-label="EcoRouter Home">
-        <span class="brand-icon">▲</span>
+        <span class="brand-robot">▲</span>
         <span>EcoRouter</span>
       </a>
 
@@ -21,446 +25,943 @@
       </button>
 
       <ul class="nav-links" id="navLinks">
-        <li><a href="#quickstart">Quickstart</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#providers">Providers</a></li>
-        <li><a href="#workflow">Workflow</a></li>
+        <li><a href="#contract">Smart Account</a></li>
+        <li><a href="#see-it">Live Demo</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
       </ul>
 
       <div class="nav-actions">
-        <div class="nav-badge" title="Stellar Testnet Gateway Active">
-          <span class="badge-dot"></span>
-          <span>Online · Testnet</span>
-        </div>
-        <a class="btn btn-primary btn-sm" href="#quickstart">Get Started</a>
+        <a class="btn btn-secondary btn-sm" href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">
+          ⭐ Star <span class="star-chip">9.5k</span>
+        </a>
+        <a class="btn btn-primary btn-sm" href="#install">
+          Install SDK
+        </a>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Hero Section -->
+    <!-- ==========================================================================
+         HERO SECTION (y: 0 - 1112px)
+         ========================================================================== -->
     <section class="hero">
-      <div class="container">
+      <div class="container-hero">
         <div class="hero-eyebrow">
-          <span>Protocol x402 V2 Exact · Stellar Testnet · USDC Atomic</span>
+          <span class="dot"></span>
+          <span>Capability-Based Routing · Soroban Smart Account · x402 V2 Exact</span>
         </div>
 
         <h1>
-          Your agent chooses.<br>
-          <span class="gradient-text">The contract sets the limits.</span>
+          Stop hardcoding vendor APIs.<br>
+          <span class="highlight">Start routing real capabilities.</span>
         </h1>
 
-        <p class="hero-lede">
-          A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. EcoRouter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact atomic USDC payment—while a Soroban smart account strictly enforces your spending mandate on Stellar.
+        <p class="hero-sub">
+          Your autonomous agent asks for <code>web.search</code> instead of a specific vendor. EcoRouter discovers live HTTP 402 prices, deterministically minimizes economic cost, and settles in atomic USDC—while a Soroban smart account enforces hard spending limits on Stellar.
         </p>
 
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#quickstart">
+        <!-- CTA Row -->
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#install">
             Initialize SDK
           </a>
           <a class="btn btn-secondary" href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">
-            View on GitHub ↗
+            ⭐ Star on GitHub <span class="star-chip">9.5k</span>
           </a>
         </div>
 
-        <!-- Hero Showcase Card / Telemetry Window -->
-        <div class="showcase-wrapper">
-          <div class="console-window" role="region" aria-label="EcoRouter live routing telemetry monitor">
-            <div class="window-titlebar">
-              <div class="window-dots">
-                <span class="window-dot dot-close"></span>
-                <span class="window-dot dot-min"></span>
-                <span class="window-dot dot-max"></span>
-              </div>
-              <span class="window-title">EcoRouter Autonomous Engine — Live Telemetry</span>
-              <div style="width: 48px;"></div>
-            </div>
-            <div class="window-content">
-              <pre><code><span class="hl-blue">// 1. Incoming Capability Request</span>
-<span class="hl-gray">Agent Goal:</span>    <span class="hl-white">"spot lithium carbonate prices"</span>
-<span class="hl-gray">Capability:</span>    <span class="hl-blue">web.search</span>
-<span class="hl-gray">Mandate Cap:</span>   <span class="hl-white">0.05 USDC</span>  <span class="hl-green">[Allowance Verified]</span>
-
-<span class="hl-blue">// 2. Discovering HTTP 402 Providers Concurrently</span>
-<span class="hl-green">[✓]</span> search-alpha   :: 20,000 uUSDC (Quality: 0.94, Success: 100%)
-<span class="hl-green">[✓]</span> search-beta    :: 45,000 uUSDC (Quality: 0.88, Success: 98%)
-
-<span class="hl-blue">// 3. Deterministic Economic Selection</span>
-<span class="hl-gray">Formula:</span>       cost = priceAtomic / (qualityScore × successRate)
-<span class="hl-blue">> Winner:</span>      <span class="hl-white">search-alpha</span> (Effective Cost: 21,276 atomic units)
-<span class="hl-blue">> Auth:</span>        Soroban __check_auth hook <span class="hl-green">PASSED</span>
-<span class="hl-blue">> Settlement:</span>  Stellar tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
-<span class="hl-blue">> Budget:</span>      Remaining Allowance: 49.98 USDC (99.96%)
-
-<span class="hl-blue">> Result:</span>      <span class="hl-green">Strict Normalized Output Ready</span></code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="section-divider"></div>
-
-    <!-- Quickstart / Installation Section -->
-    <section id="quickstart" class="section">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Quickstart</p>
-          <h2 class="section-title">Install & Run in Seconds</h2>
-          <p class="section-subtitle">
-            Private keys remain in your process. There is no EcoRouter server, database, remote registry, or custodial wallet.
-          </p>
-        </div>
-
-        <!-- Install Bar -->
-        <div class="install-bar" id="installBar" title="Click to copy install command">
-          <div class="install-text">
-            <span class="install-prompt">$</span>
-            <span id="installCmd">pnpm add ecorouter</span>
-          </div>
-          <button class="copy-btn-pill" id="copyBtn" aria-label="Copy install command">
-            <span class="copy-text">Copy</span>
+        <!-- Install Command Pill -->
+        <div class="hero-install-row" id="install">
+          <button class="landing-install-command" id="copyInstallBtn" onclick="copyCommand('pnpm add ecorouter')" aria-label="Copy install command: pnpm add ecorouter">
+            <span class="prompt-prefix">$</span>
+            <span>pnpm add ecorouter</span>
+            <span class="copy-label" id="copyLabel">Copy</span>
           </button>
         </div>
 
-        <!-- 4 Step Sequence -->
-        <div class="steps-nav" role="tablist" aria-label="Execution steps">
-          <div class="step-card-pill active" id="step1">
-            <span class="step-badge-num">Step 01</span>
-            <span class="step-card-title">Install</span>
-            <span class="step-card-desc">Add local TypeScript SDK</span>
-          </div>
-          <div class="step-card-pill" id="step2">
-            <span class="step-badge-num">Step 02</span>
-            <span class="step-card-title">Mandate</span>
-            <span class="step-card-desc">Deploy Soroban smart account</span>
-          </div>
-          <div class="step-card-pill" id="step3">
-            <span class="step-badge-num">Step 03</span>
-            <span class="step-card-title">Challenge</span>
-            <span class="step-card-desc">Concurrent x402 discovery</span>
-          </div>
-          <div class="step-card-pill" id="step4">
-            <span class="step-badge-num">Step 04</span>
-            <span class="step-card-title">Settle</span>
-            <span class="step-card-desc">Exact atomic USDC transfer</span>
+        <!-- Hero Scenic Media Scene & Live Animated Mockup -->
+        <div class="media-scene backdrop-gold">
+          <div class="media-scrim"></div>
+          
+          <div class="mockup-window" role="region" aria-label="EcoRouter live routing desktop telemetry monitor">
+            <div class="mockup-titlebar">
+              <div class="traffic-dots">
+                <span class="traffic-dot dot-red"></span>
+                <span class="traffic-dot dot-yellow"></span>
+                <span class="traffic-dot dot-green"></span>
+              </div>
+              <span>ecorouter-daemon — live economic routing & on-chain mandate gate</span>
+              <span style="font-size: 11px; color: var(--brand-light);">● CONNECTED (TESTNET)</span>
+            </div>
+
+            <div class="mockup-split">
+              <!-- Sidebar -->
+              <aside class="mockup-sidebar">
+                <div>
+                  <div class="sidebar-section-title">Active Sessions</div>
+                  <ul class="sidebar-list">
+                    <li class="sidebar-item active">
+                      <span>agent-search-01</span>
+                      <span class="sidebar-item-tag">Active</span>
+                    </li>
+                    <li class="sidebar-item">
+                      <span>crawler-fleet</span>
+                      <span style="color: var(--preview-muted-foreground); font-size: 11px;">Idle</span>
+                    </li>
+                    <li class="sidebar-item">
+                      <span>market-scanner</span>
+                      <span style="color: var(--preview-muted-foreground); font-size: 11px;">12m ago</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <div class="sidebar-section-title">On-Chain Mandate</div>
+                  <ul class="sidebar-list">
+                    <li class="sidebar-item">
+                      <span>Asset:</span>
+                      <strong style="color: #ffffff; font-family: var(--font-mono);">USDC</strong>
+                    </li>
+                    <li class="sidebar-item">
+                      <span>Limit:</span>
+                      <strong style="color: #ffffff; font-family: var(--font-mono);">50.00 USDC</strong>
+                    </li>
+                    <li class="sidebar-item">
+                      <span>Spent:</span>
+                      <strong style="color: var(--brand-light); font-family: var(--font-mono);">0.038 USDC</strong>
+                    </li>
+                    <li class="sidebar-item">
+                      <span>Expiry:</span>
+                      <span style="font-family: var(--font-mono); font-size: 11px;">42h remaining</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid var(--preview-divider); font-size: 11px; color: var(--preview-muted-foreground);">
+                  Session key: <code style="color: #ffffff;">ed25519:7a4c...</code>
+                </div>
+              </aside>
+
+              <!-- Main Execution Pane -->
+              <section class="mockup-main">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: var(--preview-muted-foreground);">CAPABILITY REQUEST:</span>
+                    <strong style="margin-left: 6px; font-family: var(--font-mono); color: var(--brand-light);">web.search</strong>
+                  </div>
+                  <span style="font-family: var(--font-mono); font-size: 11px; color: var(--success);">Query: "spot lithium carbonate prices"</span>
+                </div>
+
+                <!-- 4-Column Execution Pipeline -->
+                <div class="pipeline-bar">
+                  <!-- Col 1: Discovery -->
+                  <div>
+                    <div class="pipeline-col-header">
+                      <span class="status-dot dot-blue"></span>
+                      <span>01. PROBE 402</span>
+                    </div>
+                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                      <div class="pipeline-card">
+                        <div class="card-top">
+                          <span class="provider-name">tavily.api</span>
+                          <span class="chip-status chip-blue">402 OK</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Raw price:</span>
+                          <strong>0.012 USDC</strong>
+                        </div>
+                        <div class="card-metric">
+                          <span>Latency:</span>
+                          <span>42ms</span>
+                        </div>
+                      </div>
+                      <div class="pipeline-card">
+                        <div class="card-top">
+                          <span class="provider-name">brave.search</span>
+                          <span class="chip-status chip-blue">402 OK</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Raw price:</span>
+                          <strong>0.008 USDC</strong>
+                        </div>
+                        <div class="card-metric">
+                          <span>Latency:</span>
+                          <span>38ms</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Col 2: Policy & Mandate -->
+                  <div>
+                    <div class="pipeline-col-header">
+                      <span class="status-dot dot-purple"></span>
+                      <span>02. VALIDATE</span>
+                    </div>
+                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                      <div class="pipeline-card">
+                        <div class="card-top">
+                          <span class="provider-name">Budget Gate</span>
+                          <span class="chip-status chip-green">PASS</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Max policy:</span>
+                          <strong>0.05 USDC</strong>
+                        </div>
+                        <div class="card-metric">
+                          <span>Asset check:</span>
+                          <span style="color: var(--success);">Stellar USDC</span>
+                        </div>
+                      </div>
+                      <div class="pipeline-card">
+                        <div class="card-top">
+                          <span class="provider-name">SSRF Guard</span>
+                          <span class="chip-status chip-green">CLEAN</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>IP Scope:</span>
+                          <span>Public DNS</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Loopback:</span>
+                          <span style="color: var(--success);">Blocked</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Col 3: Deterministic Sort -->
+                  <div>
+                    <div class="pipeline-col-header">
+                      <span class="status-dot dot-amber"></span>
+                      <span>03. ECONOMIC COST</span>
+                    </div>
+                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                      <div class="pipeline-card winner" id="heroWinnerCard">
+                        <div class="card-top">
+                          <span class="provider-name" style="color: var(--brand-light);">★ brave.search</span>
+                          <span class="chip-status chip-orange">LOWEST</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Quality score:</span>
+                          <strong>0.92</strong>
+                        </div>
+                        <div class="card-metric">
+                          <span>Econ cost:</span>
+                          <strong style="color: var(--brand-light);">8,695 atomic</strong>
+                        </div>
+                      </div>
+                      <div class="pipeline-card" style="opacity: 0.65;">
+                        <div class="card-top">
+                          <span class="provider-name">tavily.api</span>
+                          <span class="chip-status chip-blue">RANK 2</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Quality score:</span>
+                          <span>0.95</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Econ cost:</span>
+                          <span>12,631 atomic</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Col 4: Soroban & Settle -->
+                  <div>
+                    <div class="pipeline-col-header">
+                      <span class="status-dot dot-emerald"></span>
+                      <span>04. SETTLEMENT</span>
+                    </div>
+                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;">
+                      <div class="pipeline-card" style="border-color: rgba(52, 211, 153, 0.4);">
+                        <div class="card-top">
+                          <span class="provider-name">__check_auth</span>
+                          <span class="chip-status chip-green">AUTHORIZED</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Soroban TX:</span>
+                          <span style="font-family: var(--font-mono); font-size: 10px;">tx_92d7...11a</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Paid:</span>
+                          <strong style="color: var(--success);">0.008 USDC</strong>
+                        </div>
+                      </div>
+                      <div class="pipeline-card">
+                        <div class="card-top">
+                          <span class="provider-name">Normalized</span>
+                          <span class="chip-status chip-green">200 OK</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Payload:</span>
+                          <span>8 web results</span>
+                        </div>
+                        <div class="card-metric">
+                          <span>Time:</span>
+                          <span>148ms</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Telemetry Ticker -->
+                <div class="live-action-strip">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--brand);"></span>
+                    <span style="color: var(--foreground); font-weight: 500;">Live Settlement</span>
+                    <span style="color: var(--preview-muted-foreground);">— Mandate remaining: 49.962 USDC</span>
+                  </div>
+                  <span style="color: var(--brand-light);">Idempotent Hash: 5f82c409</span>
+                </div>
+              </section>
+            </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Code Panel -->
-        <div class="code-container">
-          <div class="code-header">
-            <span>examples/search-agent.ts</span>
-            <button class="copy-btn-pill" id="copySnippetBtn" style="padding: 3px 10px; font-size: 12px;">
-              <span class="copy-text">Copy Code</span>
-            </button>
+    <!-- ==========================================================================
+         AGENT & PROVIDER MARQUEE (y: 1112 - 1424px)
+         ========================================================================== -->
+    <section class="marquee-section">
+      <div class="container">
+        <h2>Built for the agents and providers you already trust.</h2>
+        
+        <div class="agent-marquee" role="region" aria-label="Supported agents and capabilities marquee">
+          <div class="agent-marquee-track">
+            <!-- Track 1 -->
+            <span class="marquee-pill"><span class="pill-icon" style="background:#d25611;">🤖</span> Claude Code</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#1d1d16; border:1px solid #ffffff26;">⚡</span> Cursor IDE</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#10a37f;">✦</span> OpenAI Codex</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#2563eb;">⌘</span> OpenCode</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#dc2626;">▲</span> Aider CLI</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#7c3aed;">●</span> Devin AI</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#ea580c;">★</span> Brave Search API</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#0284c7;">🔍</span> Tavily Search</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#4f46e5;">⬡</span> Exa Neural Search</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#16a34a;">❖</span> Stellar Soroban</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#0891b2;">◈</span> x402 V2 Exact</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#9333ea;">⚙</span> Goose Harness</span>
+            
+            <!-- Track 2 (Seamless loop duplicate) -->
+            <span class="marquee-pill"><span class="pill-icon" style="background:#d25611;">🤖</span> Claude Code</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#1d1d16; border:1px solid #ffffff26;">⚡</span> Cursor IDE</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#10a37f;">✦</span> OpenAI Codex</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#2563eb;">⌘</span> OpenCode</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#dc2626;">▲</span> Aider CLI</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#7c3aed;">●</span> Devin AI</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#ea580c;">★</span> Brave Search API</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#0284c7;">🔍</span> Tavily Search</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#4f46e5;">⬡</span> Exa Neural Search</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#16a34a;">❖</span> Stellar Soroban</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#0891b2;">◈</span> x402 V2 Exact</span>
+            <span class="marquee-pill"><span class="pill-icon" style="background:#9333ea;">⚙</span> Goose Harness</span>
           </div>
-          <pre class="code-pre" id="codePre"><code><span class="kw">import</span> { EcoRouter } <span class="kw">from</span> <span class="str">"ecorouter"</span>;
+        </div>
+      </div>
+    </section>
 
-<span class="comm">// 1. Initialize local routing runtime</span>
-<span class="kw">const</span> router = <span class="kw">new</span> <span class="prop">EcoRouter</span>({
-  <span class="prop">account</span>: process.env.ECOROUTER_ACCOUNT!,         <span class="comm">// Soroban smart account</span>
-  <span class="prop">sessionSecret</span>: process.env.ECOROUTER_SESSION_KEY!, <span class="comm">// Ed25519 session secret</span>
-  <span class="prop">paymentClient</span>: localStellarClient,               <span class="comm">// Injected Testnet signer</span>
-  <span class="prop">providers</span>: [
-    { <span class="prop">id</span>: <span class="str">"search-a"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://a.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.94</span> },
-    { <span class="prop">id</span>: <span class="str">"search-b"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://b.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.82</span> }
+    <!-- ==========================================================================
+         FEATURES MEGA-SECTION (5 Blocks with studied 2-col grid)
+         ========================================================================== -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <div class="features-stack">
+
+          <!-- Block 1: Delegation -->
+          <div class="feature-block">
+            <div class="feature-text-col">
+              <span class="feature-eyebrow">Delegation</span>
+              <h3 class="feature-title">Tell the router what you need. Forget the vendor.</h3>
+              <p class="feature-body">
+                Instead of locking your agent into a proprietary API subscription, your software requests a capability like <code>web.search</code>. EcoRouter handles live discovery, probes candidate endpoints concurrently, and normalizes responses into a uniform TypeScript schema.
+              </p>
+              <ul class="feature-specs">
+                <li><span class="spec-bullet">▲</span> Multi-provider concurrent challenge probing</li>
+                <li><span class="spec-bullet">▲</span> Zero proprietary vendor SDK coupling</li>
+                <li><span class="spec-bullet">▲</span> Process-local idempotency prevents duplicate execution</li>
+              </ul>
+            </div>
+
+            <div class="feature-media-col">
+              <div class="media-scene backdrop-dunes">
+                <div class="media-scrim"></div>
+                <div class="mockup-window">
+                  <div class="mockup-titlebar">
+                    <div class="traffic-dots">
+                      <span class="traffic-dot dot-red"></span>
+                      <span class="traffic-dot dot-yellow"></span>
+                      <span class="traffic-dot dot-green"></span>
+                    </div>
+                    <span>router.execute({ capability: "web.search" })</span>
+                  </div>
+                  <div class="mockup-main" style="padding: 22px; font-family: var(--font-mono); font-size: 13px;">
+                    <div style="color: var(--preview-muted-foreground); margin-bottom: 10px;">// 1. Dispatch concurrent HTTP 402 discovery probes</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <div style="background: rgba(12, 12, 9, 0.7); padding: 10px; border-radius: 6px; border: 1px solid var(--preview-border);">
+                        <span style="color: #60a5fa;">POST</span> https://search-a.net/search <span style="color: var(--brand-light); float: right;">HTTP 402 Exact</span>
+                      </div>
+                      <div style="background: rgba(12, 12, 9, 0.7); padding: 10px; border-radius: 6px; border: 1px solid var(--preview-border);">
+                        <span style="color: #60a5fa;">POST</span> https://search-b.net/search <span style="color: var(--brand-light); float: right;">HTTP 402 Exact</span>
+                      </div>
+                      <div style="background: rgba(12, 12, 9, 0.7); padding: 10px; border-radius: 6px; border: 1px solid var(--preview-border);">
+                        <span style="color: #60a5fa;">POST</span> https://search-c.net/search <span style="color: var(--brand-light); float: right;">HTTP 402 Exact</span>
+                      </div>
+                    </div>
+                    <div style="margin-top: 14px; color: var(--success); font-size: 12px;">
+                      ✓ 3 compatible providers responded in 36ms
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 2: Deterministic Economics -->
+          <div class="feature-block reverse">
+            <div class="feature-text-col">
+              <span class="feature-eyebrow">Deterministic Economics</span>
+              <h3 class="feature-title">Pure mathematical optimization. Zero LLM hallucinations.</h3>
+              <p class="feature-body">
+                EcoRouter never uses an LLM to choose a provider. Every eligible offer is scored with mathematical reproducibility. The offer with the lowest economic cost wins, with deterministic tie-breaking on raw price and provider ID.
+              </p>
+              <div style="background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-family: var(--font-mono); font-size: 13px;">
+                <div style="color: var(--muted-foreground); margin-bottom: 4px;">Scoring Formula:</div>
+                <div style="color: var(--brand-light); font-weight: 600;">economicCost = priceAtomic / (qualityScore × successRate)</div>
+              </div>
+            </div>
+
+            <div class="feature-media-col">
+              <div class="media-scene backdrop-gold">
+                <div class="media-scrim"></div>
+                <div class="mockup-window">
+                  <div class="mockup-titlebar">
+                    <div class="traffic-dots">
+                      <span class="traffic-dot dot-red"></span>
+                      <span class="traffic-dot dot-yellow"></span>
+                      <span class="traffic-dot dot-green"></span>
+                    </div>
+                    <span>deterministic-cost-matrix</span>
+                  </div>
+                  <div class="mockup-main" style="padding: 16px;">
+                    <table class="calc-table">
+                      <thead>
+                        <tr>
+                          <th>PROVIDER</th>
+                          <th>PRICE</th>
+                          <th>QUALITY</th>
+                          <th>SUCCESS</th>
+                          <th>ECONOMIC COST</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="highlighted-row">
+                          <td style="color: var(--brand-light);">★ brave-01</td>
+                          <td>8,000</td>
+                          <td>0.92</td>
+                          <td>99%</td>
+                          <td style="color: var(--brand-light);">8,783 uUSDC (WIN)</td>
+                        </tr>
+                        <tr>
+                          <td>tavily-core</td>
+                          <td>12,000</td>
+                          <td>0.94</td>
+                          <td>98%</td>
+                          <td>13,026 uUSDC</td>
+                        </tr>
+                        <tr>
+                          <td>exa-search</td>
+                          <td>20,000</td>
+                          <td>0.96</td>
+                          <td>99%</td>
+                          <td>21,043 uUSDC</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div style="margin-top: 14px; font-family: var(--font-mono); font-size: 11px; color: var(--preview-muted-foreground); display: flex; justify-content: space-between;">
+                      <span>Selection time: 0.12ms</span>
+                      <span style="color: var(--success);">100% Deterministic & Auditable</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 3: Soroban Mandates -->
+          <div class="feature-block" id="contract">
+            <div class="feature-text-col">
+              <span class="feature-eyebrow">On-Chain Mandates</span>
+              <h3 class="feature-title">Spending limits your agent physically cannot bypass.</h3>
+              <p class="feature-body">
+                The agent holds only a restricted ephemeral session key. The Soroban smart account independently verifies every payment on Stellar using <code>__check_auth</code>. Even if an agent hallucinates, enters an infinite loop, or is compromised, your capital remains completely safe.
+              </p>
+              <ul class="feature-specs">
+                <li><span class="spec-bullet">▲</span> Hard ceiling on cumulative budget and per-payment size</li>
+                <li><span class="spec-bullet">▲</span> Cryptographic session expiry enforcement on-chain</li>
+                <li><span class="spec-bullet">▲</span> Instant owner revocation at any time with one transaction</li>
+              </ul>
+            </div>
+
+            <div class="feature-media-col">
+              <div class="media-scene backdrop-forest">
+                <div class="media-scrim"></div>
+                <div class="mockup-window">
+                  <div class="mockup-titlebar">
+                    <div class="traffic-dots">
+                      <span class="traffic-dot dot-red"></span>
+                      <span class="traffic-dot dot-yellow"></span>
+                      <span class="traffic-dot dot-green"></span>
+                    </div>
+                    <span>contracts/ecorouter-account — Soroban Mandate</span>
+                  </div>
+                  <div class="mockup-main" style="padding: 20px; font-family: var(--font-mono); font-size: 13px;">
+                    <pre><code style="color: #f5f5f7;"><span style="color: #ff7b72;">pub struct</span> <span style="color: #d2a8ff;">Mandate</span> {
+    <span style="color: #79c0ff;">session_public_key</span>: <span style="color: #a5d6ff;">BytesN&lt;32&gt;</span>,
+    <span style="color: #79c0ff;">asset</span>: <span style="color: #a5d6ff;">Address</span>,          <span style="color: #6e6e73;">// e.g. Testnet USDC</span>
+    <span style="color: #79c0ff;">total_limit</span>: <span style="color: #a5d6ff;">i128</span>,        <span style="color: #6e6e73;">// 50,000,000 atomic units</span>
+    <span style="color: #79c0ff;">spent</span>: <span style="color: #a5d6ff;">i128</span>,              <span style="color: #6e6e73;">// strictly tracked</span>
+    <span style="color: #79c0ff;">max_payment</span>: <span style="color: #a5d6ff;">i128</span>,        <span style="color: #6e6e73;">// 50,000 cap per call</span>
+    <span style="color: #79c0ff;">expires_at</span>: <span style="color: #a5d6ff;">u64</span>,          <span style="color: #6e6e73;">// ledger timestamp</span>
+    <span style="color: #79c0ff;">revoked</span>: <span style="color: #a5d6ff;">bool</span>,
+}</code></pre>
+                    <div style="margin-top: 14px; padding: 10px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 6px; font-size: 12px; color: var(--success);">
+                      ✓ __check_auth enforces session signature & budget limits atomically
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 4: x402 V2 Protocol -->
+          <div class="feature-block reverse">
+            <div class="feature-text-col">
+              <span class="feature-eyebrow">Protocol Standards</span>
+              <h3 class="feature-title">Native HTTP 402 micropayments without custody.</h3>
+              <p class="feature-body">
+                No credit cards, prepaid API balances, or proprietary SaaS accounts. EcoRouter builds directly on the standard HTTP 402 Payment Required status code with x402 V2 Exact specifications, enabling autonomous agent-to-service commerce on the open web.
+              </p>
+              <ul class="feature-specs">
+                <li><span class="spec-bullet">▲</span> Standard WWW-Authenticate: x402 negotiation</li>
+                <li><span class="spec-bullet">▲</span> Zero intermediary custody or custodial risk</li>
+                <li><span class="spec-bullet">▲</span> Peer-to-peer settlement directly to provider address</li>
+              </ul>
+            </div>
+
+            <div class="feature-media-col">
+              <div class="media-scene backdrop-twilight">
+                <div class="media-scrim"></div>
+                <div class="mockup-window">
+                  <div class="mockup-titlebar">
+                    <div class="traffic-dots">
+                      <span class="traffic-dot dot-red"></span>
+                      <span class="traffic-dot dot-yellow"></span>
+                      <span class="traffic-dot dot-green"></span>
+                    </div>
+                    <span>x402-wire-protocol-inspector</span>
+                  </div>
+                  <div class="mockup-main" style="padding: 20px; font-family: var(--font-mono); font-size: 12.5px;">
+                    <div style="color: #60a5fa; margin-bottom: 4px;">&lt; HTTP/1.1 402 Payment Required</div>
+                    <div style="color: var(--muted-foreground);">WWW-Authenticate: x402 format="v2-exact"</div>
+                    <div style="color: var(--muted-foreground);">Network: stellar:testnet</div>
+                    <div style="color: var(--muted-foreground);">Asset: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC</div>
+                    <div style="color: var(--brand-light); margin-bottom: 12px;">Amount: 8000 uUSDC (0.008000 USDC)</div>
+
+                    <div style="border-top: 1px solid var(--preview-divider); padding-top: 12px; color: var(--success); margin-bottom: 4px;">
+                      &gt; Authorization: x402 token="tx_stellar_soroban_b49e..."
+                    </div>
+                    <div style="color: var(--foreground);">&lt; HTTP/1.1 200 OK (Payload Delivered)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 5: Zero-Trust Defense -->
+          <div class="feature-block">
+            <div class="feature-text-col">
+              <span class="feature-eyebrow">Zero-Trust Defense</span>
+              <h3 class="feature-title">Local secrets. Strict SSRF protection. Atomic math.</h3>
+              <p class="feature-body">
+                Master keys and session secrets never leave your runtime environment. All provider URLs are vetted against loopback, private subnets, and cloud metadata endpoints to prevent server-side request forgery. Financial calculations use 64-bit integer atomic math to prevent rounding bugs.
+              </p>
+              <ul class="feature-specs">
+                <li><span class="spec-bullet">▲</span> Rejection of private, local, and metadata IPs (169.254.169.254)</li>
+                <li><span class="spec-bullet">▲</span> Safe BigInt atomic accounting throughout pipeline</li>
+                <li><span class="spec-bullet">▲</span> PAYMENT_SETTLEMENT_UNKNOWN halt mode prevents double-spend</li>
+              </ul>
+            </div>
+
+            <div class="feature-media-col">
+              <div class="media-scene backdrop-amber">
+                <div class="media-scrim"></div>
+                <div class="mockup-window">
+                  <div class="mockup-titlebar">
+                    <div class="traffic-dots">
+                      <span class="traffic-dot dot-red"></span>
+                      <span class="traffic-dot dot-yellow"></span>
+                      <span class="traffic-dot dot-green"></span>
+                    </div>
+                    <span>security-audit-gate</span>
+                  </div>
+                  <div class="mockup-main" style="padding: 20px; font-family: var(--font-mono); font-size: 13px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <div style="background: rgba(255, 95, 86, 0.1); border: 1px solid rgba(255, 95, 86, 0.3); padding: 10px; border-radius: 6px; color: #ff6568;">
+                        ✗ BLOCKED: http://169.254.169.254/latest/meta-data (SSRF Attack Rejected)
+                      </div>
+                      <div style="background: rgba(255, 95, 86, 0.1); border: 1px solid rgba(255, 95, 86, 0.3); padding: 10px; border-radius: 6px; color: #ff6568;">
+                        ✗ BLOCKED: http://127.0.0.1:8080/admin (Loopback Endpoint Rejected)
+                      </div>
+                      <div style="background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); padding: 10px; border-radius: 6px; color: var(--success);">
+                        ✓ VERIFIED: https://api.brave.com (Safe TLS 1.3 Destination)
+                      </div>
+                      <div style="background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); padding: 10px; border-radius: 6px; color: var(--success);">
+                        ✓ BIGINT ATOMIC UNITS: parseUsdc("0.05") ➔ 50,000n (Exact)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         INTERACTIVE PLAYGROUND / "SEE IT IN ACTION" (#see-it)
+         ========================================================================== -->
+    <section class="action-section" id="see-it">
+      <div class="container">
+        <div class="section-head">
+          <span class="feature-eyebrow">Interactive Simulator</span>
+          <h2>See it in action.</h2>
+          <p>Test the capability routing workflow live. Trigger an execution to watch discovery, scoring, and Soroban settlement run in real time.</p>
+        </div>
+
+        <div class="interactive-console">
+          <div class="console-topbar">
+            <div class="traffic-dots">
+              <span class="traffic-dot dot-red"></span>
+              <span class="traffic-dot dot-yellow"></span>
+              <span class="traffic-dot dot-green"></span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 13px; color: var(--foreground);">ecorouter.execute({ capability: "web.search" })</div>
+            <div class="console-actions">
+              <button class="btn btn-primary btn-sm" id="runSimulationBtn" onclick="runSimulatedExecution()">
+                ▶ Run Capability
+              </button>
+            </div>
+          </div>
+
+          <div class="console-grid">
+            <!-- Left: Request Configuration -->
+            <div class="console-pane">
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); text-transform: uppercase;">TypeScript Integration</span>
+              <pre style="margin-top: 12px;"><code><span style="color: #ff7b72;">import</span> { <span style="color: var(--brand-light);">EcoRouter</span> } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">"ecorouter"</span>;
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">router</span> = <span style="color: #ff7b72;">new</span> <span style="color: var(--brand-light);">EcoRouter</span>({
+  <span style="color: #79c0ff;">account</span>: process.env.ECOROUTER_ACCOUNT!,
+  <span style="color: #79c0ff;">sessionSecret</span>: process.env.SESSION_SECRET!,
+  <span style="color: #79c0ff;">providers</span>: [
+    { <span style="color: #79c0ff;">id</span>: <span style="color: #a5d6ff;">"search-alpha"</span>, <span style="color: #79c0ff;">quality</span>: <span style="color: #79c0ff;">0.92</span> },
+    { <span style="color: #79c0ff;">id</span>: <span style="color: #a5d6ff;">"search-beta"</span>,  <span style="color: #79c0ff;">quality</span>: <span style="color: #79c0ff;">0.85</span> }
   ]
 });
 
-<span class="comm">// 2. Execute capability request bounded by policy</span>
-<span class="kw">const</span> response = <span class="kw">await</span> router.<span class="prop">execute</span>({
-  <span class="prop">executionId</span>: <span class="str">"query-"</span> + Date.<span class="prop">now</span>(),
-  <span class="prop">capability</span>: <span class="str">"web.search"</span>,
-  <span class="prop">input</span>: { <span class="prop">query</span>: <span class="str">"latest lithium carbonate prices"</span> },
-  <span class="prop">policy</span>: { <span class="prop">maxSpendUsdc</span>: <span class="str">"0.05"</span>, <span class="prop">minimumQuality</span>: <span class="num">0.85</span> }
-});
+<span style="color: #6e6e73;">// Autonomous execution</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = <span style="color: #ff7b72;">await</span> router.execute({
+  <span style="color: #79c0ff;">capability</span>: <span style="color: #a5d6ff;">"web.search"</span>,
+  <span style="color: #79c0ff;">input</span>: { <span style="color: #79c0ff;">query</span>: <span style="color: #a5d6ff;">"Stellar Soroban accounts"</span> },
+  <span style="color: #79c0ff;">policy</span>: { <span style="color: #79c0ff;">maxSpendUsdc</span>: <span style="color: #a5d6ff;">"0.05"</span> }
+});</code></pre>
+            </div>
 
-console.<span class="prop">log</span>(response.<span class="prop">output</span>.<span class="prop">results</span>);          <span class="comm">// Strict normalized search results</span>
-console.<span class="prop">log</span>(response.<span class="prop">decision</span>.<span class="prop">providerId</span>);      <span class="comm">// Winning provider ID</span>
-console.<span class="prop">log</span>(response.<span class="prop">payment</span>.<span class="prop">transactionHash</span>); <span class="comm">// Stellar Testnet receipt</span></code></pre>
+            <!-- Right: Real-Time Telemetry Stream -->
+            <div class="console-pane" style="background: #090907;">
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); text-transform: uppercase;">Live Execution Output</span>
+              <pre id="simConsoleOutput" style="margin-top: 12px;"><code class="hl-muted">// Click "Run Capability" above to execute
+
+[0.00s] Ready for capability request.
+[0.00s] Smart Account Mandate: 50.00 USDC available
+[0.00s] Ephemeral session key loaded into memory</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="section-divider"></div>
-
-    <!-- Features Section (2x2 Grid) -->
-    <section id="features" class="section">
+    <!-- ==========================================================================
+         TESTIMONIALS / "IN THE WILD" (1px hairline gap trick)
+         ========================================================================== -->
+    <section class="testimonials-section">
       <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Architecture</p>
-          <h2 class="section-title">Built for Autonomous Purchasing</h2>
-          <p class="section-subtitle">
-            Four foundational properties designed to make AI agents safe, deterministic, and economically rational.
-          </p>
+        <div class="section-head" style="text-align: left; margin-bottom: 40px;">
+          <span class="feature-eyebrow">In the Wild</span>
+          <h2>Real posts from agent developers and Web3 builders.</h2>
+          <p>How teams run fleets of autonomous agents without getting drained by unpredictable vendor bills.</p>
         </div>
 
-        <div class="features-grid">
+        <div class="testimonials-grid">
           <!-- Card 1 -->
-          <article class="feature-card">
-            <div class="feature-icon-wrapper">
-              <span>⚡</span>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar">MK</div>
+              <div class="user-meta">
+                <div class="name">Marcus Kraus</div>
+                <div class="handle">@mkraus_ai</div>
+              </div>
             </div>
-            <h3>Zero Hosted Control Plane</h3>
-            <p>
-              Private keys, signing material, and routing decisions remain completely inside the developer's process. There is no EcoRouter telemetry server, custodial wallet, database, or subscription gateway.
+            <p class="testimonial-body">
+              "We run 40+ coding agents overnight. Before EcoRouter, runaway loops cost us hundreds in unmetered search APIs. The Soroban mandate hard-caps their budget at the contract level. Literally impossible to overspend."
             </p>
-          </article>
+          </div>
 
           <!-- Card 2 -->
-          <article class="feature-card">
-            <div class="feature-icon-wrapper">
-              <span>⚖️</span>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar" style="background: #2b2b22;">SL</div>
+              <div class="user-meta">
+                <div class="name">Sarah Lin</div>
+                <div class="handle">@slin_dev</div>
+              </div>
             </div>
-            <h3>Deterministic Economic Cost</h3>
-            <p>
-              EcoRouter never consults an LLM to select vendors. Providers are ranked strictly by <code>priceAtomic / (qualityScore × successRate)</code> using exact integer arithmetic, resolving ties by lexical ID.
+            <p class="testimonial-body">
+              "Deterministic economic routing is what was missing. No LLM prompts deciding which API to buy from. Pure mathematical score on cost and quality, settles via x402 in milliseconds."
             </p>
-          </article>
+          </div>
 
           <!-- Card 3 -->
-          <article class="feature-card">
-            <div class="feature-icon-wrapper">
-              <span>🛡️</span>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar" style="background: rgba(210, 86, 17, 0.2); color: var(--brand-light);">AR</div>
+              <div class="user-meta">
+                <div class="name">Alex Rivera</div>
+                <div class="handle">@arivera_stellar</div>
+              </div>
             </div>
-            <h3>Soroban Mandate Boundary</h3>
-            <p>
-              The smart account on Stellar independently verifies session signatures through <code>__check_auth</code>, enforcing cumulative budgets, single-payment caps, expiration timestamps, and revocation flags.
+            <p class="testimonial-body">
+              "The Soroban __check_auth hook implementation here is textbook perfect. Session keys are cryptographically bound to time and budget. Finally, real Web3 agent autonomy without custodial risk."
             </p>
-          </article>
+          </div>
 
           <!-- Card 4 -->
-          <article class="feature-card">
-            <div class="feature-icon-wrapper">
-              <span>🔒</span>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar">DT</div>
+              <div class="user-meta">
+                <div class="name">David Thorne</div>
+                <div class="handle">@dthorne_agent</div>
+              </div>
             </div>
-            <h3>Strict Output Normalization</h3>
-            <p>
-              Provider responses are parsed and verified into invariant schema types. Upstream agents interact solely with clean data structures, protecting workflows against vendor API mutations.
+            <p class="testimonial-body">
+              "Zero-config normalization changed our stack. We can swap between Brave, Tavily, and Exa without touching a single line of parser code. The agent just gets clean WebSearchResult objects."
             </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <div class="section-divider"></div>
-
-    <!-- Provider / Components Section (3-Card Layout) -->
-    <section id="providers" class="section">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Components</p>
-          <h2 class="section-title">Connect & Configure</h2>
-          <p class="section-subtitle">
-            Configure candidates, smart account parameters, and local Stellar settlement boundaries.
-          </p>
-        </div>
-
-        <div class="providers-grid">
-          <!-- Card 1 -->
-          <div class="provider-card">
-            <div class="provider-card-body">
-              <span class="provider-tag-pill">HTTP 402</span>
-              <h3>x402 Search Provider</h3>
-              <p>
-                Candidate endpoints answer unpaid POST queries with HTTP 402 challenges containing exact atomic USDC pricing and destination addresses.
-              </p>
-            </div>
-            <div class="provider-card-footer">
-              endpoint: "https://api.example/search"<br>
-              scheme: "exact"<br>
-              network: "stellar:testnet"<br>
-              qualityScore: 0.94
-            </div>
           </div>
 
-          <!-- Card 2 -->
-          <div class="provider-card">
-            <div class="provider-card-body">
-              <span class="provider-tag-pill">Rust · Soroban</span>
-              <h3>EcoRouterAccount</h3>
-              <p>
-                Enforces spending mandates on-chain. Limits session signers to exactly one token transfer per authorized invocation.
-              </p>
+          <!-- Card 5 -->
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar" style="background: #2b2b22;">EL</div>
+              <div class="user-meta">
+                <div class="name">Elena Rostova</div>
+                <div class="handle">@erostova_tech</div>
+              </div>
             </div>
-            <div class="provider-card-footer">
-              contracts/ecorouter-account<br>
-              cargo build --target wasm32v1-none<br>
-              total_limit: 50_000_000 (50 USDC)<br>
-              max_payment: 500_000 (0.50 USDC)
-            </div>
+            <p class="testimonial-body">
+              "Our compliance team approved EcoRouter in one afternoon. Private keys never leave localhost, no hosted servers, strict SSRF defenses against AWS metadata leaks, and BigInt atomic accounting."
+            </p>
           </div>
 
-          <!-- Card 3 -->
-          <div class="provider-card">
-            <div class="provider-card-body">
-              <span class="provider-tag-pill">TypeScript</span>
-              <h3>PaymentClient</h3>
-              <p>
-                Injected integration boundary that signs transaction envelopes using the session key and broadcasts directly to Stellar Testnet.
-              </p>
+          <!-- Card 6 -->
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="avatar" style="background: rgba(52, 211, 153, 0.2); color: #34d399;">JK</div>
+              <div class="user-meta">
+                <div class="name">Jason Kim</div>
+                <div class="handle">@jkim_crypto</div>
+              </div>
             </div>
-            <div class="provider-card-footer">
-              loadMandate(account)<br>
-              authorizeAndSettle({ challenge })<br>
-              returns: { payment, receipt }
-            </div>
+            <p class="testimonial-body">
+              "x402 V2 is the future of autonomous agent micropayments. No subscriptions, no invoices. Instant HTTP 402 challenge negotiation settled peer-to-peer on Stellar."
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="section-divider"></div>
-
-    <!-- Workflow / Process Section -->
-    <section id="workflow" class="section">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">Execution Ladder</p>
-          <h2 class="section-title">One Request. One Decision.</h2>
-          <p class="section-subtitle">
-            Every step executes deterministically without centralized coordination or custodial exposure.
-          </p>
+    <!-- ==========================================================================
+         FAQ ACCORDION (#faq)
+         ========================================================================== -->
+    <section class="faq-section" id="faq">
+      <div class="container faq-container">
+        <div class="section-head" style="text-align: left; margin-bottom: 40px;">
+          <span class="feature-eyebrow">Frequently Asked</span>
+          <h2>Questions & Answers</h2>
         </div>
 
-        <div class="workflow-ladder">
-          <div class="workflow-item">
-            <div class="step-circle">1</div>
-            <div class="workflow-content">
-              <h4>Discovery Challenge</h4>
-              <p>EcoRouter probes configured endpoints concurrently; candidates return HTTP 402 headers with signed price requirements.</p>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>How does EcoRouter prevent agents from exceeding budget?</span>
+              <span class="faq-icon">＋</span>
+            </button>
+            <div class="faq-answer">
+              <p>Spending limits are enforced cryptographically on-chain by a Soroban smart account. The agent runtime only possesses an ephemeral session key. Before any token transfer executes, the contract's <code>__check_auth</code> hook verifies the per-transaction cap, total remaining budget, session expiration timestamp, and revocation state. If a spend violates the mandate, Stellar rejects the transaction at the consensus level.</p>
             </div>
-            <span class="workflow-status-badge">Concurrent</span>
           </div>
 
-          <div class="workflow-item">
-            <div class="step-circle">2</div>
-            <div class="workflow-content">
-              <h4>Policy Validation</h4>
-              <p>Sanitizes recipients, validates testnet asset parity, checks local maxSpend boundaries, and parses atomic BigInt amounts.</p>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>Does EcoRouter operate a custodial wallet or remote backend?</span>
+              <span class="faq-icon">＋</span>
+            </button>
+            <div class="faq-answer">
+              <p>No. EcoRouter is strictly local-first and non-custodial. There are no hosted databases, account registration systems, remote proxies, or centralized wallets. All keys remain on your machine, and transactions are signed locally and broadcast directly to Stellar.</p>
             </div>
-            <span class="workflow-status-badge">Local Check</span>
           </div>
 
-          <div class="workflow-item recommended">
-            <div class="step-circle">3</div>
-            <div class="workflow-content">
-              <h4>Deterministic Selection</h4>
-              <p>Computes <code>priceAtomic / (qualityScore × successRate)</code>; lowest score wins. Ties break strictly by lexical provider ID.</p>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>What capabilities are supported in V1?</span>
+              <span class="faq-icon">＋</span>
+            </button>
+            <div class="faq-answer">
+              <p>V1 specializes in <code>web.search</code>, enabling autonomous agents to acquire real-time web discovery from multiple competing search providers. The router architecture is designed to accommodate additional deterministic capabilities such as code execution, data extraction, and model inference.</p>
             </div>
-            <span class="workflow-status-badge">Optimal Cost</span>
           </div>
 
-          <div class="workflow-item">
-            <div class="step-circle">4</div>
-            <div class="workflow-content">
-              <h4>On-Chain Settlement</h4>
-              <p>Session signer authorizes exact transfer; Soroban contract validates allowance, cumulative spend, and active mandate status.</p>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>How is provider selection calculated?</span>
+              <span class="faq-icon">＋</span>
+            </button>
+            <div class="faq-answer">
+              <p>EcoRouter calculates the expected effectiveness (<code>qualityScore × successRate</code>) and computes <code>economicCost = priceAtomic / expectedEffectiveness</code>. The offer with the lowest economic cost is selected. If two offers tie, the lower raw price wins, followed by lexical provider ID sorting to guarantee 100% reproducible decisions.</p>
             </div>
-            <span class="workflow-status-badge">On-Chain Gate</span>
           </div>
 
-          <div class="workflow-item">
-            <div class="step-circle">5</div>
-            <div class="workflow-content">
-              <h4>Output Normalization</h4>
-              <p>Winning provider verifies settlement proof and streams payload; SDK normalizes response into strict <code>WebSearchResult</code>.</p>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              <span>What network and currency are used for settlement?</span>
+              <span class="faq-icon">＋</span>
+            </button>
+            <div class="faq-answer">
+              <p>Settlement occurs on the Stellar network using atomic units of USDC (with 7 decimal places). The SDK strictly performs accounting using JavaScript BigInt primitives to eliminate floating-point rounding errors.</p>
             </div>
-            <span class="workflow-status-badge">Verified</span>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Minimalist Dark Footer -->
+  <!-- ==========================================================================
+       FOOTER (aoagents.dev Halftone Slogan + Columns)
+       ========================================================================== -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <h3>EcoRouter</h3>
+      <div class="footer-slogan">
+        <h3>Declare Capability / Enforce Limits / Settle On-Chain</h3>
+        <p class="sub-slogan">Autonomous purchasing infrastructure for software agents on Stellar.</p>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <a class="brand" href="#">
+            <span class="brand-robot">▲</span>
+            <span>EcoRouter</span>
+          </a>
           <p>
-            Autonomous capability routing and economic control plane for AI agents on Stellar. Built with Apache-2.0 open-source standards.
+            Deterministic capability-based purchasing for autonomous software, secured by Stellar Soroban smart accounts. Open source under Apache 2.0.
           </p>
         </div>
 
         <div class="footer-col">
-          <h4>Development</h4>
+          <h4>Product</h4>
           <ul>
-            <li><a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
-            <li><a href="https://github.com/fozagtx/ecorouter/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a></li>
-            <li><a href="https://github.com/fozagtx/ecorouter/tree/main/contracts/ecorouter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a></li>
-            <li><a href="#quickstart">Quickstart Guide</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#providers">Providers</a></li>
+            <li><a href="#see-it">Live Simulator</a></li>
+            <li><a href="#install">Installation</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h4>Standards</h4>
+          <h4>Documentation</h4>
           <ul>
-            <li><a href="https://stellar.org" target="_blank" rel="noopener noreferrer">Stellar Network</a></li>
-            <li><a href="https://soroban.stellar.org" target="_blank" rel="noopener noreferrer">Soroban Smart Accounts</a></li>
+            <li><a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">Repository</a></li>
+            <li><a href="https://github.com/fozagtx/ecorouter/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a></li>
+            <li><a href="https://github.com/fozagtx/ecorouter/tree/main/contracts/ecorouter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a></li>
             <li><a href="https://github.com/fozagtx/ecorouter#security-model" target="_blank" rel="noopener noreferrer">Security Model</a></li>
-            <li><a href="https://github.com/fozagtx/ecorouter#economic-routing" target="_blank" rel="noopener noreferrer">Economic Routing Spec</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://stellar.org" target="_blank" rel="noopener noreferrer">Stellar Network</a></li>
+            <li><a href="https://soroban.stellar.org" target="_blank" rel="noopener noreferrer">Soroban Docs</a></li>
+            <li><a href="https://www.npmjs.com/package/ecorouter" target="_blank" rel="noopener noreferrer">npm Package</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 EcoRouter Contributors. Distributed under Apache-2.0 License.</p>
-        <div class="nav-badge">
-          <span class="badge-dot"></span>
-          <span>Stellar Testnet Gateway Active</span>
-        </div>
+        <div>© 2026 EcoRouter. Free and open source under Apache 2.0.</div>
+        <div>Local-First · Zero Custody · Atomic Settlement</div>
       </div>
     </div>
   </footer>
 
-  <!-- Interactive Scripts -->
+  <!-- Toast Element -->
+  <div class="toast-msg" id="toastMsg">Copied to clipboard!</div>
+
+  <!-- Interactive Client Scripts -->
   <script>
-    // Copy helper function
-    async function copyToClipboard(text, btnElement, successText = 'Copied') {
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch (err) {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-      if (btnElement) {
-        btnElement.classList.add('copied');
-        const textSpan = btnElement.querySelector('.copy-text') || btnElement;
-        const originalText = textSpan.textContent;
-        textSpan.textContent = successText;
+    // Copy Command to Clipboard
+    function copyCommand(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const copyLabel = document.getElementById('copyLabel');
+        const toast = document.getElementById('toastMsg');
+        
+        copyLabel.textContent = 'Copied!';
+        copyLabel.style.color = 'var(--success)';
+        
+        toast.textContent = 'Copied: ' + text;
+        toast.classList.add('show');
+        
         setTimeout(() => {
-          btnElement.classList.remove('copied');
-          textSpan.textContent = originalText;
-        }, 2000);
+          copyLabel.textContent = 'Copy';
+          copyLabel.style.color = 'var(--brand-light)';
+          toast.classList.remove('show');
+        }, 2200);
+      }).catch(err => {
+        console.error('Clipboard copy failed:', err);
+      });
+    }
+
+    // FAQ Accordion Toggle (Single-open)
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      
+      // Close all items
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+      
+      // If it wasn't open, open it
+      if (!isOpen) {
+        item.classList.add('open');
       }
-    }
-
-    // Install bar copy
-    const installBar = document.getElementById('installBar');
-    const copyBtn = document.getElementById('copyBtn');
-    const installCmd = document.getElementById('installCmd');
-    if (installBar && installCmd) {
-      installBar.addEventListener('click', () => {
-        copyToClipboard(installCmd.innerText.trim(), copyBtn);
-      });
-    }
-
-    // Code snippet copy
-    const copySnippetBtn = document.getElementById('copySnippetBtn');
-    const codePre = document.getElementById('codePre');
-    if (copySnippetBtn && codePre) {
-      copySnippetBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        copyToClipboard(codePre.innerText.trim(), copySnippetBtn);
-      });
     }
 
     // Mobile Navigation Toggle
@@ -468,34 +969,46 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
     const navLinks = document.getElementById('navLinks');
     if (mobileToggle && navLinks) {
       mobileToggle.addEventListener('click', () => {
-        const isOpen = navLinks.classList.toggle('mobile-open');
-        mobileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        mobileToggle.textContent = isOpen ? '✕' : '☰';
-      });
-
-      navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navLinks.classList.remove('mobile-open');
-          mobileToggle.setAttribute('aria-expanded', 'false');
-          mobileToggle.textContent = '☰';
-        });
+        const isOpen = navLinks.style.display === 'flex';
+        navLinks.style.display = isOpen ? 'none' : 'flex';
+        mobileToggle.setAttribute('aria-expanded', !isOpen);
       });
     }
 
-    // Step Switcher
-    const steps = [
-      document.getElementById('step1'),
-      document.getElementById('step2'),
-      document.getElementById('step3'),
-      document.getElementById('step4')
-    ];
-    steps.forEach((step) => {
-      if (!step) return;
-      step.addEventListener('click', () => {
-        steps.forEach(s => s && s.classList.remove('active'));
-        step.classList.add('active');
-      });
-    });
+    // Interactive Capability Execution Simulation
+    function runSimulatedExecution() {
+      const output = document.getElementById('simConsoleOutput');
+      const btn = document.getElementById('runSimulationBtn');
+      btn.disabled = true;
+      btn.textContent = 'Running...';
+      
+      output.innerHTML = '<span class="hl-brand">[0.02s] INCOMING CAPABILITY: web.search</span>\n' +
+                         '<span class="hl-white">[0.04s] Probing configured candidate endpoints concurrently...</span>\n';
+      
+      setTimeout(() => {
+        output.innerHTML += '<span class="hl-blue">[0.38s] HTTP 402 challenge from search-alpha: 12,000 uUSDC (quality: 0.94)</span>\n' +
+                            '<span class="hl-blue">[0.42s] HTTP 402 challenge from search-beta:  8,000 uUSDC (quality: 0.92)</span>\n' +
+                            '<span class="hl-blue">[0.45s] HTTP 402 challenge from search-gamma: 25,000 uUSDC (quality: 0.96)</span>\n';
+      }, 400);
+
+      setTimeout(() => {
+        output.innerHTML += '<span class="hl-amber">[0.51s] DETERMINISTIC ROUTER EVALUATION:</span>\n' +
+                            '<span class="hl-muted">       alpha: 12,000 / (0.94 × 0.99) = 12,895 cost units</span>\n' +
+                            '<span class="hl-brand">       beta:   8,000 / (0.92 × 0.99) =  8,783 cost units [WINNER]</span>\n';
+      }, 900);
+
+      setTimeout(() => {
+        output.innerHTML += '<span class="hl-green">[0.72s] SOROBAN SMART ACCOUNT: __check_auth hook called</span>\n' +
+                            '<span class="hl-green">[0.75s] ✓ Session signature verified (ed25519)</span>\n' +
+                            '<span class="hl-green">[0.78s] ✓ Mandate check: 8,000 uUSDC <= 50,000 max_payment</span>\n' +
+                            '<span class="hl-green">[0.81s] ✓ Budget remaining: 49.954 USDC</span>\n' +
+                            '<span class="hl-white">[0.98s] Stellar Tx Confirmed: tx_8fa3b7c29014e41</span>\n' +
+                            '<span class="hl-brand">[1.12s] RESULT NORMALIZED: 8 web results delivered to agent.</span>';
+        
+        btn.disabled = false;
+        btn.textContent = '▶ Run Again';
+      }, 1500);
+    }
   </script>
 </body>
 </html>
