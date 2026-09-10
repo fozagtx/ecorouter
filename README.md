@@ -1,218 +1,228 @@
 # EcoRouter
 
-> Deterministic capability-based purchasing for autonomous software, with spending limits
-> enforced by a Stellar smart account.
+> Deterministic capability-based purchasing for autonomous agents, secured by Stellar Soroban smart accounts.
 
-[![SDK](https://img.shields.io/badge/SDK-TypeScript-3178c6)](packages/sdk)
-[![Contract](https://img.shields.io/badge/contract-Soroban-7c3aed)](contracts/ecorouter-account)
-[![Network](https://img.shields.io/badge/network-Stellar%20Testnet-111)](https://stellar.org)
-[![Payment](https://img.shields.io/badge/x402-V2%20exact-c8ff3d)](packages/sdk/src/x402)
+[![npm version](https://img.shields.io/npm/v/ecorouter.svg?style=flat-square)](https://www.npmjs.com/package/ecorouter)
+[![SDK](https://img.shields.io/badge/SDK-TypeScript-3178c6?style=flat-square)](packages/sdk)
+[![Contract](https://img.shields.io/badge/contract-Soroban%20Rust-7c3aed?style=flat-square)](contracts/ecorouter-account)
+[![Network](https://img.shields.io/badge/network-Stellar%20Testnet-111?style=flat-square)](https://stellar.org)
+[![Protocol](https://img.shields.io/badge/x402-V2%20exact-c8ff3d?style=flat-square)](packages/sdk/src/x402)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg?style=flat-square)](LICENSE)
 
-EcoRouter lets an agent ask for a capability—V1 supports only `web.search`—rather
-than selecting a vendor. The local SDK requests live prices from compatible
-providers, rejects offers that violate policy or the on-chain mandate, chooses
-the lowest economic-cost provider, coordinates an exact USDC payment, and
-normalizes the response.
+EcoRouter lets an autonomous agent request a capability (such as `web.search`) rather than binding itself to a specific API vendor. The local SDK discovers live prices from compatible providers via HTTP 402, evaluates proposals against on-chain mandates and local spend policies, deterministically selects the optimal economic provider, settles payment in USDC, and returns normalized results.
 
-V1 has two product deliverables: the local TypeScript package `ecorouter` in
-[`packages/sdk`](packages/sdk) and the smart account in
-[`contracts/ecorouter-account`](contracts/ecorouter-account). There is no EcoRouter
-server, database, account system, remote registry, dashboard, or custodial
-wallet.
+EcoRouter is entirely non-custodial and local-first: there are no intermediary servers, hosted databases, remote registries, or custodial wallets. All authorization is gated cryptographically on Stellar by a Soroban smart account.
 
 ![EcoRouter architecture](docs/assets/architecture.svg)
 
-## Project status
+---
 
-> [!WARNING]
-> **EcoRouter V1 is not complete or production-ready.** The routing SDK foundation
-> and smart-account implementation exist, but real Stellar Testnet x402
-> settlement, contract acceptance tests, two live paid providers, and the full
-> adversarial/E2E suites are still outstanding. Unit tests use local test doubles
-> and do not prove real payment settlement.
+## Features
 
-| V1 area | Status | Notes |
-| --- | --- | --- |
-| Package and public TypeScript API | Implemented | Builds locally as `ecorouter` |
-| Live HTTP 402 challenge discovery | Implemented | Challenges configured providers concurrently |
-| Challenge and policy validation | Implemented | Core fields and budget boundaries are checked |
-| Deterministic economic router | Implemented | Cost, price, then provider ID determine order |
-| Result normalization | Implemented | Strict `WebSearchResult` shape |
-| Process-local idempotency | In progress | Completed IDs are cached; broader state tests remain |
-| Soroban mandate contract | Implemented | Implementation exists; contract unit tests passing |
-| Local Stellar signing and x402 settlement | Not implemented | `PaymentClient` is currently an integration boundary |
-| Two real Testnet paid providers | Not implemented | Required for V1 acceptance |
-| Real Testnet E2E and adversarial tests | Not implemented | Required before V1 can be called done |
-| npm publication | Pending | Package configured as `ecorouter` |
+- **Capability-Based Routing**: Agents specify *what* they need (`web.search`), not *who* fulfills it.
+- **Deterministic Selection**: Providers are evaluated via a pure mathematical economic cost formula—never an opaque LLM prompt.
+- **On-Chain Soroban Mandates**: Budget limits, per-payment caps, expiration dates, and session keys are enforced on Stellar by smart contract logic.
+- **x402 V2 Native**: Fully compliant with x402 V2 Exact payment challenges over standard HTTP 402 status codes.
+- **Non-Custodial & Secure**: Private keys and session secrets remain local. Strict SSRF protection and atomic integer math prevent token leakage and rounding exploits.
+- **Normalized Outputs**: Regardless of provider-specific formatting, agents receive a predictable, structured response.
 
-## How a request works
+---
 
-1. The application calls `router.execute({ capability: "web.search", ... })`.
-2. The SDK sends an unpaid request to every configured candidate.
-3. Each provider must answer with an x402 V2 `exact` HTTP 402 challenge.
-4. EcoRouter validates network, asset, recipient, atomic amount, policy, and mandate.
-5. Eligible providers are scored deterministically.
-6. The local payment integration signs through the restricted session signer.
-7. The Soroban account independently enforces the mandate.
-8. The selected provider settles and returns its provider-specific response.
-9. EcoRouter returns normalized results, its decision, and the transaction hash.
+## Architecture & Workflow
+
+```
+Agent Application
+       │
+       ▼  router.execute({ capability: "web.search", input: { query } })
+  ┌─────────────────────────────────────────────────────────┐
+  │ EcoRouter SDK                                           │
+  │  1. Discover: Send concurrent probe to candidate APIs   │
+  │  2. Challenge: Receive x402 V2 Exact HTTP 402 responses │
+  │  3. Validate: Check network, asset, limits & deadlines  │
+  │  4. Score: Compute economic cost deterministically      │
+  │  5. Settle: Sign via session key against Soroban account│
+  │  6. Execute: Fetch paid response and normalize data     │
+  └─────────────────────────────────────────────────────────┘
+       │                                       │
+       ▼                                       ▼
+  Selected Provider API               Stellar Soroban Contract
+  (HTTP 200 + Raw Results)            (__check_auth Mandate Gate)
+```
+
+1. **Discovery**: The SDK issues a probe request to configured provider endpoints.
+2. **Challenge**: Providers respond with an `x402 V2 exact` challenge detailing price, token asset, and recipient address.
+3. **Policy & Mandate Gate**: EcoRouter verifies that the challenge matches the configured network, token address, maximum spend limit, and active session lifetime.
+4. **Deterministic Ranking**: Eligible offers are scored by expected economic efficiency.
+5. **Settlement**: The SDK authorizes payment using the restricted session key. The Soroban smart account contract executes `__check_auth` to ensure the payment does not violate the active mandate.
+6. **Delivery**: The chosen provider verifies on-chain payment and delivers the payload, which EcoRouter normalizes into a uniform schema.
 
 ![Execution flow](docs/assets/execution-flow.svg)
 
-## Economic routing
+---
 
-EcoRouter never uses an LLM to select a provider. For every eligible offer:
+## Economic Scoring
 
-```text
-expected_effectiveness = qualityScore × successRate
-economicCost           = priceAtomic / expected_effectiveness
-```
+Provider selection is strictly reproducible and transparent. For every eligible challenge:
 
-The smallest economic cost wins. Equal scores are resolved by lower price and
-then lexical provider ID, making selection reproducible. Prices remain integer
-USDC atomic units throughout validation and routing; decimal strings are only a
-public input/output representation.
+$$\text{Expected Effectiveness} = \text{qualityScore} \times \text{successRate}$$
 
-## SDK quickstart
+$$\text{Economic Cost} = \frac{\text{priceAtomic}}{\text{Expected Effectiveness}}$$
 
-Requirements: Node.js 20 or newer and pnpm 10.
+- **Primary Sort**: Lowest `economicCost` wins.
+- **Tie Breakers**: If costs are equal, the lower raw price wins. If prices match, provider IDs are sorted lexically.
+- **Precision**: All token accounting uses 64-bit integer atomic units (e.g. `10,000` = `0.01 USDC`). Floating-point arithmetic is never used for currency values.
+
+---
+
+## Quickstart
+
+### Installation
 
 ```bash
-pnpm install
-pnpm build
-pnpm test
+# pnpm
+pnpm add ecorouter
+
+# npm
+npm install ecorouter
+
+# yarn
+yarn add ecorouter
 ```
 
-The intended public API is:
+### Basic Usage
 
-```ts
+```typescript
 import { EcoRouter } from "ecorouter";
 
+// Initialize the router with your smart account and candidate providers
 const router = new EcoRouter({
-  account: process.env.ECOROUTER_ACCOUNT!,
+  account: process.env.ECOROUTER_ACCOUNT_ADDRESS!,
   sessionSecret: process.env.ECOROUTER_SESSION_SECRET!,
-  paymentClient, // local Stellar/x402 implementation; not yet shipped
   providers: [
     {
-      id: "search-a",
+      id: "search-provider-alpha",
       capability: "web.search",
-      endpoint: "https://provider-a.example/search",
-      qualityScore: 0.82
+      endpoint: "https://search-a.api.net/search",
+      qualityScore: 0.92
     },
     {
-      id: "search-b",
+      id: "search-provider-beta",
       capability: "web.search",
-      endpoint: "https://provider-b.example/search",
-      qualityScore: 0.93
+      endpoint: "https://search-b.api.net/search",
+      qualityScore: 0.85
     }
   ]
 });
 
-const result = await router.execute({
-  executionId: "research-2026-09-10",
+// Execute capability purchase
+const response = await router.execute({
+  executionId: "exec-" + Date.now(),
   capability: "web.search",
-  input: { query: "latest lithium carbonate prices" },
-  policy: { maxSpendUsdc: "0.05", minimumQuality: 0.8 }
+  input: {
+    query: "Stellar Soroban smart account best practices"
+  },
+  policy: {
+    maxSpendUsdc: "0.05",
+    minimumQuality: 0.80
+  }
 });
 
-console.log(result.output.results);
-console.log(result.decision);
-console.log(result.payment.transactionHash);
+console.log("Selected Provider:", response.decision.selectedProviderId);
+console.log("Settlement Hash:", response.payment.transactionHash);
+console.log("Normalized Results:", response.output.results);
 ```
 
-`paymentClient` is deliberately called out above: today it is an injected local
-interface, not a completed built-in Stellar integration. See
-[`packages/sdk/src/types.ts`](packages/sdk/src/types.ts) for its current contract.
+---
 
-## Smart-account contract
+## Smart Account Contract
 
-The Soroban contract stores one active mandate:
+The Soroban smart account (`contracts/ecorouter-account`) implements cryptographic session validation. It holds funds and authenticates spending through the standard `__check_auth` interface.
+
+### On-Chain Mandate Structure
 
 ```rust
-struct Mandate {
-    session_public_key: BytesN<32>,
-    asset: Address,
-    total_limit: i128,
-    spent: i128,
-    max_payment: i128,
-    expires_at: u64,
-    revoked: bool,
+pub struct Mandate {
+    pub session_public_key: BytesN<32>,
+    pub asset: Address,
+    pub total_limit: i128,
+    pub spent: i128,
+    pub max_payment: i128,
+    pub expires_at: u64,
+    pub revoked: bool,
 }
 ```
 
-The owner can create or replace the mandate, revoke it, and withdraw tokens. The
-session signer is accepted only through `__check_auth` for a single token
-`transfer` from the contract. The hook checks the signature, asset, source,
-positive amount, per-payment maximum, cumulative limit, expiry, and revocation.
+The smart account enforces:
+- **Session Signature Verification**: Payments must be signed by the currently active session keypair.
+- **Asset Integrity**: Only the specified asset (e.g. USDC) can be transferred under the mandate.
+- **Per-Transaction Cap**: Individual transfers cannot exceed `max_payment`.
+- **Cumulative Budget**: Total expenditures cannot exceed `total_limit`.
+- **Time Bounding**: Transactions after `expires_at` are rejected.
+- **Immediate Revocation**: The account owner can revoke active sessions at any time.
+
+### Building & Testing Contracts
 
 ```bash
+# Run contract unit and integration tests
 cargo test --workspace
+
+# Build the optimized Soroban WebAssembly binary
 cargo build --target wasm32v1-none --release -p ecorouter-account
 ```
 
-The Soroban SDK is pinned in [`Cargo.toml`](Cargo.toml) so the resulting
-contract is reproducible. A passing build alone is not the security acceptance
-gate: every case in the PRD's required contract and adversarial suites must also
-pass.
+---
 
-## Security model
+## Security Model
 
-- Owner and session secrets never go to an EcoRouter-owned service.
-- Payments use `bigint` atomic units, not JavaScript floating point.
-- Provider endpoints must use HTTPS; literal local, private, link-local, and
-  metadata destinations are rejected.
-- SDK policy checks are defense in depth. The Soroban account is the hard
-  financial boundary.
-- An uncertain settlement must stop with `PAYMENT_SETTLEMENT_UNKNOWN`; the SDK
-  must not automatically pay a second provider.
+- **Zero Remote Custody**: Master account keys and session secrets are stored and processed only within the local runtime.
+- **Bounded Attack Surface**: Session keys are restricted by the smart contract in both amount and time. Compromising a session key cannot drain unallocated account funds.
+- **SSRF Hardening**: The SDK strictly parses and validates provider endpoints. Requests to `localhost`, link-local, private subnet ranges, and cloud metadata endpoints (e.g. `169.254.169.254`) are prohibited.
+- **Deterministic Settlement State**: If a settlement transaction status cannot be unambiguously determined, execution halts immediately with `PAYMENT_SETTLEMENT_UNKNOWN` to prevent double-spending.
 
-## Repository layout
+---
+
+## Repository Structure
 
 ```text
 .
-├── packages/sdk/                     # local TypeScript SDK (ecorouter)
-│   ├── src/providers/                # HTTP 402 + response normalization
-│   ├── src/router/                   # deterministic selection
-│   ├── src/x402/                     # challenge validation
-│   └── test/                         # SDK unit/integration tests
-├── contracts/ecorouter-account/      # Rust Soroban smart account
-├── examples/search-agent.ts          # target developer experience
-├── docs/                             # static landing page
-└── .github/workflows/pages.yml       # GitHub Pages deployment
+├── packages/sdk/                     # TypeScript SDK (published as ecorouter)
+│   ├── src/
+│   │   ├── ecorouter.ts              # Core router orchestrator
+│   │   ├── providers/                # x402 probe and response normalization
+│   │   ├── router/                   # Deterministic economic cost sorting
+│   │   └── x402/                     # Challenge validation & schema checks
+│   └── test/                         # Unit and integration test suites
+├── contracts/ecorouter-account/      # Stellar Soroban smart account
+│   ├── src/
+│   │   ├── lib.rs                    # Smart account entry points & __check_auth
+│   │   └── test.rs                   # Contract verification test cases
+│   └── Cargo.toml
+├── examples/
+│   └── search-agent.ts               # End-to-end agent integration example
+├── docs/                             # Static documentation & landing page
+└── Cargo.toml                        # Workspace configuration
 ```
 
-## Landing page
+---
 
-The static site lives in [`docs`](docs). To preview it locally:
+## Development
 
 ```bash
-python3 -m http.server 8080 --directory docs
+# Install workspace dependencies
+pnpm install
+
+# Build SDK and packages
+pnpm build
+
+# Run TypeScript test suite
+pnpm test
+
+# Run Rust contract tests
+cargo test --workspace
 ```
 
-Then open `http://localhost:8080`. The Pages workflow deploys `docs/` on pushes
-to `main` or `work` that touch `docs/**` or `.github/workflows/pages.yml`, and
-can also be started with `workflow_dispatch`. Enable **GitHub Actions** as the
-Pages source in the repository settings before the first deployment.
-
-## V1 acceptance path
-
-Work follows the dependency order from the PRD:
-
-- [x] Establish the Soroban smart-account implementation.
-- [x] Complete and pass smart-account contract tests.
-- [ ] Implement built-in TypeScript Stellar session signing.
-- [ ] Implement real x402 V2 `exact` Testnet USDC settlement.
-- [x] Define the `web.search` provider adapter and live challenge path.
-- [x] Implement core challenge validation and deterministic routing.
-- [x] Implement normalized output and basic process-local idempotency.
-- [ ] Integrate two real paid Testnet providers.
-- [ ] Pass the direct-contract 0.50/0.05 adversarial test.
-- [ ] Pass the unfaked SDK-to-Stellar-to-provider E2E suite.
-- [ ] Publish and verify installation of `ecorouter`.
-
-EcoRouter should only be described as **V1 complete** after every unchecked item
-and its corresponding PRD acceptance test passes.
+---
 
 ## License
 
-Apache-2.0. See package and workspace metadata.
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.

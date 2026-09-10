@@ -1,10 +1,10 @@
 /* ==========================================================================
-   ECOROUTER — APPLE DESIGN SYSTEM (DARK MODE)
+   ECOROUTER DESIGN SYSTEM (DARK MODE)
    Precision Minimalism: Clarity, Restraint, Product-Centric Storytelling.
    ========================================================================== */
 
 :root {
-  /* Apple Dark Mode Palette */
+  /* Dark Mode Palette */
   --bg: #000000;
   --surface: #161617;
   --surface-dim: #111112;
@@ -20,7 +20,7 @@
   --outline: #424245;
   --outline-variant: #333336;
   
-  /* Apple Interaction Blue */
+  /* Interaction Accent */
   --primary: #0071e3;
   --primary-hover: #0077ed;
   --primary-active: #005ac1;
@@ -111,7 +111,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   BUTTONS (Apple Pill Primitives - 44px touch target)
+   BUTTONS (Pill Primitives - 44px touch target)
    ========================================================================== */
 .btn {
   display: inline-flex;
@@ -273,7 +273,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   HERO SECTION (Apple Precision Minimalism)
+   HERO SECTION (Precision Minimalism)
    ========================================================================== */
 .hero {
   padding: 80px 0 60px;
@@ -334,7 +334,7 @@ a:hover {
   margin: 0 auto;
 }
 
-.apple-window {
+.console-window {
   background: var(--surface);
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-xl);
@@ -396,7 +396,7 @@ a:hover {
 .hl-gray { color: var(--text-muted); }
 
 /* ==========================================================================
-   INSTALLATION & QUICKSTART (Apple Style)
+   INSTALLATION & QUICKSTART
    ========================================================================== */
 .section {
   padding: var(--spacing-xl) 0;
@@ -596,7 +596,7 @@ a:hover {
 .code-pre .prop { color: #f5f5f7; }
 
 /* ==========================================================================
-   FEATURES (Apple 2x2 Grid)
+   FEATURES (Precision Grid)
    ========================================================================== */
 .features-grid {
   display: grid;
@@ -716,7 +716,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   WORKFLOW SECTION (Apple Vertical Flow Ladder)
+   WORKFLOW SECTION (Vertical Flow Ladder)
    ========================================================================== */
 .workflow-ladder {
   display: flex;
@@ -800,7 +800,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   FOOTER (Apple Precision Minimalist)
+   FOOTER (Precision Minimalist)
    ========================================================================== */
 .site-footer {
   background: var(--surface-dim);
