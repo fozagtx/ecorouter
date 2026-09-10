@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,16 +6,19 @@
 
 @layer base {
   :root {
-    --background: #F7F7F4;
+    --background: #F6F6F3;
     --surface: #FFFFFF;
-    --surface-secondary: #F1F1ED;
-    --foreground: #0C0C0D;
+    --surface-technical: #FAFAF8;
+    --surface-secondary: #EFEFEC;
+    --foreground: #0B0B0C;
     --secondary: #55555A;
-    --muted: #85858B;
-    --border: #D9D9D4;
-    --border-strong: #A9A9A4;
-    --border-subtle: #E5E5E0;
-    --accent: #0C0C0D;
+    --muted: #7D7D84;
+    --border: #D2D2CE;
+    --border-technical: #D0D0CC;
+    --border-inner: #DADAD6;
+    --border-subtle: #E9E9E5;
+    --registration: #6E6E73;
+    --accent: #0B0B0C;
     --spectral: #725CFF;
   }
 
@@ -28,94 +31,113 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Engineering Grid Background */
+/* Very subtle background grid (0.02 opacity, 112px cell) */
 .bg-technical-grid {
-  background-color: #F7F7F4;
+  background-color: #F6F6F3;
   background-image:
-    linear-gradient(rgba(15, 15, 15, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 15, 15, 0.035) 1px, transparent 1px);
-  background-size: 96px 96px;
+    linear-gradient(rgba(11, 11, 12, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 11, 12, 0.02) 1px, transparent 1px);
+  background-size: 112px 112px;
 }
 
-/* Viewfinder Frame & Camera Registration Corners */
-.viewfinder-frame {
+/* Outer Technical Observation Frame */
+.outer-technical-frame {
   position: relative;
-  transition: border-color 180ms ease-out;
+  border: 1px solid #D0D0CC;
+  border-radius: 1px;
+  background-color: #FAFAF8;
+  background-image:
+    linear-gradient(rgba(11, 11, 12, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 11, 12, 0.025) 1px, transparent 1px);
+  background-size: 104px 104px;
 }
 
+/* Inset Camera Registration Brackets in the Gutter */
 .capture-corner {
   position: absolute;
   width: 20px;
   height: 20px;
+  z-index: 3;
   pointer-events: none;
   transition: all 180ms ease-out;
 }
 
 .capture-corner.tl {
-  top: 14px;
-  left: 14px;
-  border-top: 1.5px solid #85858B;
-  border-left: 1.5px solid #85858B;
+  top: 20px;
+  left: 20px;
+  border-top: 1px solid #6E6E73;
+  border-left: 1px solid #6E6E73;
 }
 
 .capture-corner.tr {
-  top: 14px;
-  right: 14px;
-  border-top: 1.5px solid #85858B;
-  border-right: 1.5px solid #85858B;
+  top: 20px;
+  right: 20px;
+  border-top: 1px solid #6E6E73;
+  border-right: 1px solid #6E6E73;
 }
 
 .capture-corner.bl {
-  bottom: 14px;
-  left: 14px;
-  border-bottom: 1.5px solid #85858B;
-  border-left: 1.5px solid #85858B;
+  bottom: 20px;
+  left: 20px;
+  border-bottom: 1px solid #6E6E73;
+  border-left: 1px solid #6E6E73;
 }
 
 .capture-corner.br {
-  bottom: 14px;
-  right: 14px;
-  border-bottom: 1.5px solid #85858B;
-  border-right: 1.5px solid #85858B;
+  bottom: 20px;
+  right: 20px;
+  border-bottom: 1px solid #6E6E73;
+  border-right: 1px solid #6E6E73;
 }
 
-/* Hover camera focus effect: corners animate inward by 2px and darken */
-.viewfinder-frame:hover .capture-corner {
-  border-color: #0C0C0D;
+/* Subtle camera-focus interaction on hover: corners darken and shift inward by 1-2px */
+.outer-technical-frame:hover .capture-corner {
+  border-color: #0B0B0C;
 }
 
-.viewfinder-frame:hover .capture-corner.tl {
-  top: 12px;
-  left: 12px;
+.outer-technical-frame:hover .capture-corner.tl {
+  top: 18px;
+  left: 18px;
 }
 
-.viewfinder-frame:hover .capture-corner.tr {
-  top: 12px;
-  right: 12px;
+.outer-technical-frame:hover .capture-corner.tr {
+  top: 18px;
+  right: 18px;
 }
 
-.viewfinder-frame:hover .capture-corner.bl {
-  bottom: 12px;
-  left: 12px;
+.outer-technical-frame:hover .capture-corner.bl {
+  bottom: 18px;
+  left: 18px;
 }
 
-.viewfinder-frame:hover .capture-corner.br {
-  bottom: 12px;
-  right: 12px;
+.outer-technical-frame:hover .capture-corner.br {
+  bottom: 18px;
+  right: 18px;
+}
+
+@media (max-width: 640px) {
+  .capture-corner {
+    width: 16px;
+    height: 16px;
+  }
+  .capture-corner.tl { top: 12px; left: 12px; }
+  .capture-corner.tr { top: 12px; right: 12px; }
+  .capture-corner.bl { bottom: 12px; left: 12px; }
+  .capture-corner.br { bottom: 12px; right: 12px; }
 }
 
 /* Reusable UI Primitives */
 .technical-label {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Geist Mono", "IBM Plex Mono", monospace;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   color: var(--muted);
 }
 

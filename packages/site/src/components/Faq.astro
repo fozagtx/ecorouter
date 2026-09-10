@@ -19,24 +19,24 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="py-16 md:py-24 relative bg-white border-t border-[#D9D9D4]">
+<section id="faq" class="py-16 md:py-24 relative bg-white border-t border-[#D2D2CE]">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
     <div class="space-y-2 text-center">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#85858B] font-medium">
+      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84] font-medium">
         04 // FREQUENTLY ASKED QUESTIONS
       </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#0C0C0D]">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#0B0B0C]">
         FAQ
       </h2>
     </div>
 
     <!-- Flat Accordion List Separated by Thin Borders -->
-    <div class="border-y border-[#D9D9D4] divide-y divide-[#D9D9D4]">
+    <div class="border-y border-[#D2D2CE] divide-y divide-[#D2D2CE]">
       {faqs.map((item) => (
         <details class="group py-4">
-          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0C0C0D] hover:text-[#55555A] transition-colors">
+          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0B0B0C] hover:text-[#55555A] transition-colors">
             <span>{item.q}</span>
-            <span class="text-xs font-mono text-[#85858B] group-open:rotate-45 transition-transform duration-150">
+            <span class="text-xs font-mono text-[#7D7D84] group-open:rotate-45 transition-transform duration-150">
               ＋
             </span>
           </summary>
