@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 390" role="img" aria-labelledby="title desc">
+  <title id="title">Arbiter V1 architecture</title><desc id="desc">A developer agent calls the local TypeScript SDK, which uses a Soroban smart account to pay a selected provider on Stellar.</desc>
+  <style>.bg{fill:#11130f}.box{fill:#1d201a;stroke:#59604e;stroke-width:2}.accent{fill:#c8ff3d}.h{fill:#fff;font:700 20px Arial}.p{fill:#b8bcaf;font:14px Arial}.arrow{stroke:#c8ff3d;stroke-width:3;fill:none}.small{fill:#11130f;font:700 12px Arial;letter-spacing:1px}</style>
+  <rect class="bg" width="1120" height="390" rx="18"/><rect class="box" x="40" y="110" width="200" height="150" rx="8"/><text class="h" x="65" y="155">Developer agent</text><text class="p" x="65" y="188">requests web.search</text><text class="p" x="65" y="214">keeps secrets local</text>
+  <path class="arrow" d="M240 185h75"/><path class="accent" d="m315 176 16 9-16 9z"/>
+  <rect class="box" x="330" y="70" width="240" height="230" rx="8"/><text class="h" x="355" y="115">@arbiter-ai/sdk</text><text class="p" x="355" y="150">live HTTP 402 prices</text><text class="p" x="355" y="177">policy validation</text><text class="p" x="355" y="204">economic routing</text><text class="p" x="355" y="231">local x402 orchestration</text><rect class="accent" x="355" y="252" width="166" height="25" rx="12"/><text class="small" x="372" y="269">TYPESCRIPT · LOCAL</text>
+  <path class="arrow" d="M570 185h75"/><path class="accent" d="m645 176 16 9-16 9z"/>
+  <rect class="box" x="660" y="70" width="210" height="230" rx="8"/><text class="h" x="685" y="115">Soroban account</text><text class="p" x="685" y="150">total allowance</text><text class="p" x="685" y="177">payment maximum</text><text class="p" x="685" y="204">expiry + revocation</text><text class="p" x="685" y="231">session authorization</text><rect class="accent" x="685" y="252" width="134" height="25" rx="12"/><text class="small" x="700" y="269">RUST · ONCHAIN</text>
+  <path class="arrow" d="M870 185h75"/><path class="accent" d="m945 176 16 9-16 9z"/>
+  <rect class="box" x="960" y="110" width="120" height="150" rx="8"/><text class="h" x="980" y="155">Provider</text><text class="p" x="980" y="188">Testnet</text><text class="p" x="980" y="214">USDC</text>
+</svg>

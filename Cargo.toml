@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = ["contracts/arbiter-account"]
+
+[workspace.package]
+edition = "2021"
+license = "Apache-2.0"
+version = "0.1.0"
+
+[workspace.dependencies]
+soroban-sdk = "=23.0.3"
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+lto = true
+codegen-units = 1
+panic = "abort"

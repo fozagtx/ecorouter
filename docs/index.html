@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Arbiter routes agent capabilities and enforces spending on Stellar.">
+  <title>Arbiter — bounded spending for autonomous agents</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav><a class="brand" href="#">ARBITER<span>.</span></a><a href="https://github.com/" aria-label="View Arbiter on GitHub">GitHub ↗</a></nav>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">STELLAR TESTNET · x402 V2 · USDC</p>
+      <h1>Your agent chooses.<br><em>The contract limits.</em></h1>
+      <p class="lede">A local TypeScript SDK that finds the best paid provider for <code>web.search</code> while a Soroban smart account enforces the hard financial boundary.</p>
+      <div class="actions"><a class="button" href="#quickstart">View quickstart</a><a href="#flow">See how it works ↓</a></div>
+    </section>
+    <section class="principles" aria-label="Product principles">
+      <article><b>01</b><h2>Capability first</h2><p>Ask for <code>web.search</code>, not a vendor. Arbiter discovers live prices and routes locally.</p></article>
+      <article><b>02</b><h2>Keys stay local</h2><p>No Arbiter server. Your owner and session secrets remain in your application.</p></article>
+      <article><b>03</b><h2>Limits are onchain</h2><p>Total spend, per-payment maximum, expiration, and revocation are enforced by Soroban.</p></article>
+    </section>
+    <section id="flow" class="flow">
+      <div><p class="eyebrow">ONE REQUEST. ONE DECISION.</p><h2>Economic routing without surrendering control.</h2></div>
+      <ol><li><span>01</span>Fetch live HTTP 402 challenges</li><li><span>02</span>Validate price, quality, asset, and network</li><li><span>03</span>Select lowest economic cost deterministically</li><li><span>04</span>Authorize exact payment through the smart account</li><li><span>05</span>Return normalized results and a Stellar receipt</li></ol>
+    </section>
+    <section id="quickstart" class="quickstart">
+      <p class="eyebrow">THE SDK IS THE PRODUCT</p><h2>One capability. Two providers.<br>One hard budget.</h2>
+      <pre><code><span>import</span> { Arbiter } <span>from</span> "@arbiter-ai/sdk";
+
+const arbiter = new Arbiter({
+  account, sessionSecret, paymentClient,
+  providers: [searchA, searchB]
+});
+
+const result = await arbiter.execute({
+  capability: <strong>"web.search"</strong>,
+  input: { query: "lithium carbonate prices" },
+  policy: { maxSpendUsdc: <strong>"0.05"</strong>, minimumQuality: 0.8 }
+});</code></pre>
+    </section>
+  </main>
+  <footer><span>ARBITER</span><p>Capability routing with a hard financial boundary.</p></footer>
+</body>
+</html>
