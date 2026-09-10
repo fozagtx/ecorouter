@@ -3,15 +3,16 @@ import TechnicalViewport from "./TechnicalViewport.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section class="relative py-8 md:py-14 overflow-hidden">
-  <!-- Outside Background with Faded Vignette Effect -->
-  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden -z-10 flex items-center justify-center">
+<section class="relative pt-6 pb-16 md:pt-8 md:pb-24 overflow-hidden bg-[#05070E] -mt-10">
+  <!-- Outside Background: stage-bg.png with Faded Transition Effect -->
+  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
     <img
       src={`${basePath}/stage-bg.png`}
-      alt=""
-      class="w-full max-w-6xl h-full object-cover object-center opacity-30 md:opacity-40"
-      style="mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);"
+      alt="Neon execution chamber stage"
+      class="w-full h-full object-cover object-center opacity-90 scale-105"
     />
+    <!-- Smooth faded top (merging with hero) and bottom (merging into #F6F6F3) -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#05070E] via-transparent 40% to-[#F6F6F3]"></div>
   </div>
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 font-mono">
