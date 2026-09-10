@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 240" role="img" aria-labelledby="title desc">
-  <title id="title">Arbiter execution flow</title><desc id="desc">Five steps from capability request to normalized paid result.</desc>
-  <style>.bg{fill:#f4f1e8}.line{stroke:#b9b8ad;stroke-width:2}.dot{fill:#11130f}.n{fill:#c8ff3d;font:700 13px Arial}.h{fill:#11130f;font:700 16px Arial}.p{fill:#66695f;font:13px Arial}</style>
+  <title id="title">EcoRouter execution flow</title><desc id="desc">Five steps from capability request to normalized paid result.</desc>
+  <style>.bg{fill:#0b0b0c}.line{stroke:#333336;stroke-width:2}.dot{fill:#161617;stroke:#424245;stroke-width:2}.n{fill:#2997ff;font:700 13px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif}.h{fill:#ffffff;font:700 16px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif}.p{fill:#a1a1a6;font:13px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif}</style>
   <rect class="bg" width="1120" height="240" rx="18"/><path class="line" d="M90 70h940"/>
   <g transform="translate(90)"><circle class="dot" cx="0" cy="70" r="25"/><text class="n" x="-8" y="75">01</text><text class="h" x="-45" y="125">Challenge</text><text class="p" x="-65" y="150">fetch live 402s</text></g>
   <g transform="translate(325)"><circle class="dot" cx="0" cy="70" r="25"/><text class="n" x="-8" y="75">02</text><text class="h" x="-32" y="125">Filter</text><text class="p" x="-68" y="150">validate constraints</text></g>
