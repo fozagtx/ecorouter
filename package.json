@@ -1,0 +1,10 @@
+{
+  "name": "arbiter",
+  "private": true,
+  "packageManager": "pnpm@10.28.1",
+  "scripts": {
+    "build": "pnpm --filter @arbiter-ai/sdk build",
+    "test": "pnpm --filter @arbiter-ai/sdk test",
+    "typecheck": "pnpm --filter @arbiter-ai/sdk typecheck"
+  }
+}
