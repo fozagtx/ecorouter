@@ -25,10 +25,24 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       </span>
     </div>
 
-    <!-- Dense Modern Grotesk H1 (Geist/Inter, Title Case, Tight Tracking) -->
-    <h1 class="text-[42px] sm:text-[60px] md:text-[68px] lg:text-[74px] font-medium tracking-[-0.045em] text-white leading-[0.98] mb-6 max-w-[760px] mx-auto drop-shadow-md">
-      Budget-bounded<br class="hidden sm:inline" /> capability spending
-    </h1>
+    <!-- Dense Modern Grotesk H1 with Snap Edge Signs at Beginning and End -->
+    <div class="relative inline-block max-w-[780px] mx-auto px-4 sm:px-6 py-2 sm:py-3 mb-6">
+      <!-- Snap Edge Sign: Beginning (Top-Left) -->
+      <span
+        class="absolute top-0 left-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-t-[1.5px] border-l-[1.5px] border-white/75 pointer-events-none select-none"
+        aria-hidden="true"
+      ></span>
+
+      <h1 class="text-[42px] sm:text-[60px] md:text-[68px] lg:text-[74px] font-medium tracking-[-0.045em] text-white leading-[0.98] drop-shadow-md">
+        Budget-bounded<br class="hidden sm:inline" /> capability spending
+      </h1>
+
+      <!-- Snap Edge Sign: End (Bottom-Right) -->
+      <span
+        class="absolute bottom-0 right-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-b-[1.5px] border-r-[1.5px] border-white/75 pointer-events-none select-none"
+        aria-hidden="true"
+      ></span>
+    </div>
 
     <!-- Restrained Technical Supporting Copy -->
     <p class="text-base sm:text-[17px] text-[#C4D2EC] max-w-[580px] mx-auto mb-8 font-normal leading-[1.48]">
