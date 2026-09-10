@@ -1,15 +1,18 @@
 ---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 const integrations = [
-  { name: "Model Context Protocol (MCP)", type: "Standard" },
-  { name: "OpenAI Swarm", type: "Framework" },
-  { name: "LangGraph", type: "Orchestrator" },
-  { name: "CrewAI", type: "Multi-Agent" },
-  { name: "ElizaOS", type: "Autonomous" },
-  { name: "Base AgentKit", type: "On-Chain" },
-  { name: "Solana Agent SDK", type: "On-Chain" },
-  { name: "Firecrawl", type: "Capability" },
-  { name: "Tavily Search", type: "Capability" },
-  { name: "E2B Sandboxes", type: "Runtime" },
+  { name: "Model Context Protocol", type: "Standard", logo: "mcp.svg" },
+  { name: "OpenAI Swarm", type: "Framework", logo: "openai.svg" },
+  { name: "LangGraph", type: "Orchestrator", logo: "langchain.svg" },
+  { name: "CrewAI", type: "Multi-Agent", logo: "crewai.svg" },
+  { name: "ElizaOS", type: "Autonomous", logo: "elizaos.svg" },
+  { name: "Base AgentKit", type: "On-Chain", logo: "base.svg" },
+  { name: "Solana Agent SDK", type: "On-Chain", logo: "solana.svg" },
+  { name: "Stellar Soroban", type: "Settlement", logo: "stellar.svg" },
+  { name: "Firecrawl", type: "Capability", logo: "firecrawl.svg" },
+  { name: "Tavily Search", type: "Capability", logo: "tavily.svg" },
+  { name: "E2B Sandboxes", type: "Runtime", logo: "e2b.svg" },
 ];
 ---
 
@@ -27,10 +30,17 @@ const integrations = [
 
     <div class="animate-marquee flex items-center gap-3 py-1">
       {integrations.concat(integrations).map((item) => (
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-[3px] bg-white border border-[#D8D8D3] text-xs text-[#111111] shrink-0 hover:border-[#B8B8B2] transition-colors cursor-default">
-          <span class="w-1.5 h-1.5 rounded-[1px] bg-[#111111]"></span>
-          <span class="font-medium">{item.name}</span>
-          <span class="text-[10px] text-[#888883] uppercase bg-[#F1F1EE] px-1 py-0.5 rounded-[2px] border border-[#D8D8D3]/60">{item.type}</span>
+        <div class="flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] bg-white border border-[#D8D8D3] text-xs text-[#111111] shrink-0 hover:border-[#111111] transition-all cursor-default">
+          <div class="w-4 h-4 shrink-0 flex items-center justify-center">
+            <img
+              src={`${basePath}/logos/${item.logo}`}
+              alt={`${item.name} logo`}
+              class="w-full h-full object-contain"
+              loading="lazy"
+            />
+          </div>
+          <span class="font-medium font-sans">{item.name}</span>
+          <span class="text-[10px] font-mono text-[#888883] uppercase bg-[#F1F1EE] px-1.5 py-0.5 rounded-[2px] border border-[#D8D8D3]">{item.type}</span>
         </div>
       ))}
     </div>
