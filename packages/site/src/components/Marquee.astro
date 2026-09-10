@@ -1,0 +1,40 @@
+---
+const integrations = [
+  { name: "Model Context Protocol (MCP)", type: "Standard" },
+  { name: "OpenAI Swarm", type: "Framework" },
+  { name: "LangGraph", type: "Orchestrator" },
+  { name: "CrewAI", type: "Multi-Agent" },
+  { name: "ElizaOS", type: "Autonomous" },
+  { name: "Mastra Engine", type: "Framework" },
+  { name: "Base AgentKit", type: "On-Chain" },
+  { name: "Solana Agent SDK", type: "On-Chain" },
+  { name: "Modal Labs", type: "Compute" },
+  { name: "Firecrawl", type: "Web" },
+  { name: "Tavily Search", type: "Search" },
+  { name: "E2B Sandboxes", type: "Runtime" },
+];
+---
+
+<section class="py-10 border-y border-white/10 bg-[#0e0e0b] overflow-hidden relative">
+  <div class="max-w-7xl mx-auto px-4 mb-4 text-center">
+    <span class="text-xs font-mono uppercase tracking-widest text-[#abab9c]">
+      Interoperable with every leading autonomous agent framework & capability standard
+    </span>
+  </div>
+
+  <div class="relative w-full overflow-hidden flex items-center">
+    <!-- Left/Right subtle fade gradients -->
+    <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0e0e0b] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0e0e0b] to-transparent z-10 pointer-events-none"></div>
+
+    <div class="animate-marquee flex items-center gap-4 py-2">
+      {integrations.concat(integrations).map((item) => (
+        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#1d1d16] border border-white/10 text-xs font-mono text-[#fbfbf9] shrink-0 hover:border-white/25 hover:bg-[#2b2b22] transition-colors cursor-default">
+          <span class="w-2 h-2 rounded-full bg-[#d25611]"></span>
+          <span class="font-medium">{item.name}</span>
+          <span class="text-[10px] text-[#abab9c] uppercase bg-black/40 px-1.5 py-0.5 rounded border border-white/5">{item.type}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

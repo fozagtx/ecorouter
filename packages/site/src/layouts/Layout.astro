@@ -1,0 +1,87 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "EcoRouter — Declarative Capability Routing for Autonomous AI Fleets",
+  description = "Stop hardcoding vendor APIs. Route AI agent workflows across dynamic capabilities with deterministic economic limits, automated x402 V2 settlement, and cryptographic proofs."
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || "https://fozagtx.github.io/ecorouter/");
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="AI agents, capability routing, x402, payment required, agent orchestration, autonomous payments, micro-transactions" />
+    <meta name="author" content="EcoRouter Team" />
+    <meta name="theme-color" content="#0c0c09" />
+    <link rel="canonical" href={canonicalUrl.href} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl.href} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    <title>{title}</title>
+
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d25611'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>" />
+
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body class="bg-[#0c0c09] text-[#fbfbf9] selection:bg-[#d25611]/30 selection:text-white antialiased min-h-screen flex flex-col font-sans">
+    <slot />
+
+    <!-- Copy Toast Notification -->
+    <div id="copy-toast" class="toast-msg">
+      ✓ Copied to clipboard
+    </div>
+
+    <script is:inline>
+      // Global toast helper
+      window.showToast = function(text = "✓ Copied to clipboard") {
+        const toast = document.getElementById('copy-toast');
+        if (!toast) return;
+        toast.textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      };
+
+      // Copy helpers
+      window.copyText = function(text) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => window.showToast());
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          window.showToast();
+        }
+      };
+    </script>
+  </body>
+</html>

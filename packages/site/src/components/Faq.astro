@@ -1,0 +1,63 @@
+---
+const faqs = [
+  {
+    q: "What is EcoRouter and why can't I just use standard API keys?",
+    a: "Standard API keys have no spending bounds or cryptographic isolation; if an autonomous agent enters an infinite retry loop or hallucinates malicious tool calls, it can drain thousands of dollars in minutes. EcoRouter introduces a declarative routing layer: your agent only requests abstract capabilities (e.g. 'web-crawl', 'python-sandbox'), while EcoRouter enforces signed per-hop budget mandates, arbitrates the cheapest/fastest provider, and settles payments autonomously via x402 V2."
+  },
+  {
+    q: "How does the x402 V2 protocol work under the hood?",
+    a: "When EcoRouter dispatches a capability request, an x402-compliant service responds with 'HTTP 402 Payment Required' along with payment terms (price, recipient address, and accepted tokens). EcoRouter validates these terms against the agent's pre-signed mandate, constructs an atomic payment proof or preimage, attaches it to the request header, and retries. The entire cycle finishes in under 60 milliseconds."
+  },
+  {
+    q: "What payment rails, tokens, and networks are supported?",
+    a: "EcoRouter natively supports micro-settlements on Base (USDC), Solana (USDC), Arbitrum, and Lightning Network. You can also run EcoRouter in zero-crypto 'Internal Credit Mode' using standard JWT quotas or team debit balances for enterprise environments."
+  },
+  {
+    q: "How do budget mandates protect against prompt injection or hijacked agents?",
+    a: "Budget mandates are signed using Ed25519 cryptographic keys prior to execution. Even if an attacker completely hijacks an agent's prompt, the router kernel verifies the cryptographic budget envelope on every outbound hop. The agent cannot spend more than its assigned per-hop limit or total session cap, and cannot invoke capabilities outside its whitelist."
+  },
+  {
+    q: "Does EcoRouter replace Model Context Protocol (MCP) or work with it?",
+    a: "EcoRouter works directly with MCP! Think of MCP as the standardized interface definition for tools and capabilities, while EcoRouter is the economic and routing runtime that sits between your agent and the MCP server. You can wrap any MCP server with EcoRouter to instantly monetize it or enforce spending controls."
+  },
+  {
+    q: "Can I self-host EcoRouter in our VPC or air-gapped infrastructure?",
+    a: "Yes. EcoRouter is 100% open source under Apache 2.0. You can run the lightweight daemon locally, as a sidecar container in Kubernetes, or embed it directly into your Node.js or Python backend using our zero-dependency SDK."
+  }
+];
+---
+
+<section id="faq" class="py-20 md:py-28 relative bg-[#0e0e0b]">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1d1d16] border border-white/10 text-xs font-mono text-[#abab9c] mb-3">
+        <span>KNOWLEDGE BASE</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#fbfbf9] mb-3">
+        Frequently Asked Questions
+      </h2>
+      <p class="text-sm sm:text-base text-[#abab9c]">
+        Everything you need to know about declarative capability routing and autonomous settlement.
+      </p>
+    </div>
+
+    <!-- Accordion List -->
+    <div class="space-y-3">
+      {faqs.map((item, idx) => (
+        <details class="group rounded-xl border border-white/10 bg-[#161611] overflow-hidden transition-colors hover:border-white/20">
+          <summary class="p-5 sm:p-6 flex items-center justify-between cursor-pointer list-none select-none">
+            <span class="text-base font-medium text-[#fbfbf9] group-open:text-white pr-4">
+              {item.q}
+            </span>
+            <span class="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs font-mono text-[#abab9c] group-hover:text-white group-open:rotate-45 transition-transform duration-200 shrink-0">
+              ＋
+            </span>
+          </summary>
+          <div class="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-[#abab9c] leading-relaxed border-t border-white/5 pt-4">
+            {item.a}
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
