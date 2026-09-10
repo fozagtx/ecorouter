@@ -21,38 +21,32 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="py-16 md:py-24 relative overflow-hidden bg-[#05070E] border-t border-white/10 text-white">
-  <!-- Outside Background: wave-bg with Faded Transition Effect -->
-  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
-    <img
-      src={`${basePath}/wave-bg.png`}
-      alt="FAQ luminous wave backdrop"
-      class="w-full h-full object-cover object-center opacity-85 scale-105"
-    />
-    <div class="absolute inset-0 bg-gradient-to-b from-[#F6F6F3] via-[#05070E]/75 to-[#04060C]"></div>
-  </div>
-
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
+<section id="faq" class="py-16 md:py-24 relative bg-[#05070E] border-t border-white/10 text-white">
+  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(68,136,255,0.14),transparent_34%),linear-gradient(180deg,#05070E,#03050A)]"></div>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
     <div class="space-y-2 text-center">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#93A4C8] font-medium">
+      <div class="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] font-semibold">
         04 // FREQUENTLY ASKED QUESTIONS
       </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-        FAQ
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
+        Frequently Asked Questions
       </h2>
+      <p class="text-xs sm:text-sm text-[#C4D2EC] max-w-xl mx-auto font-sans leading-relaxed">
+        Common questions about autonomous HTTP 402 capability arbitration, settlement, and in-process execution.
+      </p>
     </div>
 
-    <!-- Accordion Card List Outside the Image -->
-    <div class="bg-white/95 rounded-[2px] border border-white/20 p-6 text-[#0B0B0C] shadow-2xl backdrop-blur-sm divide-y divide-[#D2D2CE]">
+    <!-- Solid High-Contrast White FAQ Card List -->
+    <div class="bg-white rounded-[2px] border border-[#D2D2CE] p-5 sm:p-8 text-[#0B0B0C] shadow-2xl divide-y divide-[#E2E2DE]">
       {faqs.map((item) => (
-        <details class="group py-4 first:pt-0 last:pb-0">
-          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0B0B0C] hover:text-[#55555A] transition-colors">
-            <span>{item.q}</span>
-            <span class="text-xs font-mono text-[#7D7D84] group-open:rotate-45 transition-transform duration-150">
+        <details class="group py-5 first:pt-0 last:pb-0">
+          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm sm:text-base font-semibold text-[#0B0B0C] hover:text-[#000000] transition-colors gap-4">
+            <span class="leading-snug">{item.q}</span>
+            <span class="text-sm font-mono font-bold text-[#0B0B0C] group-open:rotate-45 transition-transform duration-150 shrink-0 w-6 h-6 flex items-center justify-center rounded-[2px] bg-[#F1F1EE] border border-[#D2D2CE]">
               ＋
             </span>
           </summary>
-          <div class="pt-2.5 text-xs text-[#55555A] leading-relaxed font-sans">
+          <div class="mt-3 text-xs sm:text-sm text-[#0B0B0C] leading-relaxed font-sans pr-2 sm:pr-8 font-normal pt-2 border-t border-[#F5F5F2]">
             {item.a}
           </div>
         </details>

@@ -14,14 +14,14 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="keywords" content="AI agents, capability routing, x402, payment required, agent orchestration, autonomous payments, micro-transactions" />
     <meta name="author" content="EcoRouter Team" />
-    <meta name="theme-color" content="#F6F6F3" />
+    <meta name="theme-color" content="#05070E" />
     <link rel="canonical" href={canonicalUrl.href} />
 
     <!-- Open Graph / Facebook -->
@@ -50,13 +50,57 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       @import "../styles/global.css";
     </style>
   </head>
-  <body class="bg-[#F6F6F3] text-[#0B0B0C] selection:bg-[#725CFF]/15 selection:text-[#0B0B0C] antialiased min-h-screen flex flex-col font-sans">
+  <body class="bg-[#05070E] text-[#0B0B0C] selection:bg-[#725CFF]/15 selection:text-[#0B0B0C] antialiased min-h-screen flex flex-col font-sans">
     <slot />
 
     <!-- Copy Toast Notification -->
     <div id="copy-toast" class="toast-msg">
       ✓ Copied to clipboard
     </div>
+
+    <script>
+      import Lenis from 'lenis';
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!prefersReducedMotion) {
+        const lenis = new Lenis({
+          duration: 1.15,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          syncTouch: true,
+          touchMultiplier: 1.15,
+        });
+
+        window.lenis = lenis;
+
+        function raf(time: number) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener('click', (e) => {
+            const targetId = (anchor as HTMLAnchorElement).getAttribute('href');
+            if (!targetId) return;
+
+            if (targetId === '#top') {
+              e.preventDefault();
+              lenis.scrollTo(0);
+              return;
+            }
+
+            const target = document.querySelector(targetId);
+            if (target) {
+              e.preventDefault();
+              lenis.scrollTo(target as HTMLElement, { offset: -72 });
+            }
+          });
+        });
+      }
+    </script>
 
     <script is:inline>
       // Global toast helper

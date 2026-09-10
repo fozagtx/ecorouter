@@ -4,5 +4,7 @@
 node_modules/
 **/node_modules/
 .astro/
+docs/data-store.json
+docs/settings.json
 packages/sdk/dist/
 **/test_snapshots/

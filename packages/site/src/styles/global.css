@@ -23,13 +23,28 @@
   }
 
   html {
-    scroll-behavior: smooth;
     color-scheme: light;
     background-color: var(--background);
   }
 
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
   body {
-    background-color: var(--background);
+    background-color: #05070E;
     color: var(--foreground);
     font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
@@ -48,13 +63,69 @@
 /* Outer Technical Observation Frame */
 .outer-technical-frame {
   position: relative;
-  border: 1px solid #D0D0CC;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 1px;
-  background-color: #FAFAF8;
+  background-color: #070A12;
   background-image:
-    linear-gradient(rgba(11, 11, 12, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(11, 11, 12, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(68, 136, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 136, 255, 0.055) 1px, transparent 1px);
   background-size: 104px 104px;
+}
+
+.execution-map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(68, 136, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68, 136, 255, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, transparent, black 22%, black 78%, transparent);
+  pointer-events: none;
+}
+
+.provider-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.055);
+  color: #C4D2EC;
+  padding: 10px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  animation: providerPulse 4.6s ease-in-out infinite;
+}
+
+.provider-node strong {
+  color: #FFFFFF;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+.animate-float-delay-1 {
+  animation-delay: 0.55s;
+}
+
+.animate-float-delay-2 {
+  animation-delay: 1.1s;
+}
+
+@keyframes providerPulse {
+  0%, 100% {
+    transform: translateY(0);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+  }
+  45% {
+    transform: translateY(-2px);
+    border-color: rgba(68, 136, 255, 0.52);
+    box-shadow: 0 0 24px rgba(68, 136, 255, 0.16);
+  }
 }
 
 /* Inset Camera Registration Brackets in the Gutter */
@@ -70,34 +141,34 @@
 .capture-corner.tl {
   top: 20px;
   left: 20px;
-  border-top: 1px solid #6E6E73;
-  border-left: 1px solid #6E6E73;
+  border-top: 1px solid rgba(165, 186, 224, 0.7);
+  border-left: 1px solid rgba(165, 186, 224, 0.7);
 }
 
 .capture-corner.tr {
   top: 20px;
   right: 20px;
-  border-top: 1px solid #6E6E73;
-  border-right: 1px solid #6E6E73;
+  border-top: 1px solid rgba(165, 186, 224, 0.7);
+  border-right: 1px solid rgba(165, 186, 224, 0.7);
 }
 
 .capture-corner.bl {
   bottom: 20px;
   left: 20px;
-  border-bottom: 1px solid #6E6E73;
-  border-left: 1px solid #6E6E73;
+  border-bottom: 1px solid rgba(165, 186, 224, 0.7);
+  border-left: 1px solid rgba(165, 186, 224, 0.7);
 }
 
 .capture-corner.br {
   bottom: 20px;
   right: 20px;
-  border-bottom: 1px solid #6E6E73;
-  border-right: 1px solid #6E6E73;
+  border-bottom: 1px solid rgba(165, 186, 224, 0.7);
+  border-right: 1px solid rgba(165, 186, 224, 0.7);
 }
 
 /* Subtle camera-focus interaction on hover: corners darken and shift inward by 1-2px */
 .outer-technical-frame:hover .capture-corner {
-  border-color: #0B0B0C;
+  border-color: #FFFFFF;
 }
 
 .outer-technical-frame:hover .capture-corner.tl {
@@ -121,6 +192,10 @@
 }
 
 @media (max-width: 640px) {
+  .technical-viewport-container {
+    max-width: calc(100vw - 24px);
+  }
+
   .capture-corner {
     width: 16px;
     height: 16px;
@@ -129,6 +204,15 @@
   .capture-corner.tr { top: 12px; right: 12px; }
   .capture-corner.bl { bottom: 12px; left: 12px; }
   .capture-corner.br { bottom: 12px; right: 12px; }
+
+  .outer-technical-frame:hover .capture-corner.tl { top: 12px; left: 12px; }
+  .outer-technical-frame:hover .capture-corner.tr { top: 12px; right: 12px; }
+  .outer-technical-frame:hover .capture-corner.bl { bottom: 12px; left: 12px; }
+  .outer-technical-frame:hover .capture-corner.br { bottom: 12px; right: 12px; }
+
+  .provider-node {
+    letter-spacing: 0.08em;
+  }
 }
 
 /* Reusable UI Primitives */
