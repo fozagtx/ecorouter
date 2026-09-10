@@ -7,6 +7,7 @@ interface Props {
   layerTag?: string;
   refTag?: string;
   class?: string;
+  dark?: boolean;
 }
 
 const {
@@ -16,28 +17,29 @@ const {
   scaleTag = "SCALE · 1:1",
   layerTag = "LAYER · EXECUTION",
   refTag = "REF · ECO-01",
-  class: className = ""
+  class: className = "",
+  dark = true
 } = Astro.props;
 ---
 
 <div class={`technical-viewport-container w-full max-w-[1040px] mx-auto select-none ${className}`}>
   <!-- Metadata ABOVE outer frame -->
-  <div class="flex items-end justify-between text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#7D7D84] mb-3 px-1 pointer-events-none">
+  <div class="flex items-end justify-between text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.18em] sm:tracking-[0.2em] mb-3 px-1 pointer-events-none">
     <div class="space-y-0.5">
-      <div class="flex items-center gap-1.5 font-medium text-[#0B0B0C]">
-        <span class="w-1.5 h-1.5 bg-[#725CFF] rounded-[0.5px]"></span>
+      <div class="flex items-center gap-1.5 font-medium text-white">
+        <span class="w-1.5 h-1.5 bg-[#4488FF] rounded-[0.5px] shadow-[0_0_6px_#4488FF]"></span>
         <span>{netTag}</span>
       </div>
-      <div class="text-[10px] text-[#7D7D84]">{versionTag}</div>
+      <div class="text-[10px] text-[#A5BAE0]">{versionTag}</div>
     </div>
-    <div class="flex items-center gap-1.5 text-[#55555A]">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <div class="flex items-center gap-1.5 text-[#C4D2EC]">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
       <span>{systemTag}</span>
     </div>
   </div>
 
   <!-- Outer Observation Frame -->
-  <div class="outer-technical-frame relative border border-[#D0D0CC] rounded-[1px] bg-[#FAFAF8] p-5 sm:p-10 md:p-11 transition-colors duration-200">
+  <div class="outer-technical-frame relative border border-[#D0D0CC] rounded-[1px] bg-[#FAFAF8] p-4 sm:p-8 md:p-10 transition-colors duration-200 shadow-2xl">
     <!-- Four Inset L-shaped Camera Registration Brackets in Gutter -->
     <div class="capture-corner tl"></div>
     <div class="capture-corner tr"></div>
@@ -51,9 +53,9 @@ const {
   </div>
 
   <!-- Metadata BELOW outer frame -->
-  <div class="flex items-center justify-between text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#7D7D84] mt-3 px-1 pointer-events-none">
+  <div class="flex items-center justify-between text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.18em] sm:tracking-[0.2em] text-[#A5BAE0] mt-3 px-1 pointer-events-none">
     <span>{scaleTag}</span>
-    <span class="hidden sm:inline text-[#A9A9A4]">{layerTag}</span>
+    <span class="hidden sm:inline text-[#7D8EA8]">{layerTag}</span>
     <span>{refTag}</span>
   </div>
 </div>

@@ -16,7 +16,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
     <!-- Floating Technical Metadata Eyebrow -->
-    <div class="flex items-center justify-center gap-3 text-[11px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] mb-6 select-none">
+    <div class="flex items-center justify-center gap-2.5 sm:gap-3 text-[10.5px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#B4C6E7] mb-6 select-none">
       <span>PLATFORM · 01</span>
       <span class="text-white/20">/</span>
       <span class="text-white font-medium flex items-center gap-1.5">
@@ -29,31 +29,31 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     <div class="relative inline-block max-w-[780px] mx-auto px-4 sm:px-6 py-2 sm:py-3 mb-6">
       <!-- Snap Edge Sign: Beginning (Top-Left) -->
       <span
-        class="absolute top-0 left-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-t-[1.5px] border-l-[1.5px] border-white/75 pointer-events-none select-none"
+        class="absolute top-0 left-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-t-[1.5px] border-l-[1.5px] border-white/80 pointer-events-none select-none"
         aria-hidden="true"
       ></span>
 
-      <h1 class="text-[42px] sm:text-[60px] md:text-[68px] lg:text-[74px] font-medium tracking-[-0.045em] text-white leading-[0.98] drop-shadow-md">
+      <h1 class="text-[32px] xs:text-[40px] sm:text-[56px] md:text-[66px] lg:text-[74px] font-medium tracking-[-0.045em] text-white leading-[1.02] sm:leading-[0.98] drop-shadow-md">
         Budget-bounded<br class="hidden sm:inline" /> capability spending
       </h1>
 
       <!-- Snap Edge Sign: End (Bottom-Right) -->
       <span
-        class="absolute bottom-0 right-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-b-[1.5px] border-r-[1.5px] border-white/75 pointer-events-none select-none"
+        class="absolute bottom-0 right-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-b-[1.5px] border-r-[1.5px] border-white/80 pointer-events-none select-none"
         aria-hidden="true"
       ></span>
     </div>
 
     <!-- Restrained Technical Supporting Copy -->
-    <p class="text-base sm:text-[17px] text-[#C4D2EC] max-w-[580px] mx-auto mb-8 font-normal leading-[1.48]">
+    <p class="text-sm sm:text-base md:text-[17px] text-[#D8E4F8] max-w-[580px] mx-auto mb-8 font-normal leading-relaxed sm:leading-[1.48]">
       Enforce hard spend policies across HTTP 402 providers. Compare live quotes in parallel and authorize atomic micro-settlements.
     </p>
 
     <!-- Compact Rectangular Action Buttons -->
-    <div class="flex items-center justify-center gap-3">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto">
       <button
         onclick="copyText('pnpm add ecorouter')"
-        class="inline-flex items-center gap-2.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white hover:bg-[#E8EDF5] text-[#05070E] active:scale-98 transition-colors cursor-pointer border border-white shadow-sm"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white hover:bg-[#E8EDF5] text-[#05070E] active:scale-98 transition-colors cursor-pointer border border-white shadow-sm"
         title="Copy install command"
       >
         <span class="text-[#7A8A9E]">$</span>
@@ -68,7 +68,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         href="https://github.com/fozagtx/ecorouter"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-1.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-sm transition-colors"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-sm transition-colors"
       >
         <span>GitHub ↗</span>
       </a>

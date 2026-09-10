@@ -1,38 +1,106 @@
 ---
 import Logo from './Logo.astro';
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<footer class="py-10 border-t border-[#D2D2CE] bg-[#EFEFEC] font-mono text-xs text-[#55555A]">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-    <!-- Brand -->
-    <div class="flex items-center gap-2.5">
-      <div class="w-6 h-6 rounded-[3px] bg-[#0B0B0C] flex items-center justify-center text-white">
-        <Logo class="w-3.5 h-3.5 text-white" />
+<footer class="relative overflow-hidden bg-[#04060C] border-t border-white/10 text-white font-mono text-xs pt-16 pb-12">
+  <!-- Outside Background Backdrop: silk-bg with Smooth Faded Vignette -->
+  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
+    <img
+      src={`${basePath}/silk-bg.png`}
+      alt="Footer silk backdrop"
+      class="w-full h-full object-cover object-bottom opacity-80 scale-105"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#04060C] via-[#04060C]/60 to-[#04060C]/90"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 space-y-12">
+    <!-- Top Row: Brand & Mission & Action -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/15">
+      <div class="space-y-2 max-w-md">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-[3px] bg-white flex items-center justify-center text-[#05070E] shadow-sm">
+            <Logo class="w-4 h-4 text-[#05070E]" />
+          </div>
+          <span class="font-semibold text-base tracking-tight text-white">EcoRouter</span>
+          <span class="text-white/30">|</span>
+          <span class="text-[11px] text-[#A5BAE0] bg-white/10 px-2 py-0.5 rounded-[2px] border border-white/15">APACHE 2.0</span>
+        </div>
+        <p class="text-xs text-[#C4D2EC] font-sans leading-relaxed">
+          Deterministic HTTP 402 capability routing and atomic spend policy enforcement for autonomous agents.
+        </p>
       </div>
-      <span class="font-semibold text-[#0B0B0C]">EcoRouter</span>
-      <span class="text-[#D2D2CE]">|</span>
-      <span class="text-[11px] text-[#7D7D84]">APACHE 2.0</span>
+
+      <!-- Quick Install Box -->
+      <div class="w-full sm:w-auto">
+        <div class="text-[10px] uppercase tracking-[0.2em] text-[#93A4C8] mb-1.5 font-medium">QUICK INSTALL</div>
+        <button
+          onclick="copyText('pnpm add ecorouter')"
+          class="w-full sm:w-auto h-9 px-3.5 rounded-[3px] bg-white hover:bg-[#E8EDF5] text-[#05070E] font-medium transition-colors flex items-center justify-between sm:justify-start gap-2.5 text-xs cursor-pointer shadow-md active:scale-98"
+          title="Click to copy install command"
+        >
+          <span class="text-[#7A8A9E]">$</span>
+          <span>pnpm add ecorouter</span>
+          <svg class="w-3.5 h-3.5 text-[#7A8A9E]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Navigation -->
-    <div class="flex items-center gap-6 text-[11.5px]">
-      <a href="#features" class="hover:text-[#0B0B0C] transition-colors">How it works</a>
-      <a href="#quickstart" class="hover:text-[#0B0B0C] transition-colors">Quickstart</a>
-      <a href="#simulator" class="hover:text-[#0B0B0C] transition-colors">Simulator</a>
-      <a href="#faq" class="hover:text-[#0B0B0C] transition-colors">FAQ</a>
-      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-[#0B0B0C] transition-colors">GitHub ↗</a>
-      <a href="https://www.npmjs.com/package/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-[#0B0B0C] transition-colors">npm ↗</a>
+    <!-- Middle Row: Navigation Links & Specs -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-xs">
+      <div class="space-y-3">
+        <div class="text-[10.5px] uppercase tracking-[0.2em] text-[#93A4C8] font-medium">ARCHITECTURE</div>
+        <ul class="space-y-2 text-[#C4D2EC] font-sans">
+          <li><a href="#features" class="hover:text-white transition-colors">Parallel Probing</a></li>
+          <li><a href="#features" class="hover:text-white transition-colors">Policy Constraints</a></li>
+          <li><a href="#features" class="hover:text-white transition-colors">In-Process Runtime</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <div class="text-[10.5px] uppercase tracking-[0.2em] text-[#93A4C8] font-medium">RESOURCES</div>
+        <ul class="space-y-2 text-[#C4D2EC] font-sans">
+          <li><a href="#quickstart" class="hover:text-white transition-colors">Quickstart Guide</a></li>
+          <li><a href="#simulator" class="hover:text-white transition-colors">Interactive Simulator</a></li>
+          <li><a href="#faq" class="hover:text-white transition-colors">Frequently Asked</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <div class="text-[10.5px] uppercase tracking-[0.2em] text-[#93A4C8] font-medium">DEVELOPERS</div>
+        <ul class="space-y-2 text-[#C4D2EC] font-sans">
+          <li><a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub Repository ↗</a></li>
+          <li><a href="https://www.npmjs.com/package/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">npm Package ↗</a></li>
+          <li><a href="https://github.com/fozagtx/ecorouter/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Apache 2.0 License ↗</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <div class="text-[10.5px] uppercase tracking-[0.2em] text-[#93A4C8] font-medium">TELEMETRY</div>
+        <div class="space-y-1.5 text-[11px] text-[#A5BAE0]">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>SYSTEM · ACTIVE</span>
+          </div>
+          <div class="text-[#7D8EA8]">SETTLEMENT · ATOMIC</div>
+          <div class="text-[#7D8EA8]">STANDARD · HTTP 402</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Install Pill/Command -->
-    <div>
-      <button
-        onclick="copyText('pnpm add ecorouter')"
-        class="h-7 px-2.5 rounded-[3px] bg-white hover:bg-[#EFEFEC] text-[#0B0B0C] border border-[#D2D2CE] transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
-      >
-        <span class="text-[#7D7D84]">$</span>
-        <span>pnpm add ecorouter</span>
-      </button>
+    <!-- Bottom Row: Copyright & Legal -->
+    <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#7D8EA8]">
+      <div>
+        &copy; {new Date().getFullYear()} EcoRouter Contributors. Open-source under Apache 2.0.
+      </div>
+      <div class="flex items-center gap-4">
+        <span>No custody &middot; Strictly local</span>
+        <span>&bull;</span>
+        <a href="#top" class="hover:text-white transition-colors">Back to top &uarr;</a>
+      </div>
     </div>
   </div>
 </footer>

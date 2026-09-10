@@ -41,7 +41,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         <!-- Controls (40px height, 3px radius) -->
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
           <div class="sm:col-span-5 space-y-1.5 font-mono">
-            <label class="text-[10.5px] uppercase tracking-[0.18em] text-[#7D7D84]">Capability</label>
+            <label class="text-[10px] sm:text-[10.5px] uppercase tracking-[0.18em] text-[#5D5D64] font-medium">Capability</label>
             <select id="sim-capability" class="w-full h-10 bg-white border border-[#D2D2CE] rounded-[3px] px-3 text-xs font-mono text-[#0B0B0C] focus:outline-none focus:border-[#0B0B0C]">
               <option value="crawl">web-crawl (Extract Markdown)</option>
               <option value="sandbox">python-sandbox (Code Execution)</option>
@@ -50,7 +50,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           </div>
 
           <div class="sm:col-span-4 space-y-1.5 font-mono">
-            <label class="text-[10.5px] uppercase tracking-[0.18em] text-[#7D7D84]">maxSpendUsdc</label>
+            <label class="text-[10px] sm:text-[10.5px] uppercase tracking-[0.18em] text-[#5D5D64] font-medium">maxSpendUsdc</label>
             <select id="sim-cap" class="w-full h-10 bg-white border border-[#D2D2CE] rounded-[3px] px-3 text-xs font-mono text-[#0B0B0C] focus:outline-none focus:border-[#0B0B0C]">
               <option value="0.005">$0.005 USDC (Standard)</option>
               <option value="0.010">$0.010 USDC (High Compute)</option>
@@ -73,9 +73,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
         <!-- Live Terminal Console -->
         <div class="font-mono text-xs border border-[#DADAD6] rounded-none overflow-hidden">
-          <div class="h-8 px-3 bg-[#FAFAF8] border-b border-[#DADAD6] flex items-center justify-between text-[11px] text-[#55555A]">
+          <div class="h-8 px-3 bg-[#FAFAF8] border-b border-[#DADAD6] flex items-center justify-between text-[11px] text-[#404045]">
             <span class="font-medium text-[#0B0B0C]">OUTPUT STREAM</span>
-            <span id="sim-status" class="text-[#7D7D84] uppercase tracking-wider text-[10px]">IDLE</span>
+            <span id="sim-status" class="text-[#5D5D64] uppercase tracking-wider text-[10px] font-medium">IDLE</span>
           </div>
 
           <div id="sim-console" class="bg-[#141410] p-4 min-h-[180px] max-h-[280px] overflow-y-auto space-y-1.5 text-[#abab9c] leading-relaxed">
