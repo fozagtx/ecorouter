@@ -1,4 +1,5 @@
 ---
+import Logo from './Logo.astro';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
@@ -8,9 +9,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     <div class="flex items-center gap-3">
       <a href={`${basePath}/`} class="flex items-center gap-2.5 group">
         <div class="w-7 h-7 rounded-inner bg-[#d25611] flex items-center justify-center text-white shadow-sm shadow-[#d25611]/25 group-hover:scale-105 transition-transform">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
+          <Logo class="w-4 h-4 text-white" />
         </div>
         <span class="font-bold text-base tracking-tight text-[#0c0c09] group-hover:text-black transition-colors">EcoRouter</span>
       </a>
