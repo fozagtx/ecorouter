@@ -2,45 +2,496 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Arbiter routes agent capabilities and enforces spending on Stellar.">
-  <title>Arbiter — bounded spending for autonomous agents</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Arbiter — Bounded economic purchasing and capability routing for autonomous agents, enforced by Stellar Soroban smart accounts.">
+  <title>ARBITER // Economic Control Plane for Autonomous Agents</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav><a class="brand" href="#">ARBITER<span>.</span></a><a href="https://github.com/" aria-label="View Arbiter on GitHub">GitHub ↗</a></nav>
-  <main>
-    <section class="hero">
-      <p class="eyebrow">STELLAR TESTNET · x402 V2 · USDC</p>
-      <h1>Your agent chooses.<br><em>The contract limits.</em></h1>
-      <p class="lede">A local TypeScript SDK that finds the best paid provider for <code>web.search</code> while a Soroban smart account enforces the hard financial boundary.</p>
-      <div class="actions"><a class="button" href="#quickstart">View quickstart</a><a href="#flow">See how it works ↓</a></div>
-    </section>
-    <section class="principles" aria-label="Product principles">
-      <article><b>01</b><h2>Capability first</h2><p>Ask for <code>web.search</code>, not a vendor. Arbiter discovers live prices and routes locally.</p></article>
-      <article><b>02</b><h2>Keys stay local</h2><p>No Arbiter server. Your owner and session secrets remain in your application.</p></article>
-      <article><b>03</b><h2>Limits are onchain</h2><p>Total spend, per-payment maximum, expiration, and revocation are enforced by Soroban.</p></article>
-    </section>
-    <section id="flow" class="flow">
-      <div><p class="eyebrow">ONE REQUEST. ONE DECISION.</p><h2>Economic routing without surrendering control.</h2></div>
-      <ol><li><span>01</span>Fetch live HTTP 402 challenges</li><li><span>02</span>Validate price, quality, asset, and network</li><li><span>03</span>Select lowest economic cost deterministically</li><li><span>04</span>Authorize exact payment through the smart account</li><li><span>05</span>Return normalized results and a Stellar receipt</li></ol>
-    </section>
-    <section id="quickstart" class="quickstart">
-      <p class="eyebrow">THE SDK IS THE PRODUCT</p><h2>One capability. Two providers.<br>One hard budget.</h2>
-      <pre><code><span>import</span> { Arbiter } <span>from</span> "@arbiter-ai/sdk";
+  <!-- CRT Scanline overlay -->
+  <div class="scanlines" aria-hidden="true"></div>
 
-const arbiter = new Arbiter({
-  account, sessionSecret, paymentClient,
-  providers: [searchA, searchB]
+  <!-- Top Terminal Navigation -->
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#" aria-label="Arbiter Home">
+        <span class="brand-glyph">[▲]</span>
+        <span>ARBITER.SYS</span>
+        <span class="brand-tag">v0.1.0</span>
+      </a>
+
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation" aria-expanded="false">
+        [MENU]
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#quickstart"><span>01</span>QUICKSTART</a></li>
+        <li><a href="#features"><span>02</span>FEATURES</a></li>
+        <li><a href="#providers"><span>03</span>PROVIDERS</a></li>
+        <li><a href="#workflow"><span>04</span>WORKFLOW</a></li>
+        <li><a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer"><span>05</span>GITHUB ↗</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="status-badge" title="Stellar Testnet Gateway Active">
+          <span class="status-dot"></span>
+          <span>ONLINE // TESTNET</span>
+        </div>
+        <a class="btn btn-sm" href="#quickstart">CONNECT_AGENT</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-meta">
+          <span class="hero-tag">/// PROTOCOL: x402_V2_EXACT</span>
+          <span>·</span>
+          <span>NETWORK: STELLAR TESTNET</span>
+          <span>·</span>
+          <span>SETTLEMENT: USDC ATOMIC</span>
+        </div>
+
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1>
+              YOUR AGENT CHOOSES.
+              <span class="accent">THE CONTRACT LIMITS.</span>
+            </h1>
+            <p class="hero-lede">
+              A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. Arbiter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact USDC payment—while a Soroban smart account strictly enforces your spending mandate.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#quickstart">
+                <span>[ INITIALIZE SDK ]</span>
+              </a>
+              <a class="btn" href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">
+                <span>SOURCE REPO -></span>
+              </a>
+            </div>
+
+            <div class="hero-foot">
+              <span>SECURITY: <strong>ZERO_CUSTODIAL_KEYS</strong></span>
+              <span>PRICING: <strong>BIGINT_ATOMIC_USDC</strong></span>
+              <span>BOUNDARY: <strong>SOROBAN_ONCHAIN</strong></span>
+            </div>
+          </div>
+
+          <!-- Hero Terminal Visual / ASCII Mascot Area -->
+          <div class="hero-right">
+            <div class="terminal-card" role="region" aria-label="Arbiter live routing telemetry monitor">
+              <div class="terminal-header">
+                <div class="terminal-header-title">
+                  <span class="dot">●</span>
+                  <span>ARBITER_ROUTER // TELEMETRY</span>
+                </div>
+                <div class="terminal-header-actions">[_] [口] [X]</div>
+              </div>
+              <div class="terminal-body">
+                <pre class="hero-terminal-pre" aria-label="Terminal telemetry ASCII graphic">
+<span class="hl-amber">+-----------------------------------------------+</span>
+<span class="hl-amber">|</span>  <span class="hl-cream">[▲] ARBITER AUTONOMOUS ROUTER v0.1</span>           <span class="hl-amber">|</span>
+<span class="hl-amber">+-----------------------------------------------+</span>
+ <span class="hl-dim">AGENT PROMPT:</span> <span class="hl-cream">"find spot lithium carbonate prices"</span>
+ <span class="hl-dim">CAPABILITY:</span>   <span class="hl-amber">web.search</span>
+ <span class="hl-dim">MANDATE CAP:</span>  <span class="hl-cream">0.05 USDC</span>  <span class="hl-green">[ALLOWANCE OK]</span>
+-------------------------------------------------
+ <span class="hl-dim">DISCOVERING HTTP 402 PROVIDERS...</span>
+ <span class="hl-green">[OK]</span> provider-alpha  :: 20,000 uUSDC (Q: 0.94)
+ <span class="hl-green">[OK]</span> provider-beta   :: 45,000 uUSDC (Q: 0.88)
+-------------------------------------------------
+ <span class="hl-dim">DETERMINISTIC COST FORMULA:</span>
+ <span class="hl-cream">cost = priceAtomic / (qualityScore × successRate)</span>
+
+ <span class="hl-amber">> WINNER:</span> <span class="hl-cream">provider-alpha</span> (eff_cost: 21,276)
+ <span class="hl-amber">> AUTH:</span>   Soroban __check_auth <span class="hl-green">PASSED</span>
+ <span class="hl-amber">> SETTLE:</span> tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
+ <span class="hl-amber">> BUDGET:</span> [■■■■■■■■■■■■■■□□] 92% remaining
+-------------------------------------------------
+ <span class="hl-dim">STATUS:</span> <span class="hl-green">NORMALIZED_RESULT_READY</span><span class="cursor" aria-hidden="true"></span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quickstart / Installation Block -->
+    <section id="quickstart" class="quickstart-section">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">// 01_INITIALIZATION</p>
+          <h2 class="section-title">INSTALL & RUN IN SECONDS</h2>
+          <p class="section-subtitle">
+            Private keys remain in your process. There is no Arbiter server, database, account system, remote registry, or custodial wallet.
+          </p>
+        </div>
+
+        <!-- Terminal Command Box -->
+        <div class="install-command-bar">
+          <div class="install-prefix">$</div>
+          <div class="install-code">
+            <span id="installCmd">pnpm add @arbiter-ai/sdk</span>
+          </div>
+          <button class="copy-btn" id="copyBtn" aria-label="Copy install command to clipboard">
+            <span class="copy-icon">📋</span>
+            <span class="copy-text">COPY_CMD</span>
+          </button>
+        </div>
+
+        <!-- Four Step Sequence -->
+        <div class="steps-sequence" role="tablist" aria-label="Execution steps">
+          <div class="step-item active" id="step1">
+            <span class="step-num">[01]</span>
+            <span class="step-label">INSTALL</span>
+            <span class="step-desc">Add local TypeScript SDK</span>
+          </div>
+          <div class="step-item" id="step2">
+            <span class="step-num">[02]</span>
+            <span class="step-label">MANDATE</span>
+            <span class="step-desc">Deploy Soroban smart account</span>
+          </div>
+          <div class="step-item" id="step3">
+            <span class="step-num">[03]</span>
+            <span class="step-label">CHALLENGE</span>
+            <span class="step-desc">Concurrent x402 discovery</span>
+          </div>
+          <div class="step-item" id="step4">
+            <span class="step-num">[04]</span>
+            <span class="step-label">SETTLE</span>
+            <span class="step-desc">Exact atomic USDC transfer</span>
+          </div>
+        </div>
+
+        <!-- Code Panel -->
+        <div class="quickstart-code-panel">
+          <div class="terminal-header">
+            <div class="terminal-header-title">
+              <span class="dot">●</span>
+              <span>examples/search-agent.ts</span>
+            </div>
+            <div class="terminal-header-actions">[TypeScript]</div>
+          </div>
+          <pre><code><span class="kw">import</span> { Arbiter } <span class="kw">from</span> <span class="str">"@arbiter-ai/sdk"</span>;
+
+<span class="comm">// 1. Initialize local routing runtime</span>
+<span class="kw">const</span> arbiter = <span class="kw">new</span> <span class="prop">Arbiter</span>({
+  <span class="prop">account</span>: process.env.ARBITER_ACCOUNT!,         <span class="comm">// Soroban smart account</span>
+  <span class="prop">sessionSecret</span>: process.env.ARBITER_SESSION_KEY!, <span class="comm">// Ed25519 session secret</span>
+  <span class="prop">paymentClient</span>: localStellarClient,             <span class="comm">// Injected Testnet signer</span>
+  <span class="prop">providers</span>: [
+    { <span class="prop">id</span>: <span class="str">"search-a"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://a.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.94</span> },
+    { <span class="prop">id</span>: <span class="str">"search-b"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://b.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.82</span> }
+  ]
 });
 
-const result = await arbiter.execute({
-  capability: <strong>"web.search"</strong>,
-  input: { query: "lithium carbonate prices" },
-  policy: { maxSpendUsdc: <strong>"0.05"</strong>, minimumQuality: 0.8 }
-});</code></pre>
+<span class="comm">// 2. Execute capability request bounded by policy</span>
+<span class="kw">const</span> response = <span class="kw">await</span> arbiter.<span class="prop">execute</span>({
+  <span class="prop">executionId</span>: <span class="str">"query-"</span> + Date.<span class="prop">now</span>(),
+  <span class="prop">capability</span>: <span class="str">"web.search"</span>,
+  <span class="prop">input</span>: { <span class="prop">query</span>: <span class="str">"latest lithium carbonate prices"</span> },
+  <span class="prop">policy</span>: { <span class="prop">maxSpendUsdc</span>: <span class="str">"0.05"</span>, <span class="prop">minimumQuality</span>: <span class="num">0.85</span> }
+});
+
+console.<span class="prop">log</span>(response.<span class="prop">output</span>.<span class="prop">results</span>);          <span class="comm">// Strict normalized search results</span>
+console.<span class="prop">log</span>(response.<span class="prop">decision</span>.<span class="prop">providerId</span>);      <span class="comm">// Winning provider</span>
+console.<span class="prop">log</span>(response.<span class="prop">payment</span>.<span class="prop">transactionHash</span>); <span class="comm">// Stellar Testnet receipt</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section (2x2 Grid) -->
+    <section id="features" class="features-section">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">// 02_CORE_ARCHITECTURE</p>
+          <h2 class="section-title">BUILT FOR AUTONOMOUS PURCHASING</h2>
+          <p class="section-subtitle">
+            Four foundational properties designed to make AI agents safe, deterministic, and economically rational.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <article class="feature-card">
+            <div class="feature-head">
+              <span class="feature-tag">[01 // INFRASTRUCTURE]</span>
+              <span class="feature-ascii">▓▒░ LOCAL</span>
+            </div>
+            <h3>Zero Hosted Control Plane</h3>
+            <p>
+              Private keys, signing material, and routing decisions remain completely inside the developer's process. There is no Arbiter telemetry server, custodial wallet, database, or subscription gateway.
+            </p>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="feature-card">
+            <div class="feature-head">
+              <span class="feature-tag">[02 // ROUTING_MATH]</span>
+              <span class="feature-ascii">▓▒░ EXACT</span>
+            </div>
+            <h3>Deterministic Economic Cost</h3>
+            <p>
+              Arbiter never consults an LLM to select vendors. Providers are ranked strictly by <code>priceAtomic / (qualityScore × successRate)</code> using exact integer arithmetic, resolving ties by lexical ID.
+            </p>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="feature-card">
+            <div class="feature-head">
+              <span class="feature-tag">[03 // SMART_ACCOUNT]</span>
+              <span class="feature-ascii">▓▒░ ONCHAIN</span>
+            </div>
+            <h3>Soroban Mandate Boundary</h3>
+            <p>
+              The smart account on Stellar independently verifies session signatures through <code>__check_auth</code>, enforcing cumulative budgets, single-payment caps, expiration timestamps, and revocation flags.
+            </p>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="feature-card">
+            <div class="feature-head">
+              <span class="feature-tag">[04 // NORMALIZATION]</span>
+              <span class="feature-ascii">▓▒░ SCHEMA</span>
+            </div>
+            <h3>Strict Output Normalization</h3>
+            <p>
+              Provider responses are parsed and verified into invariant schema types. Upstream agents interact solely with clean data structures, protecting workflows against vendor API mutations.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Provider / Integration Section -->
+    <section id="providers" class="providers-section">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">// 03_COMPONENTS</p>
+          <h2 class="section-title">CONNECT & CONFIGURE</h2>
+          <p class="section-subtitle">
+            Configure candidates, smart account parameters, and local Stellar settlement boundaries.
+          </p>
+        </div>
+
+        <div class="provider-cards-grid">
+          <!-- Provider 1 -->
+          <div class="provider-card">
+            <div class="provider-card-top">
+              <div class="provider-meta">
+                <span class="provider-tag">[01/ADAPTER]</span>
+                <span class="provider-badge">HTTP 402</span>
+              </div>
+              <h3>x402 Search Provider</h3>
+              <p>
+                Candidate endpoints answer unpaid POST queries with HTTP 402 challenges containing exact atomic USDC pricing and destination addresses.
+              </p>
+            </div>
+            <div class="provider-card-code">
+              endpoint: "https://api.example/search"<br>
+              scheme: "exact"<br>
+              network: "stellar:testnet"<br>
+              qualityScore: 0.94
+            </div>
+          </div>
+
+          <!-- Provider 2 -->
+          <div class="provider-card">
+            <div class="provider-card-top">
+              <div class="provider-meta">
+                <span class="provider-tag">[02/CONTRACT]</span>
+                <span class="provider-badge">RUST / SOROBAN</span>
+              </div>
+              <h3>ArbiterAccount Contract</h3>
+              <p>
+                Enforces spending mandates on-chain. Limits session signers to exactly one token transfer per authorized invocation.
+              </p>
+            </div>
+            <div class="provider-card-code">
+              contracts/arbiter-account<br>
+              cargo build --target wasm32v1-none<br>
+              total_limit: 50_000_000 (50 USDC)<br>
+              max_payment: 500_000 (0.50 USDC)
+            </div>
+          </div>
+
+          <!-- Provider 3 -->
+          <div class="provider-card">
+            <div class="provider-card-top">
+              <div class="provider-meta">
+                <span class="provider-tag">[03/SETTLEMENT]</span>
+                <span class="provider-badge">TYPESCRIPT</span>
+              </div>
+              <h3>Local PaymentClient</h3>
+              <p>
+                Injected integration boundary that signs transaction envelopes using the session key and broadcasts directly to Stellar Testnet.
+              </p>
+            </div>
+            <div class="provider-card-code">
+              loadMandate(account)<br>
+              authorizeAndSettle({ challenge })<br>
+              returns: { payment, receipt }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workflow / Process Section -->
+    <section id="workflow" class="workflow-section">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">// 04_EXECUTION_LADDER</p>
+          <h2 class="section-title">ONE REQUEST. ONE DECISION.</h2>
+          <p class="section-subtitle">
+            Every step executes deterministically without centralized coordination or custodial exposure.
+          </p>
+        </div>
+
+        <div class="flow-ladder">
+          <div class="flow-step">
+            <span class="flow-index">01</span>
+            <span class="flow-name">DISCOVERY_CHALLENGE</span>
+            <span class="flow-desc">Arbiter sends an unpaid probe to configured providers; candidates return HTTP 402 headers with signed price requirements.</span>
+            <span class="flow-status">[CONCURRENT]</span>
+          </div>
+          <div class="flow-step">
+            <span class="flow-index">02</span>
+            <span class="flow-name">POLICY_VALIDATION</span>
+            <span class="flow-desc">Sanitizes recipients, validates testnet asset parity, checks local maxSpend boundaries, and parses atomic BigInt amounts.</span>
+            <span class="flow-status">[LOCAL_CHECK]</span>
+          </div>
+          <div class="flow-step recommended">
+            <span class="flow-index">03</span>
+            <span class="flow-name">ECONOMIC_SELECTION</span>
+            <span class="flow-desc">Computes <code>priceAtomic / (qualityScore × successRate)</code>; lowest score wins. Ties break strictly by lexical provider ID.</span>
+            <span class="flow-status">[DETERMINISTIC]</span>
+          </div>
+          <div class="flow-step">
+            <span class="flow-index">04</span>
+            <span class="flow-name">ONCHAIN_SETTLEMENT</span>
+            <span class="flow-desc">Session signer authorizes exact transfer; Soroban contract validates allowance, cumulative spend, and active mandate status.</span>
+            <span class="flow-status">[ONCHAIN_GATE]</span>
+          </div>
+          <div class="flow-step">
+            <span class="flow-index">05</span>
+            <span class="flow-name">OUTPUT_NORMALIZATION</span>
+            <span class="flow-desc">Winning provider verifies settlement proof and streams payload; SDK normalizes response into strict <code>WebSearchResult</code>.</span>
+            <span class="flow-status">[VERIFIED_OK]</span>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
-  <footer><span>ARBITER</span><p>Capability routing with a hard financial boundary.</p></footer>
+
+  <!-- Retro Terminal Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand">
+            <span class="brand-glyph">[▲]</span>
+            <span>ARBITER_OS</span>
+          </div>
+          <p>
+            Autonomous capability routing and economic control plane for AI agents on Stellar. Built with Apache-2.0 open-source standards.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>DEVELOPMENT</h4>
+            <a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+            <a href="https://github.com/fozagtx/Routes/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a>
+            <a href="https://github.com/fozagtx/Routes/tree/main/contracts/arbiter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a>
+            <a href="#quickstart">Quickstart Guide</a>
+          </div>
+          <div class="footer-col">
+            <h4>STANDARDS</h4>
+            <a href="https://stellar.org" target="_blank" rel="noopener noreferrer">Stellar Network</a>
+            <a href="https://soroban.stellar.org" target="_blank" rel="noopener noreferrer">Soroban Smart Accounts</a>
+            <a href="https://github.com/fozagtx/Routes#security-model" target="_blank" rel="noopener noreferrer">Security Model</a>
+            <a href="https://github.com/fozagtx/Routes#economic-routing" target="_blank" rel="noopener noreferrer">Economic Routing Spec</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>2026 ARBITER CONTRIBUTORS. DISTRIBUTED UNDER APACHE-2.0 LICENSE.</p>
+        <div class="footer-meta">
+          <span>MADE WITH</span>
+          <span>█</span>
+          <span>ON STELLAR TESTNET</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Terminal Scripts -->
+  <script>
+    // Copy Command to Clipboard
+    const copyBtn = document.getElementById('copyBtn');
+    const installCmd = document.getElementById('installCmd');
+    if (copyBtn && installCmd) {
+      copyBtn.addEventListener('click', async () => {
+        const text = installCmd.innerText.trim();
+        try {
+          await navigator.clipboard.writeText(text);
+          copyBtn.classList.add('copied');
+          copyBtn.querySelector('.copy-text').textContent = 'COPIED!';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.querySelector('.copy-text').textContent = 'COPY_CMD';
+          }, 2000);
+        } catch (err) {
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          copyBtn.classList.add('copied');
+          copyBtn.querySelector('.copy-text').textContent = 'COPIED!';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.querySelector('.copy-text').textContent = 'COPY_CMD';
+          }, 2000);
+        }
+      });
+    }
+
+    // Mobile Navigation Toggle
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (mobileToggle && navLinks) {
+      mobileToggle.addEventListener('click', () => {
+        const isOpen = navLinks.classList.toggle('mobile-open');
+        mobileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        mobileToggle.textContent = isOpen ? '[CLOSE]' : '[MENU]';
+      });
+
+      // Close mobile menu on link click
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('mobile-open');
+          mobileToggle.setAttribute('aria-expanded', 'false');
+          mobileToggle.textContent = '[MENU]';
+        });
+      });
+    }
+
+    // Step Switcher Highlight
+    const steps = document.querySelectorAll('.step-item');
+    steps.forEach(step => {
+      step.addEventListener('click', () => {
+        steps.forEach(s => s.classList.remove('active'));
+        step.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
