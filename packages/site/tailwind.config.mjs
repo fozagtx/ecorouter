@@ -37,8 +37,9 @@ export default {
         destructive: '#e53e3e',
       },
       fontFamily: {
+        jetbrains: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
         sans: ['GeistSans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'GeistMono', 'ui-monospace', 'monospace'],
+        mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
       borderRadius: {
         '2xl': '16px',
