@@ -1,4 +1,6 @@
 ---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 const faqs = [
   {
     q: "What is EcoRouter?",
@@ -19,28 +21,38 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="py-16 md:py-24 relative bg-white border-t border-[#D2D2CE]">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
+<section id="faq" class="py-16 md:py-24 relative overflow-hidden bg-[#05070E] border-t border-white/10 text-white">
+  <!-- Outside Background: curves-bg with Faded Transition Effect -->
+  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
+    <img
+      src={`${basePath}/curves-bg.png`}
+      alt="FAQ canopy backdrop"
+      class="w-full h-full object-cover object-top opacity-85 scale-105"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#F6F6F3] via-[#05070E]/75 to-[#05070E]"></div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
     <div class="space-y-2 text-center">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#7D7D84] font-medium">
+      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#93A4C8] font-medium">
         04 // FREQUENTLY ASKED QUESTIONS
       </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#0B0B0C]">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
         FAQ
       </h2>
     </div>
 
-    <!-- Flat Accordion List Separated by Thin Borders -->
-    <div class="border-y border-[#D2D2CE] divide-y divide-[#D2D2CE]">
+    <!-- Accordion Card List Outside the Image -->
+    <div class="bg-white/95 rounded-[2px] border border-white/20 p-6 text-[#0B0B0C] shadow-2xl backdrop-blur-sm divide-y divide-[#D2D2CE]">
       {faqs.map((item) => (
-        <details class="group py-4">
+        <details class="group py-4 first:pt-0 last:pb-0">
           <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0B0B0C] hover:text-[#55555A] transition-colors">
             <span>{item.q}</span>
             <span class="text-xs font-mono text-[#7D7D84] group-open:rotate-45 transition-transform duration-150">
               ＋
             </span>
           </summary>
-          <div class="pt-2.5 text-xs text-[#55555A] leading-relaxed">
+          <div class="pt-2.5 text-xs text-[#55555A] leading-relaxed font-sans">
             {item.a}
           </div>
         </details>

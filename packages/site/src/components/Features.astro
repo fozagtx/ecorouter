@@ -3,16 +3,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section id="features" class="py-16 md:py-24 relative overflow-hidden">
-  <!-- Outside Background with Faded Vignette Effect -->
-  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden -z-10 flex items-center justify-center">
-    <img
-      src={`${basePath}/curves-bg.png`}
-      alt=""
-      class="w-full max-w-6xl h-full object-cover object-top opacity-25 md:opacity-35"
-      style="mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 20%, transparent 80%);"
-    />
-  </div>
-
   <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-16 relative z-10">
     <!-- Section Header -->
     <div class="space-y-2">
@@ -78,28 +68,39 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       </div>
     </div>
 
-    <!-- Quickstart Code Section -->
-    <div id="quickstart" class="rounded-[4px] border border-[#D2D2CE] bg-white overflow-hidden font-mono">
-      <div class="h-9 px-4 bg-[#EFEFEC] border-b border-[#D2D2CE] flex items-center justify-between text-xs">
-        <div class="flex items-center gap-2">
-          <span class="text-[10.5px] uppercase tracking-[0.16em] text-[#7D7D84]">02 // QUICKSTART</span>
-          <span class="text-[#7D7D84]">|</span>
-          <span class="font-medium text-[#0B0B0C]">example.ts</span>
-        </div>
-        <button
-          onclick="copyText(`import { EcoRouter } from 'ecorouter';\n\nconst router = new EcoRouter({\n  account: process.env.STELLAR_ACCOUNT,\n  sessionSecret: process.env.SESSION_SECRET,\n  providers: [\n    { id: 'tavily', capability: 'web-search', endpoint: 'https://api.tavily.com/x402', qualityScore: 0.95 },\n    { id: 'brave', capability: 'web-search', endpoint: 'https://api.brave.com/x402', qualityScore: 0.90 }\n  ]\n});\n\nconst result = await router.execute({\n  capability: 'web-search',\n  input: { query: 'latest open source agents' },\n  policy: { maxSpendUsdc: '0.01', minimumQuality: 0.85 }\n});\n\nconsole.log(result.providerId, result.spentUsdc);`)"
-          class="h-6 px-2 rounded-[3px] bg-white border border-[#D2D2CE] hover:bg-[#EFEFEC] text-[#0B0B0C] text-[11px] flex items-center gap-1.5 transition-colors cursor-pointer"
-        >
-          <span>Copy</span>
-          <svg class="w-3 h-3 text-[#7D7D84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-        </button>
+    <!-- Quickstart Code Section with Stage Backdrop Outside -->
+    <div class="relative rounded-[2px] bg-[#05070E] border border-white/10 p-5 sm:p-8 overflow-hidden shadow-xl">
+      <!-- Outside Backdrop: stage-bg.png with Faded Vignette -->
+      <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+        <img
+          src={`${basePath}/stage-bg.png`}
+          alt="Code terminal stage"
+          class="w-full h-full object-cover object-center opacity-85 scale-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#05070E] via-transparent to-[#05070E]/70"></div>
       </div>
 
-      <div class="p-4 sm:p-5 bg-[#141410] text-[#abab9c] text-xs leading-relaxed overflow-x-auto">
-        <pre><code><span class="text-purple-400">import</span> &#123; EcoRouter &#125; <span class="text-purple-400">from</span> <span class="text-emerald-300">"ecorouter"</span>;
+      <div id="quickstart" class="relative z-10 rounded-[4px] border border-[#D2D2CE] bg-white overflow-hidden font-mono shadow-2xl">
+        <div class="h-9 px-4 bg-[#EFEFEC] border-b border-[#D2D2CE] flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-[10.5px] uppercase tracking-[0.16em] text-[#7D7D84]">02 // QUICKSTART</span>
+            <span class="text-[#7D7D84]">|</span>
+            <span class="font-medium text-[#0B0B0C]">example.ts</span>
+          </div>
+          <button
+            onclick="copyText(`import { EcoRouter } from 'ecorouter';\n\nconst router = new EcoRouter({\n  account: process.env.STELLAR_ACCOUNT,\n  sessionSecret: process.env.SESSION_SECRET,\n  providers: [\n    { id: 'tavily', capability: 'web-search', endpoint: 'https://api.tavily.com/x402', qualityScore: 0.95 },\n    { id: 'brave', capability: 'web-search', endpoint: 'https://api.brave.com/x402', qualityScore: 0.90 }\n  ]\n});\n\nconst result = await router.execute({\n  capability: 'web-search',\n  input: { query: 'latest open source agents' },\n  policy: { maxSpendUsdc: '0.01', minimumQuality: 0.85 }\n});\n\nconsole.log(result.providerId, result.spentUsdc);`)"
+            class="h-6 px-2 rounded-[3px] bg-white border border-[#D2D2CE] hover:bg-[#EFEFEC] text-[#0B0B0C] text-[11px] flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <span>Copy</span>
+            <svg class="w-3 h-3 text-[#7D7D84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-5 bg-[#141410] text-[#abab9c] text-xs leading-relaxed overflow-x-auto">
+          <pre><code><span class="text-purple-400">import</span> &#123; EcoRouter &#125; <span class="text-purple-400">from</span> <span class="text-emerald-300">"ecorouter"</span>;
 
 <span class="text-white/40">// 1. Initialize router with smart account and candidate providers</span>
 <span class="text-purple-400">const</span> router = <span class="text-purple-400">new</span> <span class="text-amber-300">EcoRouter</span>(&#123;
@@ -119,6 +120,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 &#125;);
 
 console.<span class="text-blue-400">log</span>(result.providerId, result.spentUsdc, result.data);</code></pre>
+        </div>
       </div>
     </div>
   </div>

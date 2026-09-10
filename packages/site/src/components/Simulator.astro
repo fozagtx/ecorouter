@@ -1,18 +1,29 @@
 ---
 import TechnicalViewport from "./TechnicalViewport.astro";
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section id="simulator" class="py-16 md:py-24 relative bg-[#F6F6F3] border-t border-[#D2D2CE]">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
+<section id="simulator" class="py-16 md:py-28 relative overflow-hidden bg-[#05070E] border-t border-[#D2D2CE] text-white">
+  <!-- Outside Background Image: stage-bg with Faded Transition Effect -->
+  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
+    <img
+      src={`${basePath}/stage-bg.png`}
+      alt="Simulator testbench stage backdrop"
+      class="w-full h-full object-cover object-center opacity-90 scale-105"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#F6F6F3] via-transparent 25% to-[#F6F6F3]"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
     <!-- Header -->
     <div class="space-y-2">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#7D7D84] font-medium">
+      <div class="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] font-medium">
         03 // INTERACTIVE CAPABILITY TESTBENCH
       </div>
-      <h2 class="text-2xl sm:text-3xl font-medium tracking-[-0.035em] text-[#0B0B0C]">
+      <h2 class="text-2xl sm:text-3xl font-medium tracking-[-0.035em] text-white">
         Simulate capability execution
       </h2>
-      <p class="text-sm sm:text-base text-[#55555A] max-w-xl font-normal leading-relaxed">
+      <p class="text-sm sm:text-base text-[#C4D2EC] max-w-xl font-normal leading-relaxed">
         Test how EcoRouter challenges endpoints, enforces maxSpendUsdc caps, and selects providers deterministically.
       </p>
     </div>
@@ -26,7 +37,7 @@ import TechnicalViewport from "./TechnicalViewport.astro";
       layerTag="LAYER · TESTBENCH"
       refTag="REF · SIM-02"
     >
-      <div class="bg-white p-5 sm:p-6 space-y-6">
+      <div class="bg-white p-5 sm:p-6 space-y-6 text-[#0B0B0C] shadow-2xl">
         <!-- Controls (40px height, 3px radius) -->
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
           <div class="sm:col-span-5 space-y-1.5 font-mono">
