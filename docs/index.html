@@ -4,40 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="EcoRouter — Bounded economic purchasing and deterministic capability routing for autonomous agents on Stellar.">
-  <title>ECOROUTER // Deterministic Capability Routing for Autonomous Agents</title>
+  <title>EcoRouter — Deterministic Capability Routing for Autonomous Agents</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- CRT Scanline overlay -->
-  <div class="scanlines" aria-hidden="true"></div>
-
-  <!-- Top Terminal Navigation -->
+  <!-- Top Navigation (Frosted Glass Header) -->
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="#" aria-label="EcoRouter Home">
-        <span class="brand-glyph">[▲]</span>
-        <span>ECOROUTER.SYS</span>
-        <span class="brand-tag">v0.1.0</span>
+        <span class="brand-icon">▲</span>
+        <span>EcoRouter</span>
       </a>
 
       <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation" aria-expanded="false">
-        [MENU]
+        ☰
       </button>
 
       <ul class="nav-links" id="navLinks">
-        <li><a href="#quickstart"><span>01</span>QUICKSTART</a></li>
-        <li><a href="#features"><span>02</span>FEATURES</a></li>
-        <li><a href="#providers"><span>03</span>PROVIDERS</a></li>
-        <li><a href="#workflow"><span>04</span>WORKFLOW</a></li>
-        <li><a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer"><span>05</span>GITHUB ↗</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#providers">Providers</a></li>
+        <li><a href="#workflow">Workflow</a></li>
+        <li><a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
       </ul>
 
       <div class="nav-actions">
-        <div class="status-badge" title="Stellar Testnet Gateway Active">
-          <span class="status-dot"></span>
-          <span>ONLINE // TESTNET</span>
+        <div class="nav-badge" title="Stellar Testnet Gateway Active">
+          <span class="badge-dot"></span>
+          <span>Online · Testnet</span>
         </div>
-        <a class="btn btn-sm" href="#quickstart">CONNECT_AGENT</a>
+        <a class="btn btn-primary btn-sm" href="#quickstart">Get Started</a>
       </div>
     </div>
   </header>
@@ -46,140 +42,121 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <div class="hero-meta">
-          <span class="hero-tag">/// PROTOCOL: x402_V2_EXACT</span>
-          <span>·</span>
-          <span>NETWORK: STELLAR TESTNET</span>
-          <span>·</span>
-          <span>SETTLEMENT: USDC ATOMIC</span>
+        <div class="hero-eyebrow">
+          <span>Protocol x402 V2 Exact · Stellar Testnet · USDC Atomic</span>
         </div>
 
-        <div class="hero-grid">
-          <div class="hero-left">
-            <h1>
-              YOUR AGENT CHOOSES.
-              <span class="accent">THE CONTRACT SETS THE LIMITS.</span>
-            </h1>
-            <p class="hero-lede">
-              A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. EcoRouter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact atomic USDC payment—while a Soroban smart account strictly enforces your spending mandate on Stellar.
-            </p>
+        <h1>
+          Your agent chooses.<br>
+          <span class="gradient-text">The contract sets the limits.</span>
+        </h1>
 
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="#quickstart">
-                <span>[ INITIALIZE SDK ]</span>
-              </a>
-              <a class="btn" href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">
-                <span>SOURCE REPO -></span>
-              </a>
-            </div>
+        <p class="hero-lede">
+          A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. EcoRouter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact atomic USDC payment—while a Soroban smart account strictly enforces your spending mandate on Stellar.
+        </p>
 
-            <div class="hero-foot">
-              <span>SECURITY: <strong>ZERO_CUSTODIAL_KEYS</strong></span>
-              <span>PRICING: <strong>BIGINT_ATOMIC_USDC</strong></span>
-              <span>BOUNDARY: <strong>SOROBAN_ONCHAIN</strong></span>
-            </div>
-          </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#quickstart">
+            Initialize SDK
+          </a>
+          <a class="btn btn-secondary" href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">
+            View on GitHub ↗
+          </a>
+        </div>
 
-          <!-- Hero Terminal Visual / ASCII Mascot Area -->
-          <div class="hero-right">
-            <div class="terminal-card" role="region" aria-label="EcoRouter live routing telemetry monitor">
-              <div class="terminal-header">
-                <div class="terminal-header-title">
-                  <span class="dot">●</span>
-                  <span>ECOROUTER_ENGINE // TELEMETRY</span>
-                </div>
-                <div class="terminal-header-actions">[_] [口] [X]</div>
+        <!-- Hero Showcase Card / Telemetry Window -->
+        <div class="showcase-wrapper">
+          <div class="apple-window" role="region" aria-label="EcoRouter live routing telemetry monitor">
+            <div class="window-titlebar">
+              <div class="window-dots">
+                <span class="window-dot dot-close"></span>
+                <span class="window-dot dot-min"></span>
+                <span class="window-dot dot-max"></span>
               </div>
-              <div class="terminal-body">
-                <pre class="hero-terminal-pre" aria-label="Terminal telemetry ASCII graphic">
-<span class="hl-amber">+-----------------------------------------------+</span>
-<span class="hl-amber">|</span>  <span class="hl-cream">[▲] ECOROUTER AUTONOMOUS ENGINE v0.1.0</span>       <span class="hl-amber">|</span>
-<span class="hl-amber">+-----------------------------------------------+</span>
- <span class="hl-dim">AGENT PROMPT:</span> <span class="hl-cream">"spot lithium carbonate prices"</span>
- <span class="hl-dim">CAPABILITY:</span>   <span class="hl-amber">web.search</span>
- <span class="hl-dim">MANDATE CAP:</span>  <span class="hl-cream">0.05 USDC</span>  <span class="hl-green">[ALLOWANCE OK]</span>
--------------------------------------------------
- <span class="hl-dim">DISCOVERING HTTP 402 PROVIDERS...</span>
- <span class="hl-green">[OK]</span> search-alpha    :: 20,000 uUSDC (Q: 0.94)
- <span class="hl-green">[OK]</span> search-beta     :: 45,000 uUSDC (Q: 0.88)
--------------------------------------------------
- <span class="hl-dim">DETERMINISTIC ECONOMIC SELECTION:</span>
- <span class="hl-cream">cost = priceAtomic / (qualityScore × successRate)</span>
+              <span class="window-title">EcoRouter Autonomous Engine — Live Telemetry</span>
+              <div style="width: 48px;"></div>
+            </div>
+            <div class="window-content">
+              <pre><code><span class="hl-blue">// 1. Incoming Capability Request</span>
+<span class="hl-gray">Agent Goal:</span>    <span class="hl-white">"spot lithium carbonate prices"</span>
+<span class="hl-gray">Capability:</span>    <span class="hl-blue">web.search</span>
+<span class="hl-gray">Mandate Cap:</span>   <span class="hl-white">0.05 USDC</span>  <span class="hl-green">[Allowance Verified]</span>
 
- <span class="hl-amber">> WINNER:</span>  <span class="hl-cream">search-alpha</span> (eff_cost: 21,276)
- <span class="hl-amber">> AUTH:</span>    Soroban __check_auth <span class="hl-green">PASSED</span>
- <span class="hl-amber">> SETTLE:</span>  tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
- <span class="hl-amber">> BUDGET:</span>  [■■■■■■■■■■■■■■□□] 92% remaining
--------------------------------------------------
- <span class="hl-dim">STATUS:</span> <span class="hl-green">VERIFIED_RESULT_READY</span><span class="cursor" aria-hidden="true"></span></pre>
-              </div>
+<span class="hl-blue">// 2. Discovering HTTP 402 Providers Concurrently</span>
+<span class="hl-green">[✓]</span> search-alpha   :: 20,000 uUSDC (Quality: 0.94, Success: 100%)
+<span class="hl-green">[✓]</span> search-beta    :: 45,000 uUSDC (Quality: 0.88, Success: 98%)
+
+<span class="hl-blue">// 3. Deterministic Economic Selection</span>
+<span class="hl-gray">Formula:</span>       cost = priceAtomic / (qualityScore × successRate)
+<span class="hl-blue">> Winner:</span>      <span class="hl-white">search-alpha</span> (Effective Cost: 21,276 atomic units)
+<span class="hl-blue">> Auth:</span>        Soroban __check_auth hook <span class="hl-green">PASSED</span>
+<span class="hl-blue">> Settlement:</span>  Stellar tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
+<span class="hl-blue">> Budget:</span>      Remaining Allowance: 49.98 USDC (99.96%)
+
+<span class="hl-blue">> Result:</span>      <span class="hl-green">Strict Normalized Output Ready</span></code></pre>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Quickstart / Installation Block -->
-    <section id="quickstart" class="quickstart-section">
+    <div class="section-divider"></div>
+
+    <!-- Quickstart / Installation Section -->
+    <section id="quickstart" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">// 01_INITIALIZATION</p>
-          <h2 class="section-title">INSTALL & RUN IN SECONDS</h2>
+          <p class="section-eyebrow">Quickstart</p>
+          <h2 class="section-title">Install & Run in Seconds</h2>
           <p class="section-subtitle">
-            Private keys remain in your process. There is no EcoRouter server, database, account system, remote registry, or custodial wallet.
+            Private keys remain in your process. There is no EcoRouter server, database, remote registry, or custodial wallet.
           </p>
         </div>
 
-        <!-- Terminal Command Box -->
-        <div class="install-command-bar" id="installBar" title="Click to copy install command" style="cursor: pointer;">
-          <div class="install-prefix">$</div>
-          <div class="install-code">
+        <!-- Install Bar -->
+        <div class="install-bar" id="installBar" title="Click to copy install command">
+          <div class="install-text">
+            <span class="install-prompt">$</span>
             <span id="installCmd">pnpm add ecorouter</span>
           </div>
-          <button class="copy-btn" id="copyBtn" aria-label="Copy install command to clipboard">
-            <span class="copy-icon">📋</span>
-            <span class="copy-text">COPY_CMD</span>
+          <button class="copy-btn-pill" id="copyBtn" aria-label="Copy install command">
+            <span class="copy-text">Copy</span>
           </button>
         </div>
 
-        <!-- Four Step Sequence -->
-        <div class="steps-sequence" role="tablist" aria-label="Execution steps">
-          <div class="step-item active" id="step1" style="cursor: pointer;">
-            <span class="step-num">[01]</span>
-            <span class="step-label">INSTALL</span>
-            <span class="step-desc">Add local TypeScript SDK</span>
+        <!-- 4 Step Sequence -->
+        <div class="steps-nav" role="tablist" aria-label="Execution steps">
+          <div class="step-card-pill active" id="step1">
+            <span class="step-badge-num">Step 01</span>
+            <span class="step-card-title">Install</span>
+            <span class="step-card-desc">Add local TypeScript SDK</span>
           </div>
-          <div class="step-item" id="step2" style="cursor: pointer;">
-            <span class="step-num">[02]</span>
-            <span class="step-label">MANDATE</span>
-            <span class="step-desc">Deploy Soroban smart account</span>
+          <div class="step-card-pill" id="step2">
+            <span class="step-badge-num">Step 02</span>
+            <span class="step-card-title">Mandate</span>
+            <span class="step-card-desc">Deploy Soroban smart account</span>
           </div>
-          <div class="step-item" id="step3" style="cursor: pointer;">
-            <span class="step-num">[03]</span>
-            <span class="step-label">CHALLENGE</span>
-            <span class="step-desc">Concurrent x402 discovery</span>
+          <div class="step-card-pill" id="step3">
+            <span class="step-badge-num">Step 03</span>
+            <span class="step-card-title">Challenge</span>
+            <span class="step-card-desc">Concurrent x402 discovery</span>
           </div>
-          <div class="step-item" id="step4" style="cursor: pointer;">
-            <span class="step-num">[04]</span>
-            <span class="step-label">SETTLE</span>
-            <span class="step-desc">Exact atomic USDC transfer</span>
+          <div class="step-card-pill" id="step4">
+            <span class="step-badge-num">Step 04</span>
+            <span class="step-card-title">Settle</span>
+            <span class="step-card-desc">Exact atomic USDC transfer</span>
           </div>
         </div>
 
         <!-- Code Panel -->
-        <div class="quickstart-code-panel">
-          <div class="terminal-header">
-            <div class="terminal-header-title">
-              <span class="dot">●</span>
-              <span id="codeFilename">examples/search-agent.ts</span>
-            </div>
-            <div class="terminal-header-actions">
-              <button class="copy-btn" id="copySnippetBtn" aria-label="Copy code snippet" style="border: 0; padding: 0; font-size: 11px;">
-                <span class="copy-text">COPY_CODE</span>
-              </button>
-            </div>
+        <div class="code-container">
+          <div class="code-header">
+            <span>examples/search-agent.ts</span>
+            <button class="copy-btn-pill" id="copySnippetBtn" style="padding: 3px 10px; font-size: 12px;">
+              <span class="copy-text">Copy Code</span>
+            </button>
           </div>
-          <pre id="codePre"><code><span class="kw">import</span> { EcoRouter } <span class="kw">from</span> <span class="str">"ecorouter"</span>;
+          <pre class="code-pre" id="codePre"><code><span class="kw">import</span> { EcoRouter } <span class="kw">from</span> <span class="str">"ecorouter"</span>;
 
 <span class="comm">// 1. Initialize local routing runtime</span>
 <span class="kw">const</span> router = <span class="kw">new</span> <span class="prop">EcoRouter</span>({
@@ -207,12 +184,14 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       </div>
     </section>
 
+    <div class="section-divider"></div>
+
     <!-- Features Section (2x2 Grid) -->
-    <section id="features" class="features-section">
+    <section id="features" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">// 02_CORE_ARCHITECTURE</p>
-          <h2 class="section-title">BUILT FOR AUTONOMOUS PURCHASING</h2>
+          <p class="section-eyebrow">Architecture</p>
+          <h2 class="section-title">Built for Autonomous Purchasing</h2>
           <p class="section-subtitle">
             Four foundational properties designed to make AI agents safe, deterministic, and economically rational.
           </p>
@@ -221,9 +200,8 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
         <div class="features-grid">
           <!-- Card 1 -->
           <article class="feature-card">
-            <div class="feature-head">
-              <span class="feature-tag">[01 // INFRASTRUCTURE]</span>
-              <span class="feature-ascii">▓▒░ LOCAL</span>
+            <div class="feature-icon-wrapper">
+              <span>⚡</span>
             </div>
             <h3>Zero Hosted Control Plane</h3>
             <p>
@@ -233,9 +211,8 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
 
           <!-- Card 2 -->
           <article class="feature-card">
-            <div class="feature-head">
-              <span class="feature-tag">[02 // ROUTING_MATH]</span>
-              <span class="feature-ascii">▓▒░ EXACT</span>
+            <div class="feature-icon-wrapper">
+              <span>⚖️</span>
             </div>
             <h3>Deterministic Economic Cost</h3>
             <p>
@@ -245,9 +222,8 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
 
           <!-- Card 3 -->
           <article class="feature-card">
-            <div class="feature-head">
-              <span class="feature-tag">[03 // SMART_ACCOUNT]</span>
-              <span class="feature-ascii">▓▒░ ONCHAIN</span>
+            <div class="feature-icon-wrapper">
+              <span>🛡️</span>
             </div>
             <h3>Soroban Mandate Boundary</h3>
             <p>
@@ -257,9 +233,8 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
 
           <!-- Card 4 -->
           <article class="feature-card">
-            <div class="feature-head">
-              <span class="feature-tag">[04 // NORMALIZATION]</span>
-              <span class="feature-ascii">▓▒░ SCHEMA</span>
+            <div class="feature-icon-wrapper">
+              <span>🔒</span>
             </div>
             <h3>Strict Output Normalization</h3>
             <p>
@@ -270,31 +245,30 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       </div>
     </section>
 
-    <!-- Provider / Integration Section -->
-    <section id="providers" class="providers-section">
+    <div class="section-divider"></div>
+
+    <!-- Provider / Components Section (3-Card Layout) -->
+    <section id="providers" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">// 03_COMPONENTS</p>
-          <h2 class="section-title">CONNECT & CONFIGURE</h2>
+          <p class="section-eyebrow">Components</p>
+          <h2 class="section-title">Connect & Configure</h2>
           <p class="section-subtitle">
             Configure candidates, smart account parameters, and local Stellar settlement boundaries.
           </p>
         </div>
 
-        <div class="provider-cards-grid">
-          <!-- Provider 1 -->
+        <div class="providers-grid">
+          <!-- Card 1 -->
           <div class="provider-card">
-            <div class="provider-card-top">
-              <div class="provider-meta">
-                <span class="provider-tag">[01/ADAPTER]</span>
-                <span class="provider-badge">HTTP 402</span>
-              </div>
+            <div class="provider-card-body">
+              <span class="provider-tag-pill">HTTP 402</span>
               <h3>x402 Search Provider</h3>
               <p>
                 Candidate endpoints answer unpaid POST queries with HTTP 402 challenges containing exact atomic USDC pricing and destination addresses.
               </p>
             </div>
-            <div class="provider-card-code">
+            <div class="provider-card-footer">
               endpoint: "https://api.example/search"<br>
               scheme: "exact"<br>
               network: "stellar:testnet"<br>
@@ -302,19 +276,16 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
             </div>
           </div>
 
-          <!-- Provider 2 -->
+          <!-- Card 2 -->
           <div class="provider-card">
-            <div class="provider-card-top">
-              <div class="provider-meta">
-                <span class="provider-tag">[02/CONTRACT]</span>
-                <span class="provider-badge">RUST / SOROBAN</span>
-              </div>
-              <h3>EcoRouterAccount Contract</h3>
+            <div class="provider-card-body">
+              <span class="provider-tag-pill">Rust · Soroban</span>
+              <h3>EcoRouterAccount</h3>
               <p>
                 Enforces spending mandates on-chain. Limits session signers to exactly one token transfer per authorized invocation.
               </p>
             </div>
-            <div class="provider-card-code">
+            <div class="provider-card-footer">
               contracts/ecorouter-account<br>
               cargo build --target wasm32v1-none<br>
               total_limit: 50_000_000 (50 USDC)<br>
@@ -322,19 +293,16 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
             </div>
           </div>
 
-          <!-- Provider 3 -->
+          <!-- Card 3 -->
           <div class="provider-card">
-            <div class="provider-card-top">
-              <div class="provider-meta">
-                <span class="provider-tag">[03/SETTLEMENT]</span>
-                <span class="provider-badge">TYPESCRIPT</span>
-              </div>
-              <h3>Local PaymentClient</h3>
+            <div class="provider-card-body">
+              <span class="provider-tag-pill">TypeScript</span>
+              <h3>PaymentClient</h3>
               <p>
                 Injected integration boundary that signs transaction envelopes using the session key and broadcasts directly to Stellar Testnet.
               </p>
             </div>
-            <div class="provider-card-code">
+            <div class="provider-card-footer">
               loadMandate(account)<br>
               authorizeAndSettle({ challenge })<br>
               returns: { payment, receipt }
@@ -344,100 +312,115 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       </div>
     </section>
 
+    <div class="section-divider"></div>
+
     <!-- Workflow / Process Section -->
-    <section id="workflow" class="workflow-section">
+    <section id="workflow" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">// 04_EXECUTION_LADDER</p>
-          <h2 class="section-title">ONE REQUEST. ONE DECISION.</h2>
+          <p class="section-eyebrow">Execution Ladder</p>
+          <h2 class="section-title">One Request. One Decision.</h2>
           <p class="section-subtitle">
             Every step executes deterministically without centralized coordination or custodial exposure.
           </p>
         </div>
 
-        <div class="flow-ladder">
-          <div class="flow-step">
-            <span class="flow-index">01</span>
-            <span class="flow-name">DISCOVERY_CHALLENGE</span>
-            <span class="flow-desc">EcoRouter sends an unpaid probe to configured providers; candidates return HTTP 402 headers with signed price requirements.</span>
-            <span class="flow-status">[CONCURRENT]</span>
+        <div class="workflow-ladder">
+          <div class="workflow-item">
+            <div class="step-circle">1</div>
+            <div class="workflow-content">
+              <h4>Discovery Challenge</h4>
+              <p>EcoRouter probes configured endpoints concurrently; candidates return HTTP 402 headers with signed price requirements.</p>
+            </div>
+            <span class="workflow-status-badge">Concurrent</span>
           </div>
-          <div class="flow-step">
-            <span class="flow-index">02</span>
-            <span class="flow-name">POLICY_VALIDATION</span>
-            <span class="flow-desc">Sanitizes recipients, validates testnet asset parity, checks local maxSpend boundaries, and parses atomic BigInt amounts.</span>
-            <span class="flow-status">[LOCAL_CHECK]</span>
+
+          <div class="workflow-item">
+            <div class="step-circle">2</div>
+            <div class="workflow-content">
+              <h4>Policy Validation</h4>
+              <p>Sanitizes recipients, validates testnet asset parity, checks local maxSpend boundaries, and parses atomic BigInt amounts.</p>
+            </div>
+            <span class="workflow-status-badge">Local Check</span>
           </div>
-          <div class="flow-step recommended">
-            <span class="flow-index">03</span>
-            <span class="flow-name">ECONOMIC_SELECTION</span>
-            <span class="flow-desc">Computes <code>priceAtomic / (qualityScore × successRate)</code>; lowest score wins. Ties break strictly by lexical provider ID.</span>
-            <span class="flow-status">[DETERMINISTIC]</span>
+
+          <div class="workflow-item recommended">
+            <div class="step-circle">3</div>
+            <div class="workflow-content">
+              <h4>Deterministic Selection</h4>
+              <p>Computes <code>priceAtomic / (qualityScore × successRate)</code>; lowest score wins. Ties break strictly by lexical provider ID.</p>
+            </div>
+            <span class="workflow-status-badge">Optimal Cost</span>
           </div>
-          <div class="flow-step">
-            <span class="flow-index">04</span>
-            <span class="flow-name">ONCHAIN_SETTLEMENT</span>
-            <span class="flow-desc">Session signer authorizes exact transfer; Soroban contract validates allowance, cumulative spend, and active mandate status.</span>
-            <span class="flow-status">[ONCHAIN_GATE]</span>
+
+          <div class="workflow-item">
+            <div class="step-circle">4</div>
+            <div class="workflow-content">
+              <h4>On-Chain Settlement</h4>
+              <p>Session signer authorizes exact transfer; Soroban contract validates allowance, cumulative spend, and active mandate status.</p>
+            </div>
+            <span class="workflow-status-badge">On-Chain Gate</span>
           </div>
-          <div class="flow-step">
-            <span class="flow-index">05</span>
-            <span class="flow-name">OUTPUT_NORMALIZATION</span>
-            <span class="flow-desc">Winning provider verifies settlement proof and streams payload; SDK normalizes response into strict <code>WebSearchResult</code>.</span>
-            <span class="flow-status">[VERIFIED_OK]</span>
+
+          <div class="workflow-item">
+            <div class="step-circle">5</div>
+            <div class="workflow-content">
+              <h4>Output Normalization</h4>
+              <p>Winning provider verifies settlement proof and streams payload; SDK normalizes response into strict <code>WebSearchResult</code>.</p>
+            </div>
+            <span class="workflow-status-badge">Verified</span>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Retro Terminal Footer -->
+  <!-- Apple Minimalist Dark Footer -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand">
-          <div class="brand">
-            <span class="brand-glyph">[▲]</span>
-            <span>ECOROUTER_OS</span>
-          </div>
+          <h3>EcoRouter</h3>
           <p>
             Autonomous capability routing and economic control plane for AI agents on Stellar. Built with Apache-2.0 open-source standards.
           </p>
         </div>
 
-        <div class="footer-links">
-          <div class="footer-col">
-            <h4>DEVELOPMENT</h4>
-            <a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-            <a href="https://github.com/fozagtx/Routes/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a>
-            <a href="https://github.com/fozagtx/Routes/tree/main/contracts/ecorouter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a>
-            <a href="#quickstart">Quickstart Guide</a>
-          </div>
-          <div class="footer-col">
-            <h4>STANDARDS</h4>
-            <a href="https://stellar.org" target="_blank" rel="noopener noreferrer">Stellar Network</a>
-            <a href="https://soroban.stellar.org" target="_blank" rel="noopener noreferrer">Soroban Smart Accounts</a>
-            <a href="https://github.com/fozagtx/Routes#security-model" target="_blank" rel="noopener noreferrer">Security Model</a>
-            <a href="https://github.com/fozagtx/Routes#economic-routing" target="_blank" rel="noopener noreferrer">Economic Routing Spec</a>
-          </div>
+        <div class="footer-col">
+          <h4>Development</h4>
+          <ul>
+            <li><a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+            <li><a href="https://github.com/fozagtx/Routes/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a></li>
+            <li><a href="https://github.com/fozagtx/Routes/tree/main/contracts/ecorouter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a></li>
+            <li><a href="#quickstart">Quickstart Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Standards</h4>
+          <ul>
+            <li><a href="https://stellar.org" target="_blank" rel="noopener noreferrer">Stellar Network</a></li>
+            <li><a href="https://soroban.stellar.org" target="_blank" rel="noopener noreferrer">Soroban Smart Accounts</a></li>
+            <li><a href="https://github.com/fozagtx/Routes#security-model" target="_blank" rel="noopener noreferrer">Security Model</a></li>
+            <li><a href="https://github.com/fozagtx/Routes#economic-routing" target="_blank" rel="noopener noreferrer">Economic Routing Spec</a></li>
+          </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>2026 ECOROUTER CONTRIBUTORS. DISTRIBUTED UNDER APACHE-2.0 LICENSE.</p>
-        <div class="footer-meta">
-          <span>MADE WITH</span>
-          <span>█</span>
-          <span>ON STELLAR TESTNET</span>
+        <p>© 2026 EcoRouter Contributors. Distributed under Apache-2.0 License.</p>
+        <div class="nav-badge">
+          <span class="badge-dot"></span>
+          <span>Stellar Testnet Gateway Active</span>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Interactive Terminal Scripts -->
+  <!-- Interactive Scripts -->
   <script>
     // Copy helper function
-    async function copyToClipboard(text, btnElement, successText = 'COPIED!') {
+    async function copyToClipboard(text, btnElement, successText = 'Copied') {
       try {
         await navigator.clipboard.writeText(text);
       } catch (err) {
@@ -450,29 +433,27 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       }
       if (btnElement) {
         btnElement.classList.add('copied');
-        const textSpan = btnElement.querySelector('.copy-text');
-        const originalText = textSpan ? textSpan.textContent : btnElement.textContent;
-        if (textSpan) textSpan.textContent = successText;
-        else btnElement.textContent = successText;
+        const textSpan = btnElement.querySelector('.copy-text') || btnElement;
+        const originalText = textSpan.textContent;
+        textSpan.textContent = successText;
         setTimeout(() => {
           btnElement.classList.remove('copied');
-          if (textSpan) textSpan.textContent = originalText;
-          else btnElement.textContent = originalText;
+          textSpan.textContent = originalText;
         }, 2000);
       }
     }
 
-    // Install command bar copy
+    // Install bar copy
     const installBar = document.getElementById('installBar');
     const copyBtn = document.getElementById('copyBtn');
     const installCmd = document.getElementById('installCmd');
     if (installBar && installCmd) {
-      installBar.addEventListener('click', (e) => {
+      installBar.addEventListener('click', () => {
         copyToClipboard(installCmd.innerText.trim(), copyBtn);
       });
     }
 
-    // Code snippet copy button
+    // Code snippet copy
     const copySnippetBtn = document.getElementById('copySnippetBtn');
     const codePre = document.getElementById('codePre');
     if (copySnippetBtn && codePre) {
@@ -489,15 +470,14 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       mobileToggle.addEventListener('click', () => {
         const isOpen = navLinks.classList.toggle('mobile-open');
         mobileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        mobileToggle.textContent = isOpen ? '[CLOSE]' : '[MENU]';
+        mobileToggle.textContent = isOpen ? '✕' : '☰';
       });
 
-      // Close mobile menu on link click
       navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
           navLinks.classList.remove('mobile-open');
           mobileToggle.setAttribute('aria-expanded', 'false');
-          mobileToggle.textContent = '[MENU]';
+          mobileToggle.textContent = '☰';
         });
       });
     }
@@ -509,7 +489,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       document.getElementById('step3'),
       document.getElementById('step4')
     ];
-    steps.forEach((step, idx) => {
+    steps.forEach((step) => {
       if (!step) return;
       step.addEventListener('click', () => {
         steps.forEach(s => s && s.classList.remove('active'));
