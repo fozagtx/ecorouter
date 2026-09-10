@@ -1,0 +1,17 @@
+[package]
+name = "arbiter-account"
+description = "Restricted Stellar contract account for Arbiter agent mandates"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
