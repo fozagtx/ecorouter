@@ -1,11 +1,11 @@
-import { Arbiter } from "@arbiter-ai/sdk";
+import { EcoRouter } from "ecorouter";
 
 // `paymentClient` is the local Stellar/x402 integration: it reads the deployed
-// mandate and signs inside this process. Secrets are never sent to Arbiter.
+// mandate and signs inside this process. Secrets are never sent to EcoRouter.
 const paymentClient = createStellarPaymentClient();
-const arbiter = new Arbiter({
-  account: process.env.ARBITER_ACCOUNT!,
-  sessionSecret: process.env.ARBITER_SESSION_SECRET!,
+const router = new EcoRouter({
+  account: process.env.ECOROUTER_ACCOUNT ?? process.env.ARBITER_ACCOUNT!,
+  sessionSecret: process.env.ECOROUTER_SESSION_SECRET ?? process.env.ARBITER_SESSION_SECRET!,
   paymentClient,
   providers: [
     { id: "search-a", capability: "web.search", endpoint: process.env.SEARCH_A_URL!, qualityScore: 0.82 },
@@ -13,7 +13,7 @@ const arbiter = new Arbiter({
   ]
 });
 
-console.log(await arbiter.execute({
+console.log(await router.execute({
   capability: "web.search",
   input: { query: "latest lithium carbonate prices" },
   policy: { maxSpendUsdc: "0.05", minimumQuality: 0.8 }

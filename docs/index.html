@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Arbiter — Bounded economic purchasing and capability routing for autonomous agents, enforced by Stellar Soroban smart accounts.">
-  <title>ARBITER // Economic Control Plane for Autonomous Agents</title>
+  <meta name="description" content="EcoRouter — Bounded economic purchasing and deterministic capability routing for autonomous agents on Stellar.">
+  <title>ECOROUTER // Deterministic Capability Routing for Autonomous Agents</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,9 +14,9 @@
   <!-- Top Terminal Navigation -->
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="#" aria-label="Arbiter Home">
+      <a class="brand" href="#" aria-label="EcoRouter Home">
         <span class="brand-glyph">[▲]</span>
-        <span>ARBITER.SYS</span>
+        <span>ECOROUTER.SYS</span>
         <span class="brand-tag">v0.1.0</span>
       </a>
 
@@ -58,10 +58,10 @@
           <div class="hero-left">
             <h1>
               YOUR AGENT CHOOSES.
-              <span class="accent">THE CONTRACT LIMITS.</span>
+              <span class="accent">THE CONTRACT SETS THE LIMITS.</span>
             </h1>
             <p class="hero-lede">
-              A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. Arbiter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact USDC payment—while a Soroban smart account strictly enforces your spending mandate.
+              A local TypeScript SDK for autonomous software. Instead of hardcoding API vendors, your agent asks for capabilities like <code>web.search</code>. EcoRouter challenges providers via HTTP 402, picks the lowest economic cost, and coordinates exact atomic USDC payment—while a Soroban smart account strictly enforces your spending mandate on Stellar.
             </p>
 
             <div class="hero-actions">
@@ -82,36 +82,36 @@
 
           <!-- Hero Terminal Visual / ASCII Mascot Area -->
           <div class="hero-right">
-            <div class="terminal-card" role="region" aria-label="Arbiter live routing telemetry monitor">
+            <div class="terminal-card" role="region" aria-label="EcoRouter live routing telemetry monitor">
               <div class="terminal-header">
                 <div class="terminal-header-title">
                   <span class="dot">●</span>
-                  <span>ARBITER_ROUTER // TELEMETRY</span>
+                  <span>ECOROUTER_ENGINE // TELEMETRY</span>
                 </div>
                 <div class="terminal-header-actions">[_] [口] [X]</div>
               </div>
               <div class="terminal-body">
                 <pre class="hero-terminal-pre" aria-label="Terminal telemetry ASCII graphic">
 <span class="hl-amber">+-----------------------------------------------+</span>
-<span class="hl-amber">|</span>  <span class="hl-cream">[▲] ARBITER AUTONOMOUS ROUTER v0.1</span>           <span class="hl-amber">|</span>
+<span class="hl-amber">|</span>  <span class="hl-cream">[▲] ECOROUTER AUTONOMOUS ENGINE v0.1.0</span>       <span class="hl-amber">|</span>
 <span class="hl-amber">+-----------------------------------------------+</span>
- <span class="hl-dim">AGENT PROMPT:</span> <span class="hl-cream">"find spot lithium carbonate prices"</span>
+ <span class="hl-dim">AGENT PROMPT:</span> <span class="hl-cream">"spot lithium carbonate prices"</span>
  <span class="hl-dim">CAPABILITY:</span>   <span class="hl-amber">web.search</span>
  <span class="hl-dim">MANDATE CAP:</span>  <span class="hl-cream">0.05 USDC</span>  <span class="hl-green">[ALLOWANCE OK]</span>
 -------------------------------------------------
  <span class="hl-dim">DISCOVERING HTTP 402 PROVIDERS...</span>
- <span class="hl-green">[OK]</span> provider-alpha  :: 20,000 uUSDC (Q: 0.94)
- <span class="hl-green">[OK]</span> provider-beta   :: 45,000 uUSDC (Q: 0.88)
+ <span class="hl-green">[OK]</span> search-alpha    :: 20,000 uUSDC (Q: 0.94)
+ <span class="hl-green">[OK]</span> search-beta     :: 45,000 uUSDC (Q: 0.88)
 -------------------------------------------------
- <span class="hl-dim">DETERMINISTIC COST FORMULA:</span>
+ <span class="hl-dim">DETERMINISTIC ECONOMIC SELECTION:</span>
  <span class="hl-cream">cost = priceAtomic / (qualityScore × successRate)</span>
 
- <span class="hl-amber">> WINNER:</span> <span class="hl-cream">provider-alpha</span> (eff_cost: 21,276)
- <span class="hl-amber">> AUTH:</span>   Soroban __check_auth <span class="hl-green">PASSED</span>
- <span class="hl-amber">> SETTLE:</span> tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
- <span class="hl-amber">> BUDGET:</span> [■■■■■■■■■■■■■■□□] 92% remaining
+ <span class="hl-amber">> WINNER:</span>  <span class="hl-cream">search-alpha</span> (eff_cost: 21,276)
+ <span class="hl-amber">> AUTH:</span>    Soroban __check_auth <span class="hl-green">PASSED</span>
+ <span class="hl-amber">> SETTLE:</span>  tx_b47d...9cbe <span class="hl-green">[CONFIRMED]</span>
+ <span class="hl-amber">> BUDGET:</span>  [■■■■■■■■■■■■■■□□] 92% remaining
 -------------------------------------------------
- <span class="hl-dim">STATUS:</span> <span class="hl-green">NORMALIZED_RESULT_READY</span><span class="cursor" aria-hidden="true"></span></pre>
+ <span class="hl-dim">STATUS:</span> <span class="hl-green">VERIFIED_RESULT_READY</span><span class="cursor" aria-hidden="true"></span></pre>
               </div>
             </div>
           </div>
@@ -126,15 +126,15 @@
           <p class="section-eyebrow">// 01_INITIALIZATION</p>
           <h2 class="section-title">INSTALL & RUN IN SECONDS</h2>
           <p class="section-subtitle">
-            Private keys remain in your process. There is no Arbiter server, database, account system, remote registry, or custodial wallet.
+            Private keys remain in your process. There is no EcoRouter server, database, account system, remote registry, or custodial wallet.
           </p>
         </div>
 
         <!-- Terminal Command Box -->
-        <div class="install-command-bar">
+        <div class="install-command-bar" id="installBar" title="Click to copy install command" style="cursor: pointer;">
           <div class="install-prefix">$</div>
           <div class="install-code">
-            <span id="installCmd">pnpm add @arbiter-ai/sdk</span>
+            <span id="installCmd">pnpm add ecorouter</span>
           </div>
           <button class="copy-btn" id="copyBtn" aria-label="Copy install command to clipboard">
             <span class="copy-icon">📋</span>
@@ -144,22 +144,22 @@
 
         <!-- Four Step Sequence -->
         <div class="steps-sequence" role="tablist" aria-label="Execution steps">
-          <div class="step-item active" id="step1">
+          <div class="step-item active" id="step1" style="cursor: pointer;">
             <span class="step-num">[01]</span>
             <span class="step-label">INSTALL</span>
             <span class="step-desc">Add local TypeScript SDK</span>
           </div>
-          <div class="step-item" id="step2">
+          <div class="step-item" id="step2" style="cursor: pointer;">
             <span class="step-num">[02]</span>
             <span class="step-label">MANDATE</span>
             <span class="step-desc">Deploy Soroban smart account</span>
           </div>
-          <div class="step-item" id="step3">
+          <div class="step-item" id="step3" style="cursor: pointer;">
             <span class="step-num">[03]</span>
             <span class="step-label">CHALLENGE</span>
             <span class="step-desc">Concurrent x402 discovery</span>
           </div>
-          <div class="step-item" id="step4">
+          <div class="step-item" id="step4" style="cursor: pointer;">
             <span class="step-num">[04]</span>
             <span class="step-label">SETTLE</span>
             <span class="step-desc">Exact atomic USDC transfer</span>
@@ -171,17 +171,21 @@
           <div class="terminal-header">
             <div class="terminal-header-title">
               <span class="dot">●</span>
-              <span>examples/search-agent.ts</span>
+              <span id="codeFilename">examples/search-agent.ts</span>
             </div>
-            <div class="terminal-header-actions">[TypeScript]</div>
+            <div class="terminal-header-actions">
+              <button class="copy-btn" id="copySnippetBtn" aria-label="Copy code snippet" style="border: 0; padding: 0; font-size: 11px;">
+                <span class="copy-text">COPY_CODE</span>
+              </button>
+            </div>
           </div>
-          <pre><code><span class="kw">import</span> { Arbiter } <span class="kw">from</span> <span class="str">"@arbiter-ai/sdk"</span>;
+          <pre id="codePre"><code><span class="kw">import</span> { EcoRouter } <span class="kw">from</span> <span class="str">"ecorouter"</span>;
 
 <span class="comm">// 1. Initialize local routing runtime</span>
-<span class="kw">const</span> arbiter = <span class="kw">new</span> <span class="prop">Arbiter</span>({
-  <span class="prop">account</span>: process.env.ARBITER_ACCOUNT!,         <span class="comm">// Soroban smart account</span>
-  <span class="prop">sessionSecret</span>: process.env.ARBITER_SESSION_KEY!, <span class="comm">// Ed25519 session secret</span>
-  <span class="prop">paymentClient</span>: localStellarClient,             <span class="comm">// Injected Testnet signer</span>
+<span class="kw">const</span> router = <span class="kw">new</span> <span class="prop">EcoRouter</span>({
+  <span class="prop">account</span>: process.env.ECOROUTER_ACCOUNT!,         <span class="comm">// Soroban smart account</span>
+  <span class="prop">sessionSecret</span>: process.env.ECOROUTER_SESSION_KEY!, <span class="comm">// Ed25519 session secret</span>
+  <span class="prop">paymentClient</span>: localStellarClient,               <span class="comm">// Injected Testnet signer</span>
   <span class="prop">providers</span>: [
     { <span class="prop">id</span>: <span class="str">"search-a"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://a.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.94</span> },
     { <span class="prop">id</span>: <span class="str">"search-b"</span>, <span class="prop">capability</span>: <span class="str">"web.search"</span>, <span class="prop">endpoint</span>: <span class="str">"https://b.example/search"</span>, <span class="prop">qualityScore</span>: <span class="num">0.82</span> }
@@ -189,7 +193,7 @@
 });
 
 <span class="comm">// 2. Execute capability request bounded by policy</span>
-<span class="kw">const</span> response = <span class="kw">await</span> arbiter.<span class="prop">execute</span>({
+<span class="kw">const</span> response = <span class="kw">await</span> router.<span class="prop">execute</span>({
   <span class="prop">executionId</span>: <span class="str">"query-"</span> + Date.<span class="prop">now</span>(),
   <span class="prop">capability</span>: <span class="str">"web.search"</span>,
   <span class="prop">input</span>: { <span class="prop">query</span>: <span class="str">"latest lithium carbonate prices"</span> },
@@ -197,7 +201,7 @@
 });
 
 console.<span class="prop">log</span>(response.<span class="prop">output</span>.<span class="prop">results</span>);          <span class="comm">// Strict normalized search results</span>
-console.<span class="prop">log</span>(response.<span class="prop">decision</span>.<span class="prop">providerId</span>);      <span class="comm">// Winning provider</span>
+console.<span class="prop">log</span>(response.<span class="prop">decision</span>.<span class="prop">providerId</span>);      <span class="comm">// Winning provider ID</span>
 console.<span class="prop">log</span>(response.<span class="prop">payment</span>.<span class="prop">transactionHash</span>); <span class="comm">// Stellar Testnet receipt</span></code></pre>
         </div>
       </div>
@@ -223,7 +227,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
             </div>
             <h3>Zero Hosted Control Plane</h3>
             <p>
-              Private keys, signing material, and routing decisions remain completely inside the developer's process. There is no Arbiter telemetry server, custodial wallet, database, or subscription gateway.
+              Private keys, signing material, and routing decisions remain completely inside the developer's process. There is no EcoRouter telemetry server, custodial wallet, database, or subscription gateway.
             </p>
           </article>
 
@@ -235,7 +239,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
             </div>
             <h3>Deterministic Economic Cost</h3>
             <p>
-              Arbiter never consults an LLM to select vendors. Providers are ranked strictly by <code>priceAtomic / (qualityScore × successRate)</code> using exact integer arithmetic, resolving ties by lexical ID.
+              EcoRouter never consults an LLM to select vendors. Providers are ranked strictly by <code>priceAtomic / (qualityScore × successRate)</code> using exact integer arithmetic, resolving ties by lexical ID.
             </p>
           </article>
 
@@ -305,13 +309,13 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
                 <span class="provider-tag">[02/CONTRACT]</span>
                 <span class="provider-badge">RUST / SOROBAN</span>
               </div>
-              <h3>ArbiterAccount Contract</h3>
+              <h3>EcoRouterAccount Contract</h3>
               <p>
                 Enforces spending mandates on-chain. Limits session signers to exactly one token transfer per authorized invocation.
               </p>
             </div>
             <div class="provider-card-code">
-              contracts/arbiter-account<br>
+              contracts/ecorouter-account<br>
               cargo build --target wasm32v1-none<br>
               total_limit: 50_000_000 (50 USDC)<br>
               max_payment: 500_000 (0.50 USDC)
@@ -355,7 +359,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
           <div class="flow-step">
             <span class="flow-index">01</span>
             <span class="flow-name">DISCOVERY_CHALLENGE</span>
-            <span class="flow-desc">Arbiter sends an unpaid probe to configured providers; candidates return HTTP 402 headers with signed price requirements.</span>
+            <span class="flow-desc">EcoRouter sends an unpaid probe to configured providers; candidates return HTTP 402 headers with signed price requirements.</span>
             <span class="flow-status">[CONCURRENT]</span>
           </div>
           <div class="flow-step">
@@ -394,7 +398,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
         <div class="footer-brand">
           <div class="brand">
             <span class="brand-glyph">[▲]</span>
-            <span>ARBITER_OS</span>
+            <span>ECOROUTER_OS</span>
           </div>
           <p>
             Autonomous capability routing and economic control plane for AI agents on Stellar. Built with Apache-2.0 open-source standards.
@@ -406,7 +410,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
             <h4>DEVELOPMENT</h4>
             <a href="https://github.com/fozagtx/Routes" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
             <a href="https://github.com/fozagtx/Routes/tree/main/packages/sdk" target="_blank" rel="noopener noreferrer">TypeScript SDK</a>
-            <a href="https://github.com/fozagtx/Routes/tree/main/contracts/arbiter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a>
+            <a href="https://github.com/fozagtx/Routes/tree/main/contracts/ecorouter-account" target="_blank" rel="noopener noreferrer">Soroban Contract</a>
             <a href="#quickstart">Quickstart Guide</a>
           </div>
           <div class="footer-col">
@@ -420,7 +424,7 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       </div>
 
       <div class="footer-bottom">
-        <p>2026 ARBITER CONTRIBUTORS. DISTRIBUTED UNDER APACHE-2.0 LICENSE.</p>
+        <p>2026 ECOROUTER CONTRIBUTORS. DISTRIBUTED UNDER APACHE-2.0 LICENSE.</p>
         <div class="footer-meta">
           <span>MADE WITH</span>
           <span>█</span>
@@ -432,35 +436,49 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
 
   <!-- Interactive Terminal Scripts -->
   <script>
-    // Copy Command to Clipboard
+    // Copy helper function
+    async function copyToClipboard(text, btnElement, successText = 'COPIED!') {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (btnElement) {
+        btnElement.classList.add('copied');
+        const textSpan = btnElement.querySelector('.copy-text');
+        const originalText = textSpan ? textSpan.textContent : btnElement.textContent;
+        if (textSpan) textSpan.textContent = successText;
+        else btnElement.textContent = successText;
+        setTimeout(() => {
+          btnElement.classList.remove('copied');
+          if (textSpan) textSpan.textContent = originalText;
+          else btnElement.textContent = originalText;
+        }, 2000);
+      }
+    }
+
+    // Install command bar copy
+    const installBar = document.getElementById('installBar');
     const copyBtn = document.getElementById('copyBtn');
     const installCmd = document.getElementById('installCmd');
-    if (copyBtn && installCmd) {
-      copyBtn.addEventListener('click', async () => {
-        const text = installCmd.innerText.trim();
-        try {
-          await navigator.clipboard.writeText(text);
-          copyBtn.classList.add('copied');
-          copyBtn.querySelector('.copy-text').textContent = 'COPIED!';
-          setTimeout(() => {
-            copyBtn.classList.remove('copied');
-            copyBtn.querySelector('.copy-text').textContent = 'COPY_CMD';
-          }, 2000);
-        } catch (err) {
-          // Fallback
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          copyBtn.classList.add('copied');
-          copyBtn.querySelector('.copy-text').textContent = 'COPIED!';
-          setTimeout(() => {
-            copyBtn.classList.remove('copied');
-            copyBtn.querySelector('.copy-text').textContent = 'COPY_CMD';
-          }, 2000);
-        }
+    if (installBar && installCmd) {
+      installBar.addEventListener('click', (e) => {
+        copyToClipboard(installCmd.innerText.trim(), copyBtn);
+      });
+    }
+
+    // Code snippet copy button
+    const copySnippetBtn = document.getElementById('copySnippetBtn');
+    const codePre = document.getElementById('codePre');
+    if (copySnippetBtn && codePre) {
+      copySnippetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyToClipboard(codePre.innerText.trim(), copySnippetBtn);
       });
     }
 
@@ -484,11 +502,17 @@ console.<span class="prop">log</span>(response.<span class="prop">payment</span>
       });
     }
 
-    // Step Switcher Highlight
-    const steps = document.querySelectorAll('.step-item');
-    steps.forEach(step => {
+    // Step Switcher
+    const steps = [
+      document.getElementById('step1'),
+      document.getElementById('step2'),
+      document.getElementById('step3'),
+      document.getElementById('step4')
+    ];
+    steps.forEach((step, idx) => {
+      if (!step) return;
       step.addEventListener('click', () => {
-        steps.forEach(s => s.classList.remove('active'));
+        steps.forEach(s => s && s.classList.remove('active'));
         step.classList.add('active');
       });
     });

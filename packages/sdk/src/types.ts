@@ -44,14 +44,15 @@ export interface PaymentClient {
   }): Promise<{ payment: SignedPayment; receipt: SettlementReceipt; remainingAtomic: bigint }>;
 }
 
-export interface ArbiterConfig {
+export interface EcoRouterConfig {
   account: string;
   sessionSecret: string;
   providers: ProviderConfig[];
-  /** Stellar/x402 transport. Kept local; secrets are never sent to Arbiter. */
+  /** Stellar/x402 transport. Kept local; secrets are never sent to EcoRouter. */
   paymentClient: PaymentClient;
   fetch?: typeof globalThis.fetch;
 }
+export type ArbiterConfig = EcoRouterConfig;
 
 export interface ExecuteRequest {
   executionId?: string;
@@ -60,7 +61,7 @@ export interface ExecuteRequest {
   policy: { maxSpendUsdc: string; minimumQuality: number };
 }
 
-export interface ArbiterExecutionResult {
+export interface EcoRouterExecutionResult {
   executionId: string;
   output: WebSearchResult;
   decision: {
@@ -70,3 +71,4 @@ export interface ArbiterExecutionResult {
   payment: { network: "stellar:testnet"; asset: "USDC"; transactionHash: string };
   mandate: { remainingUsdc: string };
 }
+export type ArbiterExecutionResult = EcoRouterExecutionResult;

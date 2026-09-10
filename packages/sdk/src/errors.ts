@@ -1,14 +1,17 @@
-export type ArbiterErrorCode =
+export type EcoRouterErrorCode =
   | "NO_ELIGIBLE_PROVIDER" | "INVALID_PAYMENT_CHALLENGE" | "POLICY_EXCEEDED"
   | "MANDATE_EXCEEDED" | "MANDATE_EXPIRED" | "MANDATE_REVOKED"
   | "PAYMENT_AUTHORIZATION_ERROR" | "PAYMENT_SETTLEMENT_ERROR"
   | "PAYMENT_SETTLEMENT_UNKNOWN" | "PROVIDER_EXECUTION_ERROR" | "PROVIDER_RESPONSE_ERROR";
+export type ArbiterErrorCode = EcoRouterErrorCode;
 
-export class ArbiterError extends Error {
-  constructor(public readonly code: ArbiterErrorCode, message: string, public readonly executionId?: string) {
+export class EcoRouterError extends Error {
+  constructor(public readonly code: EcoRouterErrorCode, message: string, public readonly executionId?: string) {
     super(message); this.name = new.target.name;
   }
 }
+export const ArbiterError = EcoRouterError;
+export type ArbiterError = EcoRouterError;
 const createError = (name: string, code: ArbiterErrorCode, defaultMessage: string) => {
   const cls = class extends ArbiterError {
     constructor(message = defaultMessage, executionId?: string) {

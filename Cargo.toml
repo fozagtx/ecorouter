@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["contracts/arbiter-account"]
+members = ["contracts/ecorouter-account"]
 
 [workspace.package]
 edition = "2021"

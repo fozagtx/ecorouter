@@ -1,5 +1,5 @@
 {
-  "name": "@arbiter-ai/sdk",
+  "name": "ecorouter",
   "version": "0.1.0",
   "description": "Local capability routing and Stellar x402 orchestration for autonomous agents",
   "type": "module",

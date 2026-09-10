@@ -7,7 +7,8 @@ use soroban_sdk::{
 };
 
 #[contract]
-pub struct ArbiterAccount;
+pub struct EcoRouterAccount;
+pub type ArbiterAccount = EcoRouterAccount;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -54,7 +55,7 @@ pub enum AccountError {
 }
 
 #[contractimpl]
-impl ArbiterAccount {
+impl EcoRouterAccount {
     pub fn initialize(env: Env, owner: Address) -> Result<(), AccountError> {
         owner.require_auth();
         if env.storage().instance().has(&DataKey::Owner) {
@@ -240,8 +241,8 @@ mod test {
     fn test_initialize() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register(ArbiterAccount, ());
-        let client = ArbiterAccountClient::new(&env, &contract_id);
+        let contract_id = env.register(EcoRouterAccount, ());
+        let client = EcoRouterAccountClient::new(&env, &contract_id);
 
         let owner = Address::generate(&env);
         client.initialize(&owner);
@@ -256,8 +257,8 @@ mod test {
     #[should_panic]
     fn test_initialize_requires_auth() {
         let env = Env::default();
-        let contract_id = env.register(ArbiterAccount, ());
-        let client = ArbiterAccountClient::new(&env, &contract_id);
+        let contract_id = env.register(EcoRouterAccount, ());
+        let client = EcoRouterAccountClient::new(&env, &contract_id);
         let owner = Address::generate(&env);
         client.initialize(&owner);
     }

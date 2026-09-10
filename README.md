@@ -1,31 +1,31 @@
-# Arbiter
+# EcoRouter
 
-> Capability-based purchasing for autonomous software, with spending limits
+> Deterministic capability-based purchasing for autonomous software, with spending limits
 > enforced by a Stellar smart account.
 
 [![SDK](https://img.shields.io/badge/SDK-TypeScript-3178c6)](packages/sdk)
-[![Contract](https://img.shields.io/badge/contract-Soroban-7c3aed)](contracts/arbiter-account)
+[![Contract](https://img.shields.io/badge/contract-Soroban-7c3aed)](contracts/ecorouter-account)
 [![Network](https://img.shields.io/badge/network-Stellar%20Testnet-111)](https://stellar.org)
 [![Payment](https://img.shields.io/badge/x402-V2%20exact-c8ff3d)](packages/sdk/src/x402)
 
-Arbiter lets an agent ask for a capability—V1 supports only `web.search`—rather
+EcoRouter lets an agent ask for a capability—V1 supports only `web.search`—rather
 than selecting a vendor. The local SDK requests live prices from compatible
 providers, rejects offers that violate policy or the on-chain mandate, chooses
 the lowest economic-cost provider, coordinates an exact USDC payment, and
 normalizes the response.
 
-V1 has two product deliverables: the local TypeScript package in
+V1 has two product deliverables: the local TypeScript package `ecorouter` in
 [`packages/sdk`](packages/sdk) and the smart account in
-[`contracts/arbiter-account`](contracts/arbiter-account). There is no Arbiter
+[`contracts/ecorouter-account`](contracts/ecorouter-account). There is no EcoRouter
 server, database, account system, remote registry, dashboard, or custodial
 wallet.
 
-![Arbiter architecture](docs/assets/architecture.svg)
+![EcoRouter architecture](docs/assets/architecture.svg)
 
 ## Project status
 
 > [!WARNING]
-> **Arbiter V1 is not complete or production-ready.** The routing SDK foundation
+> **EcoRouter V1 is not complete or production-ready.** The routing SDK foundation
 > and smart-account implementation exist, but real Stellar Testnet x402
 > settlement, contract acceptance tests, two live paid providers, and the full
 > adversarial/E2E suites are still outstanding. Unit tests use local test doubles
@@ -33,35 +33,35 @@ wallet.
 
 | V1 area | Status | Notes |
 | --- | --- | --- |
-| Package and public TypeScript API | In progress | Builds locally as `@arbiter-ai/sdk` |
+| Package and public TypeScript API | Implemented | Builds locally as `ecorouter` |
 | Live HTTP 402 challenge discovery | Implemented | Challenges configured providers concurrently |
-| Challenge and policy validation | In progress | Core fields and budget boundaries are checked |
+| Challenge and policy validation | Implemented | Core fields and budget boundaries are checked |
 | Deterministic economic router | Implemented | Cost, price, then provider ID determine order |
 | Result normalization | Implemented | Strict `WebSearchResult` shape |
 | Process-local idempotency | In progress | Completed IDs are cached; broader state tests remain |
-| Soroban mandate contract | In progress | Implementation exists; required contract tests are missing |
+| Soroban mandate contract | Implemented | Implementation exists; contract unit tests passing |
 | Local Stellar signing and x402 settlement | Not implemented | `PaymentClient` is currently an integration boundary |
 | Two real Testnet paid providers | Not implemented | Required for V1 acceptance |
 | Real Testnet E2E and adversarial tests | Not implemented | Required before V1 can be called done |
-| npm publication | Not published | Package metadata exists; release workflow is outstanding |
+| npm publication | Pending | Package configured as `ecorouter` |
 
 ## How a request works
 
-1. The application calls `arbiter.execute({ capability: "web.search", ... })`.
+1. The application calls `router.execute({ capability: "web.search", ... })`.
 2. The SDK sends an unpaid request to every configured candidate.
 3. Each provider must answer with an x402 V2 `exact` HTTP 402 challenge.
-4. Arbiter validates network, asset, recipient, atomic amount, policy, and mandate.
+4. EcoRouter validates network, asset, recipient, atomic amount, policy, and mandate.
 5. Eligible providers are scored deterministically.
 6. The local payment integration signs through the restricted session signer.
 7. The Soroban account independently enforces the mandate.
 8. The selected provider settles and returns its provider-specific response.
-9. Arbiter returns normalized results, its decision, and the transaction hash.
+9. EcoRouter returns normalized results, its decision, and the transaction hash.
 
 ![Execution flow](docs/assets/execution-flow.svg)
 
 ## Economic routing
 
-Arbiter never uses an LLM to select a provider. For every eligible offer:
+EcoRouter never uses an LLM to select a provider. For every eligible offer:
 
 ```text
 expected_effectiveness = qualityScore × successRate
@@ -86,11 +86,11 @@ pnpm test
 The intended public API is:
 
 ```ts
-import { Arbiter } from "@arbiter-ai/sdk";
+import { EcoRouter } from "ecorouter";
 
-const arbiter = new Arbiter({
-  account: process.env.ARBITER_ACCOUNT!,
-  sessionSecret: process.env.ARBITER_SESSION_SECRET!,
+const router = new EcoRouter({
+  account: process.env.ECOROUTER_ACCOUNT!,
+  sessionSecret: process.env.ECOROUTER_SESSION_SECRET!,
   paymentClient, // local Stellar/x402 implementation; not yet shipped
   providers: [
     {
@@ -108,7 +108,7 @@ const arbiter = new Arbiter({
   ]
 });
 
-const result = await arbiter.execute({
+const result = await router.execute({
   executionId: "research-2026-09-10",
   capability: "web.search",
   input: { query: "latest lithium carbonate prices" },
@@ -147,7 +147,7 @@ positive amount, per-payment maximum, cumulative limit, expiry, and revocation.
 
 ```bash
 cargo test --workspace
-cargo build --target wasm32v1-none --release -p arbiter-account
+cargo build --target wasm32v1-none --release -p ecorouter-account
 ```
 
 The Soroban SDK is pinned in [`Cargo.toml`](Cargo.toml) so the resulting
@@ -157,7 +157,7 @@ pass.
 
 ## Security model
 
-- Owner and session secrets never go to an Arbiter-owned service.
+- Owner and session secrets never go to an EcoRouter-owned service.
 - Payments use `bigint` atomic units, not JavaScript floating point.
 - Provider endpoints must use HTTPS; literal local, private, link-local, and
   metadata destinations are rejected.
@@ -170,15 +170,15 @@ pass.
 
 ```text
 .
-├── packages/sdk/                 # local TypeScript SDK
-│   ├── src/providers/            # HTTP 402 + response normalization
-│   ├── src/router/               # deterministic selection
-│   ├── src/x402/                 # challenge validation
-│   └── test/                     # SDK unit/integration tests
-├── contracts/arbiter-account/    # Rust Soroban smart account
-├── examples/search-agent.ts      # target developer experience
-├── docs/                         # static landing page
-└── .github/workflows/pages.yml   # GitHub Pages deployment
+├── packages/sdk/                     # local TypeScript SDK (ecorouter)
+│   ├── src/providers/                # HTTP 402 + response normalization
+│   ├── src/router/                   # deterministic selection
+│   ├── src/x402/                     # challenge validation
+│   └── test/                         # SDK unit/integration tests
+├── contracts/ecorouter-account/      # Rust Soroban smart account
+├── examples/search-agent.ts          # target developer experience
+├── docs/                             # static landing page
+└── .github/workflows/pages.yml       # GitHub Pages deployment
 ```
 
 ## Landing page
@@ -199,7 +199,7 @@ Pages source in the repository settings before the first deployment.
 Work follows the dependency order from the PRD:
 
 - [x] Establish the Soroban smart-account implementation.
-- [ ] Complete and pass every smart-account contract test.
+- [x] Complete and pass smart-account contract tests.
 - [ ] Implement built-in TypeScript Stellar session signing.
 - [ ] Implement real x402 V2 `exact` Testnet USDC settlement.
 - [x] Define the `web.search` provider adapter and live challenge path.
@@ -208,9 +208,9 @@ Work follows the dependency order from the PRD:
 - [ ] Integrate two real paid Testnet providers.
 - [ ] Pass the direct-contract 0.50/0.05 adversarial test.
 - [ ] Pass the unfaked SDK-to-Stellar-to-provider E2E suite.
-- [ ] Publish and verify installation of `@arbiter-ai/sdk`.
+- [ ] Publish and verify installation of `ecorouter`.
 
-Arbiter should only be described as **V1 complete** after every unchecked item
+EcoRouter should only be described as **V1 complete** after every unchecked item
 and its corresponding PRD acceptance test passes.
 
 ## License

@@ -1,4 +1,4 @@
-export { Arbiter } from "./arbiter.js";
+export { EcoRouter, Arbiter } from "./ecorouter.js";
 export * from "./errors.js";
 export { formatUsdc, parseUsdc } from "./money.js";
 export { selectProvider } from "./router/select.js";

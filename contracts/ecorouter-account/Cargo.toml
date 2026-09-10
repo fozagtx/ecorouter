@@ -1,6 +1,6 @@
 [package]
-name = "arbiter-account"
-description = "Restricted Stellar contract account for Arbiter agent mandates"
+name = "ecorouter-account"
+description = "Restricted Stellar contract account for EcoRouter agent mandates"
 edition.workspace = true
 license.workspace = true
 version.workspace = true

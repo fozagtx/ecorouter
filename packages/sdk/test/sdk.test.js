@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { Arbiter, formatUsdc, parseUsdc, selectProvider, validateChallenge } from "../dist/index.js";
+import { Arbiter, EcoRouter, formatUsdc, parseUsdc, selectProvider, validateChallenge } from "../dist/index.js";
+
+test("EcoRouter and Arbiter export identity", () => {
+  assert.equal(EcoRouter, Arbiter);
+});
 
 test("money uses exact USDC atomic units", () => {
   assert.equal(parseUsdc("0.05"), 500000n);
