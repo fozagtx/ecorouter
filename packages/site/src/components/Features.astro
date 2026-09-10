@@ -1,242 +1,81 @@
 ---
 ---
 
-<section id="capabilities" class="py-20 md:py-28 relative">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-24">
-    <!-- Section Header -->
-    <div class="text-center max-w-3xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f0] border border-black/8 text-xs font-mono text-[#606056] mb-4 shadow-sm">
-        <span>CORE ARCHITECTURE</span>
+<section id="features" class="py-16 md:py-20 relative">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-16">
+    <!-- 3 Core Technical Primitives -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- 1 -->
+      <div class="p-6 rounded-xl border border-black/8 bg-white shadow-xs space-y-3">
+        <div class="w-8 h-8 rounded-lg bg-[#d25611]/10 text-[#d25611] flex items-center justify-center font-mono font-bold text-xs">
+          01
+        </div>
+        <h3 class="text-base font-bold text-[#0c0c09]">Parallel 402 Probes</h3>
+        <p class="text-xs text-[#606056] leading-relaxed">
+          Instead of committing blindly to one vendor, EcoRouter pings multiple capability providers simultaneously to inspect live payment challenges and latency.
+        </p>
       </div>
-      <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#0c0c09] mb-4">
-        Built for autonomous agents that spend real money.
-      </h2>
-      <p class="text-base sm:text-lg text-[#606056]">
-        Traditional API keys grant infinite spending power to hallucinating LLMs. EcoRouter introduces cryptographically bounded capability routing with deterministic micro-settlements.
-      </p>
-    </div>
 
-    <!-- Feature 1: Deterministic Economic Limits (Gold backdrop) -->
-    <div class="rounded-2xl border border-black/8 backdrop-gold p-6 sm:p-10 lg:p-12 overflow-hidden relative group shadow-sm">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-6 space-y-4">
-          <div class="inline-flex items-center gap-2 text-xs font-mono text-[#d25611] font-semibold tracking-wider uppercase">
-            <span>01 / Deterministic Limits</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
-            Cryptographic Spending Mandates. No Runaway Bills.
-          </h3>
-          <p class="text-sm sm:text-base text-[#606056] leading-relaxed">
-            Assign your agent a signed Ed25519 mandate specifying strict bounds: lifetime spend cap, maximum per-call fee, expiry timestamp, and allowed capability tags. If an agent loops or gets hijacked, the router hard-halts further calls before spending an extra cent.
-          </p>
-          <ul class="space-y-2 text-xs sm:text-sm font-mono text-[#606056] pt-2">
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Enforces per-hop micro-caps (e.g. $0.005 max per query)
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Pre-signed session budgets verifiable on-chain
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Automatic circuit breakers on latency or rate anomalies
-            </li>
-          </ul>
+      <!-- 2 -->
+      <div class="p-6 rounded-xl border border-black/8 bg-white shadow-xs space-y-3">
+        <div class="w-8 h-8 rounded-lg bg-[#d25611]/10 text-[#d25611] flex items-center justify-center font-mono font-bold text-xs">
+          02
         </div>
+        <h3 class="text-base font-bold text-[#0c0c09]">Hard Spend Limits</h3>
+        <p class="text-xs text-[#606056] leading-relaxed">
+          Set <code class="text-[#0c0c09] font-mono bg-black/5 px-1 py-0.5 rounded">maxSpendUsdc</code> on every execution. Any provider quoting above your policy threshold is immediately rejected.
+        </p>
+      </div>
 
-        <div class="lg:col-span-6">
-          <div class="rounded-xl border border-black/10 bg-[#161611] p-4 font-mono text-xs shadow-xl">
-            <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-white/50 text-[11px]">
-              <span>mandate.config.json</span>
-              <span class="text-emerald-400">ED25519-SIGNED</span>
-            </div>
-            <pre class="text-[#abab9c] leading-relaxed overflow-x-auto"><code>&#123;
-  <span class="text-[#d25611]">"agentId"</span>: <span class="text-emerald-300">"research-agent-01"</span>,
-  <span class="text-[#d25611]">"budget"</span>: &#123;
-    <span class="text-[#d25611]">"maxSessionCostUSDC"</span>: <span class="text-amber-300">"5.00"</span>,
-    <span class="text-[#d25611]">"maxPerHopUSDC"</span>: <span class="text-amber-300">"0.01"</span>,
-    <span class="text-[#d25611]">"expiresAt"</span>: <span class="text-white/80">1760000000</span>
-  &#125;,
-  <span class="text-[#d25611]">"allowedCapabilities"</span>: [
-    <span class="text-emerald-300">"web-crawl"</span>,
-    <span class="text-emerald-300">"code-sandbox"</span>
-  ],
-  <span class="text-[#d25611]">"circuitBreaker"</span>: &#123;
-    <span class="text-[#d25611]">"maxConsecutiveErrors"</span>: <span class="text-amber-300">3</span>,
-    <span class="text-[#d25611]">"cooldownSec"</span>: <span class="text-amber-300">30</span>
-  &#125;
-&#125;</code></pre>
-          </div>
+      <!-- 3 -->
+      <div class="p-6 rounded-xl border border-black/8 bg-white shadow-xs space-y-3">
+        <div class="w-8 h-8 rounded-lg bg-[#d25611]/10 text-[#d25611] flex items-center justify-center font-mono font-bold text-xs">
+          03
         </div>
+        <h3 class="text-base font-bold text-[#0c0c09]">Local &amp; Idempotent</h3>
+        <p class="text-xs text-[#606056] leading-relaxed">
+          Runs directly in your application runtime. Every request takes an optional <code class="text-[#0c0c09] font-mono bg-black/5 px-1 py-0.5 rounded">executionId</code> to guarantee safe idempotent retries.
+        </p>
       </div>
     </div>
 
-    <!-- Feature 2: x402 V2 Protocol (Dunes backdrop) -->
-    <div id="x402-protocol" class="rounded-2xl border border-black/8 backdrop-dunes p-6 sm:p-10 lg:p-12 overflow-hidden relative group shadow-sm">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-6 lg:order-2 space-y-4">
-          <div class="inline-flex items-center gap-2 text-xs font-mono text-[#d25611] font-semibold tracking-wider uppercase">
-            <span>02 / x402 V2 Protocol</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
-            Native Machine-to-Machine Settlement.
-          </h3>
-          <p class="text-sm sm:text-base text-[#606056] leading-relaxed">
-            When your agent calls an external capability, the provider responds with <code class="text-[#0c0c09] font-mono bg-black/5 px-1.5 py-0.5 rounded border border-black/5">HTTP 402 Payment Required</code>. EcoRouter verifies the invoice against the active mandate, attaches the payment preimage, and retries the request seamlessly in under 60ms.
-          </p>
-          <ul class="space-y-2 text-xs sm:text-sm font-mono text-[#606056] pt-2">
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> No credit card signups, no API subscriptions, no monthly minimums
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Multi-chain settlement: Base, Solana, Arbitrum, Lightning
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Cryptographic proof of receipt attached to execution payload
-            </li>
-          </ul>
-        </div>
-
-        <div class="lg:col-span-6 lg:order-1">
-          <div class="rounded-xl border border-black/10 bg-[#161611] p-4 font-mono text-xs shadow-xl">
-            <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-white/50 text-[11px]">
-              <span>HTTP / x402 Handshake</span>
-              <span class="text-amber-400">402 ➔ 200 OK</span>
-            </div>
-            <div class="space-y-3 text-[11px]">
-              <div class="p-2 rounded bg-black/40 border border-white/5">
-                <span class="text-white/40"># 1. Agent queries capability</span><br/>
-                <span class="text-emerald-400">GET</span> /v1/crawl?url=https://docs.ai
-              </div>
-              <div class="p-2 rounded bg-black/40 border border-amber-500/20">
-                <span class="text-amber-400 font-bold">HTTP/1.1 402 Payment Required</span><br/>
-                <span class="text-[#abab9c]">X-Payment-Amount: 0.0012 USDC</span><br/>
-                <span class="text-[#abab9c]">X-Payment-Address: 0x892a...f910</span>
-              </div>
-              <div class="p-2 rounded bg-black/40 border border-emerald-500/20">
-                <span class="text-white/40"># 2. EcoRouter attaches preimage</span><br/>
-                <span class="text-emerald-400">GET</span> /v1/crawl?url=https://docs.ai<br/>
-                <span class="text-emerald-300">X-Payment-Signature: 0x5a18...bc41</span><br/>
-                <span class="text-emerald-400 font-bold">HTTP/1.1 200 OK (Clean Markdown Payload)</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Quickstart Code Section -->
+    <div id="quickstart" class="rounded-xl border border-black/8 bg-white shadow-md overflow-hidden font-mono">
+      <div class="h-10 px-4 bg-[#f4f4f0] border-b border-black/8 flex items-center justify-between text-xs">
+        <span class="font-medium text-[#0c0c09]">quickstart.ts</span>
+        <button
+          onclick="copyText(`import { EcoRouter } from 'ecorouter';\n\nconst router = new EcoRouter({\n  account: process.env.STELLAR_ACCOUNT,\n  sessionSecret: process.env.SESSION_SECRET,\n  providers: [\n    { id: 'tavily', capability: 'web-search', endpoint: 'https://api.tavily.com/x402', qualityScore: 0.95 },\n    { id: 'brave', capability: 'web-search', endpoint: 'https://api.brave.com/x402', qualityScore: 0.90 }\n  ]\n});\n\nconst result = await router.execute({\n  capability: 'web-search',\n  input: { query: 'latest open source agents' },\n  policy: { maxSpendUsdc: '0.01', minimumQuality: 0.85 }\n});\n\nconsole.log(result.data, result.spentUsdc);`)"
+          class="text-[#606056] hover:text-[#0c0c09] text-[11px] flex items-center gap-1.5 transition-colors"
+        >
+          <span>Copy snippet</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
       </div>
-    </div>
 
-    <!-- Feature 3: Multi-Provider Arbitrage (Forest backdrop) -->
-    <div id="architecture" class="rounded-2xl border border-black/8 backdrop-forest p-6 sm:p-10 lg:p-12 overflow-hidden relative group shadow-sm">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-6 space-y-4">
-          <div class="inline-flex items-center gap-2 text-xs font-mono text-[#d25611] font-semibold tracking-wider uppercase">
-            <span>03 / Dynamic Arbitrage</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
-            Instant Arbitrage Across Capability Providers.
-          </h3>
-          <p class="text-sm sm:text-base text-[#606056] leading-relaxed">
-            Never depend on a single fragile API vendor. Declare the capability requirement, and EcoRouter routes dynamically to the fastest and cheapest provider based on real-time SLA metrics, network health, and active prices.
-          </p>
-          <ul class="space-y-2 text-xs sm:text-sm font-mono text-[#606056] pt-2">
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Automatic fallback if a provider goes down or times out
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Latency-optimized scoring with active health pinging
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="text-emerald-600 font-bold">✓</span> Zero vendor lock-in — switch providers with zero code change
-            </li>
-          </ul>
-        </div>
+      <div class="p-4 sm:p-6 bg-[#141410] text-[#abab9c] text-xs leading-relaxed overflow-x-auto">
+        <pre><code><span class="text-purple-400">import</span> &#123; EcoRouter &#125; <span class="text-purple-400">from</span> <span class="text-emerald-300">"ecorouter"</span>;
 
-        <div class="lg:col-span-6">
-          <div class="rounded-xl border border-black/10 bg-[#161611] p-4 font-mono text-xs shadow-xl space-y-2.5">
-            <div class="flex items-center justify-between pb-3 border-b border-white/10 text-white/50 text-[11px]">
-              <span>Capability: "deep-web-search"</span>
-              <span class="text-emerald-400">3 Candidates</span>
-            </div>
-
-            <div class="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
-              <div>
-                <div class="text-[#fbfbf9] font-bold flex items-center gap-2">
-                  <span>Provider Alpha (Tavily Direct)</span>
-                  <span class="text-[10px] text-emerald-400 uppercase bg-emerald-400/20 px-1 rounded">Optimal</span>
-                </div>
-                <span class="text-[#abab9c] text-[11px]">Latency: 42ms • Cost: $0.0008 • SLA: 99.9%</span>
-              </div>
-              <span class="text-emerald-400 text-xs font-bold">ROUTED</span>
-            </div>
-
-            <div class="p-2.5 rounded bg-white/5 border border-white/5 flex items-center justify-between opacity-70">
-              <div>
-                <div class="text-[#fbfbf9] font-semibold">Provider Beta (Brave Search)</div>
-                <span class="text-[#abab9c] text-[11px]">Latency: 94ms • Cost: $0.0015 • SLA: 99.4%</span>
-              </div>
-              <span class="text-white/40 text-xs">STANDBY</span>
-            </div>
-
-            <div class="p-2.5 rounded bg-white/5 border border-white/5 flex items-center justify-between opacity-50">
-              <div>
-                <div class="text-[#fbfbf9] font-semibold">Provider Gamma (SerpAPI)</div>
-                <span class="text-[#abab9c] text-[11px]">Latency: 280ms • Cost: $0.0030 • SLA: 98.1%</span>
-              </div>
-              <span class="text-white/40 text-xs">STANDBY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 4: Drop-in SDK (Twilight backdrop) -->
-    <div class="rounded-2xl border border-black/8 backdrop-twilight p-6 sm:p-10 lg:p-12 overflow-hidden relative group shadow-sm">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-6 lg:order-2 space-y-4">
-          <div class="inline-flex items-center gap-2 text-xs font-mono text-[#d25611] font-semibold tracking-wider uppercase">
-            <span>04 / Developer Experience</span>
-          </div>
-          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
-            3 Lines of Code to Supercharge Any Agent.
-          </h3>
-          <p class="text-sm sm:text-base text-[#606056] leading-relaxed">
-            Integrate EcoRouter into your existing LangChain, CrewAI, AutoGPT, or raw OpenAI agent in minutes. Wrap your standard fetch or use our typed SDK client.
-          </p>
-          <div class="pt-2">
-            <button
-              onclick="copyText(`import { EcoRouter } from 'ecorouter';\n\nconst router = new EcoRouter({ mandateKey: process.env.ROUTER_KEY });\nconst result = await router.execute('web-crawl', { url: 'https://example.com' });`)"
-              class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono bg-white hover:bg-[#fafaf7] text-[#0c0c09] border border-black/10 transition-colors shadow-xs"
-            >
-              <span>Copy TypeScript snippet</span>
-              <svg class="w-3.5 h-3.5 text-[#606056]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="lg:col-span-6 lg:order-1">
-          <div class="rounded-xl border border-black/10 bg-[#161611] p-4 font-mono text-xs shadow-xl">
-            <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-white/50 text-[11px]">
-              <span>agent.ts</span>
-              <span class="text-[#d25611]">TypeScript</span>
-            </div>
-            <pre class="text-[#abab9c] leading-relaxed overflow-x-auto"><code><span class="text-purple-400">import</span> &#123; EcoRouter &#125; <span class="text-purple-400">from</span> <span class="text-emerald-300">'ecorouter'</span>;
-
-<span class="text-white/40">// 1. Initialize with agent mandate</span>
+<span class="text-white/40">// Configure router with payment credentials and redundant providers</span>
 <span class="text-purple-400">const</span> router = <span class="text-purple-400">new</span> <span class="text-amber-300">EcoRouter</span>(&#123;
-  privateKey: process.env.<span class="text-[#fbfbf9]">MANDATE_SECRET</span>,
-  maxPerHop: <span class="text-amber-300">0.01</span> <span class="text-white/40">// $0.01 max</span>
+  account: process.env.<span class="text-[#fbfbf9]">STELLAR_ACCOUNT</span>,
+  sessionSecret: process.env.<span class="text-[#fbfbf9]">SESSION_SECRET</span>,
+  providers: [
+    &#123; id: <span class="text-emerald-300">"tavily"</span>, capability: <span class="text-emerald-300">"web-search"</span>, endpoint: <span class="text-emerald-300">"https://api.tavily.com/x402"</span>, qualityScore: <span class="text-amber-300">0.95</span> &#125;,
+    &#123; id: <span class="text-emerald-300">"brave"</span>, capability: <span class="text-emerald-300">"web-search"</span>, endpoint: <span class="text-emerald-300">"https://api.brave.com/x402"</span>, qualityScore: <span class="text-amber-300">0.90</span> &#125;
+  ]
 &#125;);
 
-<span class="text-white/40">// 2. Execute capability without vendor API keys</span>
-<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> router.<span class="text-blue-400">execute</span>(<span class="text-emerald-300">'web-crawl'</span>, &#123;
-  url: <span class="text-emerald-300">'https://ecorouter.dev'</span>,
-  extract: <span class="text-emerald-300">'markdown'</span>
+<span class="text-white/40">// Route capability with strict policy bounds</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> router.<span class="text-blue-400">execute</span>(&#123;
+  capability: <span class="text-emerald-300">"web-search"</span>,
+  input: &#123; query: <span class="text-emerald-300">"latest open source agent protocols"</span> &#125;,
+  policy: &#123; maxSpendUsdc: <span class="text-amber-300">"0.01"</span>, minimumQuality: <span class="text-amber-300">0.85</span> &#125;
 &#125;);
 
-console.<span class="text-blue-400">log</span>(result.data); <span class="text-white/40">// Clean output</span></code></pre>
-          </div>
-        </div>
+console.<span class="text-blue-400">log</span>(result.providerId, result.spentUsdc, result.data);</code></pre>
       </div>
     </div>
   </div>

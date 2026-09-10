@@ -4,25 +4,24 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <header class="sticky top-0 z-50 w-full h-14 bg-white/90 backdrop-blur-md border-b border-black/8 transition-colors">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
     <!-- Left: Brand Logo & Pill -->
     <div class="flex items-center gap-3">
       <a href={`${basePath}/`} class="flex items-center gap-2.5 group">
-        <div class="w-7 h-7 rounded-inner bg-[#d25611] flex items-center justify-center text-white shadow-sm shadow-[#d25611]/25 group-hover:scale-105 transition-transform">
+        <div class="w-7 h-7 rounded-inner bg-[#d25611] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
           <Logo class="w-4 h-4 text-white" />
         </div>
         <span class="font-bold text-base tracking-tight text-[#0c0c09] group-hover:text-black transition-colors">EcoRouter</span>
       </a>
       <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-[#f4f4f0] text-[#606056] border border-black/8">
-        v0.9.4
+        v0.1.0
       </span>
     </div>
 
     <!-- Center: Desktop Nav -->
-    <nav class="hidden md:flex items-center gap-6 text-sm text-[#606056]">
-      <a href="#capabilities" class="hover:text-[#0c0c09] transition-colors">Capabilities</a>
-      <a href="#architecture" class="hover:text-[#0c0c09] transition-colors">Architecture</a>
-      <a href="#x402-protocol" class="hover:text-[#0c0c09] transition-colors">x402 V2 Protocol</a>
+    <nav class="hidden md:flex items-center gap-6 text-xs font-mono text-[#606056]">
+      <a href="#features" class="hover:text-[#0c0c09] transition-colors">How it works</a>
+      <a href="#quickstart" class="hover:text-[#0c0c09] transition-colors">Quickstart</a>
       <a href="#simulator" class="hover:text-[#0c0c09] transition-colors">Simulator</a>
       <a href="#faq" class="hover:text-[#0c0c09] transition-colors">FAQ</a>
     </nav>
@@ -43,7 +42,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
       <button
         onclick="copyText('pnpm add ecorouter')"
-        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#0c0c09] text-white hover:bg-[#20201a] active:scale-95 transition-all shadow-sm"
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#0c0c09] text-white hover:bg-[#20201a] active:scale-95 transition-all shadow-xs"
         title="Copy install command"
       >
         <span>$ pnpm add ecorouter</span>

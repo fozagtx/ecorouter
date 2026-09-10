@@ -1,70 +1,62 @@
 ---
 ---
 
-<section class="relative pt-20 pb-16 md:pt-28 md:pb-24 overflow-hidden">
-  <!-- Subtle top radial glow -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[680px] h-[340px] bg-[#d25611]/8 blur-[130px] pointer-events-none rounded-full"></div>
+<section class="relative pt-16 pb-12 md:pt-24 md:pb-16 overflow-hidden">
+  <!-- Subtle top glow -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[540px] h-[240px] bg-[#d25611]/6 blur-[120px] pointer-events-none rounded-full"></div>
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
-    <!-- Eyebrow Pill -->
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f0] border border-black/8 text-xs font-mono text-[#606056] mb-6 shadow-sm">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#d25611] animate-pulse"></span>
-      <span class="text-[#0c0c09] font-medium">EcoRouter v0.9</span>
-      <span class="text-black/20">|</span>
-      <span>Declarative Capability Routing for Autonomous AI Agents</span>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
+    <!-- Eyebrow -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f0] border border-black/8 text-xs font-mono text-[#606056] mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#d25611]"></span>
+      <span>v0.1.0 • TypeScript SDK</span>
     </div>
 
-    <!-- Giant Headline with tight tracking -->
-    <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#0c0c09] leading-[1.04] mb-6 max-w-4xl mx-auto">
-      Stop hardcoding vendor APIs.<br />
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0c0c09] via-[#3d3d35] to-[#606056]">
-        Start routing real capabilities.
-      </span>
+    <!-- Punchy Headline -->
+    <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#0c0c09] leading-[1.08] mb-5">
+      Smart capability routing &amp; x402 payments for AI agents.
     </h1>
 
-    <!-- Subtitle -->
-    <p class="text-base sm:text-lg md:text-xl text-[#606056] max-w-2xl mx-auto leading-relaxed mb-10 font-normal">
-      The open-source capability router for autonomous AI agents. Probe payment requirements over <span class="text-[#0c0c09] font-mono font-medium">x402 V2</span>, enforce cryptographic spending mandates, and arbitrate providers by cost and latency without handing agents raw API keys or credit cards.
+    <!-- Direct Subtitle -->
+    <p class="text-base sm:text-lg text-[#606056] max-w-2xl mx-auto leading-relaxed mb-8">
+      Challenge multiple providers over HTTP 402, enforce strict per-request spend limits, and route to the lowest-cost endpoint. Open source, local runtime, zero vendor lock-in.
     </p>
 
     <!-- CTAs -->
-    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
       <a
-        href="#capabilities"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-[#0c0c09] text-white hover:bg-[#20201a] hover:shadow-md hover:shadow-black/10 active:scale-95 transition-all"
+        href="#quickstart"
+        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-[#0c0c09] text-white hover:bg-[#20201a] active:scale-95 transition-all shadow-xs"
       >
-        <span>Explore Capabilities</span>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <span>Quickstart</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
       </a>
 
       <button
         onclick="copyText('pnpm add ecorouter')"
-        class="inline-flex items-center gap-3 px-5 py-3 rounded-full text-xs sm:text-sm font-mono bg-[#f4f4f0] hover:bg-[#eaeae5] text-[#0c0c09] border border-black/8 hover:border-black/15 active:scale-95 transition-all group shadow-sm"
+        class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full text-xs sm:text-sm font-mono bg-[#f4f4f0] hover:bg-[#eaeae5] text-[#0c0c09] border border-black/8 active:scale-95 transition-all group"
       >
         <span class="text-[#d25611] font-bold">$</span>
         <span>pnpm add ecorouter</span>
-        <svg class="w-4 h-4 text-[#606056] group-hover:text-[#0c0c09] transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-3.5 h-3.5 text-[#606056] group-hover:text-[#0c0c09]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
       </button>
     </div>
 
-    <!-- Micro-badges / Specs -->
-    <div class="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs font-mono text-[#606056]">
-      <span class="inline-flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        Apache 2.0 Open Source
+    <!-- 3 Specs -->
+    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono text-[#606056]">
+      <span class="flex items-center gap-1.5">
+        <span class="text-emerald-600">✓</span> HTTP 402 price discovery
       </span>
-      <span class="inline-flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        Zero Cloud Lock-in
+      <span class="flex items-center gap-1.5">
+        <span class="text-emerald-600">✓</span> Deterministic spend policies
       </span>
-      <span class="inline-flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        x402 V2 Protocol Ready
+      <span class="flex items-center gap-1.5">
+        <span class="text-emerald-600">✓</span> In-process local execution
       </span>
     </div>
   </div>

@@ -1,59 +1,42 @@
 ---
 const faqs = [
   {
-    q: "What is EcoRouter and why can't I just use standard API keys?",
-    a: "Standard API keys have no spending bounds or cryptographic isolation; if an autonomous agent enters an infinite retry loop or hallucinates malicious tool calls, it can drain thousands of dollars in minutes. EcoRouter introduces a declarative routing layer: your agent only requests abstract capabilities (e.g. 'web-crawl', 'python-sandbox'), while EcoRouter enforces signed per-hop budget mandates, arbitrates the cheapest/fastest provider, and settles payments autonomously via x402 V2."
+    q: "What is EcoRouter?",
+    a: "EcoRouter is an open-source TypeScript SDK that handles capability discovery, provider arbitrage, and x402 payment settlement directly in your application process."
   },
   {
-    q: "How does the x402 V2 protocol work under the hood?",
-    a: "When EcoRouter dispatches a capability request, an x402-compliant service responds with 'HTTP 402 Payment Required' along with payment terms (price, recipient address, and accepted tokens). EcoRouter validates these terms against the agent's pre-signed mandate, constructs an atomic payment proof or preimage, attaches it to the request header, and retries. The entire cycle finishes in under 60 milliseconds."
+    q: "How does provider selection work?",
+    a: "When you call execute(), EcoRouter queries all registered providers for that capability in parallel, checks their 402 challenge terms against your spending policy, and selects the optimal provider based on price and quality."
   },
   {
-    q: "What payment rails, tokens, and networks are supported?",
-    a: "EcoRouter natively supports micro-settlements on Base (USDC), Solana (USDC), Arbitrum, and Lightning Network. You can also run EcoRouter in zero-crypto 'Internal Credit Mode' using standard JWT quotas or team debit balances for enterprise environments."
+    q: "Is there a centralized server or proxy?",
+    a: "No. EcoRouter runs locally inside your agent runtime. Your credentials, policies, and requests never pass through third-party servers."
   },
   {
-    q: "How do budget mandates protect against prompt injection or hijacked agents?",
-    a: "Budget mandates are signed using Ed25519 cryptographic keys prior to execution. Even if an attacker completely hijacks an agent's prompt, the router kernel verifies the cryptographic budget envelope on every outbound hop. The agent cannot spend more than its assigned per-hop limit or total session cap, and cannot invoke capabilities outside its whitelist."
-  },
-  {
-    q: "Does EcoRouter replace Model Context Protocol (MCP) or work with it?",
-    a: "EcoRouter works directly with MCP! Think of MCP as the standardized interface definition for tools and capabilities, while EcoRouter is the economic and routing runtime that sits between your agent and the MCP server. You can wrap any MCP server with EcoRouter to instantly monetize it or enforce spending controls."
-  },
-  {
-    q: "Can I self-host EcoRouter in our VPC or air-gapped infrastructure?",
-    a: "Yes. EcoRouter is 100% open source under Apache 2.0. You can run the lightweight daemon locally, as a sidecar container in Kubernetes, or embed it directly into your Node.js or Python backend using our zero-dependency SDK."
+    q: "How does it prevent overspending?",
+    a: "Every execution accepts a maxSpendUsdc policy. If all providers quote above your maximum limit, EcoRouter aborts the call with a NoEligibleProviderError before making any payment."
   }
 ];
 ---
 
-<section id="faq" class="py-20 md:py-28 relative bg-[#fafaf7] border-t border-black/8">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6">
-    <div class="text-center max-w-2xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/8 text-xs font-mono text-[#606056] mb-3 shadow-xs">
-        <span>KNOWLEDGE BASE</span>
-      </div>
-      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0c0c09] mb-3">
-        Frequently Asked Questions
+<section id="faq" class="py-16 md:py-20 relative bg-[#fafaf7] border-t border-black/8">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <div class="mb-10 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
+        FAQ
       </h2>
-      <p class="text-sm sm:text-base text-[#606056]">
-        Everything you need to know about declarative capability routing and autonomous settlement.
-      </p>
     </div>
 
-    <!-- Accordion List -->
     <div class="space-y-3">
-      {faqs.map((item, idx) => (
-        <details class="group rounded-xl border border-black/8 bg-white overflow-hidden transition-colors hover:border-black/20 shadow-xs">
-          <summary class="p-5 sm:p-6 flex items-center justify-between cursor-pointer list-none select-none">
-            <span class="text-base font-medium text-[#0c0c09] group-open:text-[#d25611] pr-4 transition-colors">
-              {item.q}
-            </span>
-            <span class="w-6 h-6 rounded-full bg-black/5 flex items-center justify-center text-xs font-mono text-[#606056] group-hover:text-[#0c0c09] group-open:rotate-45 transition-transform duration-200 shrink-0">
+      {faqs.map((item) => (
+        <details class="group rounded-xl border border-black/8 bg-white overflow-hidden transition-colors hover:border-black/20 shadow-2xs">
+          <summary class="p-4 sm:p-5 flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0c0c09] group-open:text-[#d25611]">
+            <span>{item.q}</span>
+            <span class="w-5 h-5 rounded-full bg-black/5 flex items-center justify-center text-xs font-mono text-[#606056] group-hover:text-[#0c0c09] group-open:rotate-45 transition-transform duration-200 shrink-0">
               ＋
             </span>
           </summary>
-          <div class="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-[#606056] leading-relaxed border-t border-black/5 pt-4">
+          <div class="px-4 pb-5 sm:px-5 sm:pb-5 text-xs text-[#606056] leading-relaxed border-t border-black/5 pt-3">
             {item.a}
           </div>
         </details>
