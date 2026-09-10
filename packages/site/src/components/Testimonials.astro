@@ -42,31 +42,31 @@ const reviews = [
 <section class="py-20 md:py-28 relative">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-2xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1d1d16] border border-white/10 text-xs font-mono text-[#abab9c] mb-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f0] border border-black/8 text-xs font-mono text-[#606056] mb-3 shadow-xs">
         <span>FIELD VALIDATION</span>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#fbfbf9] mb-3">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0c0c09] mb-3">
         Engineered for teams building autonomous AI agents.
       </h2>
-      <p class="text-sm sm:text-base text-[#abab9c]">
+      <p class="text-sm sm:text-base text-[#606056]">
         How autonomous engineering teams eliminate vendor lock-in and cap LLM spending risks.
       </p>
     </div>
 
     <!-- 1px Hairline Grid -->
-    <div class="rounded-2xl border border-white/10 bg-white/10 overflow-hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px">
+    <div class="rounded-2xl border border-black/8 bg-black/8 overflow-hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px shadow-sm">
       {reviews.map((r) => (
-        <div class="bg-[#14140f] p-6 sm:p-8 flex flex-col justify-between hover:bg-[#181812] transition-colors">
-          <p class="text-sm text-[#abab9c] leading-relaxed mb-6 font-normal">
+        <div class="bg-white p-6 sm:p-8 flex flex-col justify-between hover:bg-[#fafaf7] transition-colors">
+          <p class="text-sm text-[#4a4a40] leading-relaxed mb-6 font-normal">
             "{r.quote}"
           </p>
-          <div class="pt-4 border-t border-white/5 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#1d1d16] border border-white/10 flex items-center justify-center font-mono font-bold text-xs text-[#d25611]">
+          <div class="pt-4 border-t border-black/6 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[#f4f4f0] border border-black/8 flex items-center justify-center font-mono font-bold text-xs text-[#d25611]">
               {r.author[0]}
             </div>
             <div>
-              <div class="text-xs font-semibold text-[#fbfbf9]">{r.author}</div>
-              <div class="text-[11px] font-mono text-[#abab9c]">{r.role} • {r.company}</div>
+              <div class="text-xs font-semibold text-[#0c0c09]">{r.author}</div>
+              <div class="text-[11px] font-mono text-[#606056]">{r.role} • {r.company}</div>
             </div>
           </div>
         </div>

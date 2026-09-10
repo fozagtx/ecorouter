@@ -2,25 +2,25 @@
 ---
 
 <div class="max-w-6xl mx-auto px-4 sm:px-6 -mt-4 mb-20 relative z-20">
-  <div class="rounded-xl border border-white/10 bg-[#161611] shadow-2xl overflow-hidden backdrop-blur-md">
+  <div class="rounded-xl border border-black/10 bg-white shadow-2xl overflow-hidden">
     <!-- Window Title Bar with Traffic Lights -->
-    <div class="h-10 px-4 bg-[#14140f] border-b border-white/10 flex items-center justify-between">
+    <div class="h-10 px-4 bg-[#f4f4f0] border-b border-black/8 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block border border-black/20"></span>
-        <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block border border-black/20"></span>
-        <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block border border-black/20"></span>
-        <span class="ml-2 text-xs font-mono text-[#abab9c] hidden sm:inline-block">
+        <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block border border-black/10"></span>
+        <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block border border-black/10"></span>
+        <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block border border-black/10"></span>
+        <span class="ml-2 text-xs font-mono text-[#606056] hidden sm:inline-block">
           ecorouter-daemon — 4 active agents — session: #ec-8821
         </span>
       </div>
 
       <div class="flex items-center gap-3 text-xs font-mono">
-        <div class="flex items-center gap-1.5 text-emerald-400">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <div class="flex items-center gap-1.5 text-emerald-600 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           <span>Engine Online</span>
         </div>
-        <div class="hidden md:inline-flex items-center px-2 py-0.5 rounded bg-white/5 text-[#abab9c] border border-white/5">
-          Latency: <span class="text-[#fbfbf9] ml-1">14ms</span>
+        <div class="hidden md:inline-flex items-center px-2 py-0.5 rounded bg-black/5 text-[#606056] border border-black/5">
+          Latency: <span class="text-[#0c0c09] ml-1 font-semibold">14ms</span>
         </div>
       </div>
     </div>
@@ -28,129 +28,129 @@
     <!-- Main Workspace: 3 Columns -->
     <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[440px] text-xs font-mono">
       <!-- Left Column: Agents & Mandates (3 cols) -->
-      <div class="lg:col-span-3 bg-[#14140f]/60 border-b lg:border-b-0 lg:border-r border-white/10 p-4 flex flex-col justify-between">
+      <div class="lg:col-span-3 bg-[#fafaf7] border-b lg:border-b-0 lg:border-r border-black/8 p-4 flex flex-col justify-between">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-[#abab9c] font-semibold mb-3 flex items-center justify-between">
+          <div class="text-[11px] uppercase tracking-wider text-[#606056] font-semibold mb-3 flex items-center justify-between">
             <span>Agent Mandates</span>
-            <span class="text-white/40">USDC / Base</span>
+            <span class="text-black/40">USDC / Base</span>
           </div>
 
           <!-- Pool Card -->
-          <div class="bg-[#1d1d16] border border-white/10 rounded-lg p-3 mb-4">
+          <div class="bg-white border border-black/8 rounded-lg p-3 mb-4 shadow-sm">
             <div class="flex justify-between items-baseline mb-1">
-              <span class="text-[#abab9c]">Remaining Pool</span>
-              <span class="text-sm font-bold text-emerald-400">$42.80</span>
+              <span class="text-[#606056]">Remaining Pool</span>
+              <span class="text-sm font-bold text-emerald-600">$42.80</span>
             </div>
-            <div class="w-full bg-[#0c0c09] rounded-full h-1.5 mb-2 overflow-hidden">
+            <div class="w-full bg-[#f4f4f0] rounded-full h-1.5 mb-2 overflow-hidden">
               <div class="bg-gradient-to-r from-emerald-500 to-[#d25611] h-full rounded-full" style="width: 28%"></div>
             </div>
-            <div class="flex justify-between text-[10px] text-[#abab9c]">
+            <div class="flex justify-between text-[10px] text-[#606056]">
               <span>Cap: $60.00</span>
               <span>Spent: $17.20</span>
             </div>
           </div>
 
           <!-- Active Agents List -->
-          <div class="text-[11px] uppercase tracking-wider text-[#abab9c] font-semibold mb-2">
+          <div class="text-[11px] uppercase tracking-wider text-[#606056] font-semibold mb-2">
             Active Agents (4)
           </div>
           <div class="space-y-1.5">
-            <div class="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 text-[#fbfbf9]">
+            <div class="flex items-center justify-between p-2 rounded bg-white border border-black/8 text-[#0c0c09] shadow-xs">
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span class="truncate">research-agent-01</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="truncate font-medium">research-agent-01</span>
               </div>
-              <span class="text-[10px] text-[#d25611] font-medium">x402</span>
+              <span class="text-[10px] text-[#d25611] font-semibold">x402</span>
             </div>
 
-            <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] hover:bg-white/5 border border-transparent text-[#abab9c]">
+            <div class="flex items-center justify-between p-2 rounded bg-black/[0.02] hover:bg-white border border-transparent hover:border-black/8 text-[#606056] transition-colors">
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span class="truncate">code-sandbox-agent</span>
               </div>
-              <span class="text-[10px] text-white/40">idle</span>
+              <span class="text-[10px] text-black/40">idle</span>
             </div>
 
-            <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] hover:bg-white/5 border border-transparent text-[#abab9c]">
+            <div class="flex items-center justify-between p-2 rounded bg-black/[0.02] hover:bg-white border border-transparent hover:border-black/8 text-[#606056] transition-colors">
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                 <span class="truncate">solana-indexer-bot</span>
               </div>
-              <span class="text-[10px] text-amber-400">probe</span>
+              <span class="text-[10px] text-amber-600 font-medium">probe</span>
             </div>
 
-            <div class="flex items-center justify-between p-2 rounded bg-white/[0.02] hover:bg-white/5 border border-transparent text-[#abab9c]">
+            <div class="flex items-center justify-between p-2 rounded bg-black/[0.02] hover:bg-white border border-transparent hover:border-black/8 text-[#606056] transition-colors">
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                 <span class="truncate">vision-agent-04</span>
               </div>
-              <span class="text-[10px] text-blue-400">settling</span>
+              <span class="text-[10px] text-blue-600 font-medium">settling</span>
             </div>
           </div>
         </div>
 
-        <div class="pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-[#abab9c]">
+        <div class="pt-4 border-t border-black/8 flex items-center justify-between text-[11px] text-[#606056]">
           <span>Security Mandate</span>
-          <span class="text-emerald-400 font-semibold">ED25519-OK</span>
+          <span class="text-emerald-600 font-semibold">ED25519-OK</span>
         </div>
       </div>
 
       <!-- Middle Column: Dynamic Execution Pipeline (6 cols) -->
-      <div class="lg:col-span-6 p-4 sm:p-5 flex flex-col justify-between bg-[#161611]">
+      <div class="lg:col-span-6 p-4 sm:p-5 flex flex-col justify-between bg-white">
         <div>
-          <div class="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-black/8">
             <div class="flex items-center gap-2">
-              <span class="text-[#fbfbf9] font-semibold">Execution Flow:</span>
-              <span class="px-2 py-0.5 rounded bg-[#d25611]/15 text-[#d25611] font-mono text-[11px] border border-[#d25611]/30">
+              <span class="text-[#0c0c09] font-semibold">Execution Flow:</span>
+              <span class="px-2 py-0.5 rounded bg-[#d25611]/10 text-[#d25611] font-mono text-[11px] border border-[#d25611]/20 font-medium">
                 capability:brave-deep-crawl
               </span>
             </div>
-            <span class="text-[11px] text-[#abab9c]">hop_budget: &lt;$0.005</span>
+            <span class="text-[11px] text-[#606056]">hop_budget: &lt;$0.005</span>
           </div>
 
           <!-- Step Cards -->
           <div class="space-y-2.5">
             <!-- Step 1 -->
-            <div class="p-3 rounded-lg bg-[#1d1d16] border border-white/10 flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">1</div>
+            <div class="p-3 rounded-lg bg-[#fafaf7] border border-black/8 flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-[10px] font-bold text-[#0c0c09] shrink-0 mt-0.5">1</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-[#fbfbf9]">Probe 402 Negotiator</span>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">HTTP 402 Recv</span>
+                  <span class="font-semibold text-[#0c0c09]">Probe 402 Negotiator</span>
+                  <span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-medium">HTTP 402 Recv</span>
                 </div>
-                <div class="text-[11px] text-[#abab9c] truncate">
-                  Endpoint demanded <span class="text-[#fbfbf9]">$0.0012 USDC</span> via x402-v2 headers.
+                <div class="text-[11px] text-[#606056] truncate">
+                  Endpoint demanded <span class="text-[#0c0c09] font-medium">$0.0012 USDC</span> via x402-v2 headers.
                 </div>
               </div>
             </div>
 
             <!-- Step 2 -->
-            <div class="p-3 rounded-lg bg-[#1d1d16] border border-white/10 flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-[#d25611]/20 text-[#d25611] border border-[#d25611]/40 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</div>
+            <div class="p-3 rounded-lg bg-[#fafaf7] border border-black/8 flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-[#d25611]/15 text-[#d25611] border border-[#d25611]/30 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-[#fbfbf9]">Cryptographic Mandate Check</span>
-                  <span class="text-[10px] text-emerald-400">PASSED</span>
+                  <span class="font-semibold text-[#0c0c09]">Cryptographic Mandate Check</span>
+                  <span class="text-[10px] text-emerald-600 font-semibold">PASSED</span>
                 </div>
-                <div class="text-[11px] text-[#abab9c]">
+                <div class="text-[11px] text-[#606056]">
                   Requested $0.0012 &le; Max Hop Budget $0.0050. Mandate signature valid.
                 </div>
               </div>
             </div>
 
             <!-- Step 3 -->
-            <div class="p-3 rounded-lg bg-[#1d1d16] border border-white/10 flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">3</div>
+            <div class="p-3 rounded-lg bg-[#fafaf7] border border-black/8 flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-[10px] font-bold text-[#0c0c09] shrink-0 mt-0.5">3</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-[#fbfbf9]">Dynamic Provider Arbitrage</span>
-                  <span class="text-[10px] text-[#abab9c]">Selected Provider A</span>
+                  <span class="font-semibold text-[#0c0c09]">Dynamic Provider Arbitrage</span>
+                  <span class="text-[10px] text-[#606056]">Selected Provider Alpha</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-[10px] mt-1 text-[#abab9c]">
-                  <div class="bg-black/30 p-1.5 rounded border border-emerald-500/30 text-emerald-300">
+                <div class="grid grid-cols-2 gap-2 text-[10px] mt-1 text-[#606056]">
+                  <div class="bg-white p-1.5 rounded border border-emerald-300 text-emerald-800 font-medium shadow-2xs">
                     Provider A: 48ms • $0.0012 ✓
                   </div>
-                  <div class="bg-black/30 p-1.5 rounded border border-white/5">
+                  <div class="bg-[#f4f4f0] p-1.5 rounded border border-black/5 opacity-80">
                     Provider B: 122ms • $0.0025 ✗
                   </div>
                 </div>
@@ -158,14 +158,14 @@
             </div>
 
             <!-- Step 4 -->
-            <div class="p-3 rounded-lg bg-[#1d1d16] border border-emerald-500/30 bg-emerald-500/[0.02] flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">4</div>
+            <div class="p-3 rounded-lg bg-emerald-50/60 border border-emerald-300/80 flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">4</div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="font-semibold text-emerald-300">Atomic x402 Settlement</span>
-                  <span class="text-[10px] text-emerald-400 font-bold">200 OK (52ms)</span>
+                  <span class="font-semibold text-emerald-900">Atomic x402 Settlement</span>
+                  <span class="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">200 OK (52ms)</span>
                 </div>
-                <div class="text-[11px] text-[#abab9c] truncate">
+                <div class="text-[11px] text-[#606056] truncate">
                   Payment preimage attached. 1,420 tokens streamed back to agent.
                 </div>
               </div>
@@ -173,53 +173,53 @@
           </div>
         </div>
 
-        <div class="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-[#abab9c]">
-          <span>Total Cycle: <strong class="text-[#fbfbf9]">52ms</strong></span>
-          <span>Settled: <strong class="text-emerald-400">0.0012 USDC</strong></span>
+        <div class="pt-3 border-t border-black/8 flex items-center justify-between text-[11px] text-[#606056]">
+          <span>Total Cycle: <strong class="text-[#0c0c09]">52ms</strong></span>
+          <span>Settled: <strong class="text-emerald-700 font-bold">0.0012 USDC</strong></span>
         </div>
       </div>
 
       <!-- Right Column: Real-time Telemetry Log (3 cols) -->
-      <div class="lg:col-span-3 bg-[#14140f]/60 border-t lg:border-t-0 lg:border-l border-white/10 p-4 flex flex-col justify-between">
+      <div class="lg:col-span-3 bg-[#fafaf7] border-t lg:border-t-0 lg:border-l border-black/8 p-4 flex flex-col justify-between">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-[#abab9c] font-semibold mb-3 flex items-center justify-between">
+          <div class="text-[11px] uppercase tracking-wider text-[#606056] font-semibold mb-3 flex items-center justify-between">
             <span>Daemon Stream</span>
             <span class="w-1.5 h-1.5 rounded-full bg-[#d25611] animate-ping"></span>
           </div>
 
           <div class="space-y-2 text-[10.5px] leading-snug">
             <div>
-              <span class="text-white/40">14:32:01.102</span>
-              <p class="text-[#abab9c]"><span class="text-emerald-400">INIT</span> agent:crawler-0 connected</p>
+              <span class="text-black/40">14:32:01.102</span>
+              <p class="text-[#606056]"><span class="text-emerald-600 font-medium">INIT</span> agent:research-01 connected</p>
             </div>
             <div>
-              <span class="text-white/40">14:32:01.320</span>
-              <p class="text-[#abab9c]"><span class="text-[#d25611]">PROBE</span> x402 invoice received</p>
+              <span class="text-black/40">14:32:01.320</span>
+              <p class="text-[#606056]"><span class="text-[#d25611] font-medium">PROBE</span> x402 invoice received</p>
             </div>
             <div>
-              <span class="text-white/40">14:32:01.324</span>
-              <p class="text-[#abab9c]"><span class="text-blue-400">MANDATE</span> cap check ok ($0.0012)</p>
+              <span class="text-black/40">14:32:01.324</span>
+              <p class="text-[#606056]"><span class="text-blue-600 font-medium">MANDATE</span> cap check ok ($0.0012)</p>
             </div>
             <div>
-              <span class="text-white/40">14:32:01.332</span>
-              <p class="text-[#abab9c]"><span class="text-purple-400">DISPATCH</span> node_a selected</p>
+              <span class="text-black/40">14:32:01.332</span>
+              <p class="text-[#606056]"><span class="text-purple-600 font-medium">DISPATCH</span> node_a selected</p>
             </div>
             <div>
-              <span class="text-white/40">14:32:01.372</span>
-              <p class="text-[#abab9c]"><span class="text-emerald-400">SETTLE</span> 200 OK payload verified</p>
+              <span class="text-black/40">14:32:01.372</span>
+              <p class="text-[#606056]"><span class="text-emerald-600 font-medium">SETTLE</span> 200 OK payload verified</p>
             </div>
             <div>
-              <span class="text-white/40">14:32:02.010</span>
-              <p class="text-[#abab9c]"><span class="text-emerald-400">BALANCE</span> $42.80 (-$0.0012)</p>
+              <span class="text-black/40">14:32:02.010</span>
+              <p class="text-[#606056]"><span class="text-emerald-600 font-medium">BALANCE</span> $42.80 (-$0.0012)</p>
             </div>
           </div>
         </div>
 
-        <div class="pt-4 border-t border-white/10">
-          <div class="bg-black/40 rounded p-2 text-[10px] text-[#abab9c] flex items-center justify-between">
+        <div class="pt-4 border-t border-black/8">
+          <div class="bg-white rounded p-2 text-[10px] text-[#606056] border border-black/8 flex items-center justify-between shadow-2xs">
             <span>Proof:</span>
-            <span class="text-white/60 truncate max-w-[120px]">0x7f...82e9b1</span>
-            <span class="text-emerald-400">VALID</span>
+            <span class="text-black/70 truncate max-w-[120px]">0x7f...82e9b1</span>
+            <span class="text-emerald-600 font-semibold">VALID</span>
           </div>
         </div>
       </div>

@@ -2,12 +2,12 @@
   <title id="title">EcoRouter architecture</title>
   <desc id="desc">A developer agent calls the local TypeScript SDK, which routes x402 capabilities under strict mandate caps.</desc>
   <style>
-    .bg { fill: #0c0c09; }
-    .box { fill: #161611; stroke: rgba(255, 255, 255, 0.1); stroke-width: 1.5; }
-    .box-active { fill: #1d1d16; stroke: #d25611; stroke-width: 2; }
+    .bg { fill: #fafaf7; stroke: rgba(0, 0, 0, 0.08); stroke-width: 1; }
+    .box { fill: #ffffff; stroke: rgba(0, 0, 0, 0.08); stroke-width: 1.5; }
+    .box-active { fill: #ffffff; stroke: #d25611; stroke-width: 2; }
     .accent { fill: #d25611; }
-    .h { fill: #fbfbf9; font: 700 19px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
-    .p { fill: #abab9c; font: 14px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
+    .h { fill: #0c0c09; font: 700 19px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
+    .p { fill: #606056; font: 14px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
     .arrow { stroke: #d25611; stroke-width: 2.5; fill: none; stroke-dasharray: 4 2; }
     .badge { fill: #d25611; }
     .small { fill: #ffffff; font: 700 11px 'IBM Plex Mono', monospace; letter-spacing: 1px; }

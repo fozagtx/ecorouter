@@ -15,24 +15,24 @@ const integrations = [
 ];
 ---
 
-<section class="py-10 border-y border-white/10 bg-[#0e0e0b] overflow-hidden relative">
+<section class="py-10 border-y border-black/8 bg-[#fafaf7] overflow-hidden relative">
   <div class="max-w-7xl mx-auto px-4 mb-4 text-center">
-    <span class="text-xs font-mono uppercase tracking-widest text-[#abab9c]">
+    <span class="text-xs font-mono uppercase tracking-widest text-[#606056]">
       Interoperable with every leading autonomous agent framework & capability standard
     </span>
   </div>
 
   <div class="relative w-full overflow-hidden flex items-center">
     <!-- Left/Right subtle fade gradients -->
-    <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0e0e0b] to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0e0e0b] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#fafaf7] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#fafaf7] to-transparent z-10 pointer-events-none"></div>
 
     <div class="animate-marquee flex items-center gap-4 py-2">
       {integrations.concat(integrations).map((item) => (
-        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#1d1d16] border border-white/10 text-xs font-mono text-[#fbfbf9] shrink-0 hover:border-white/25 hover:bg-[#2b2b22] transition-colors cursor-default">
+        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-black/8 text-xs font-mono text-[#0c0c09] shrink-0 hover:border-black/20 hover:bg-[#f4f4f0] transition-colors cursor-default shadow-xs">
           <span class="w-2 h-2 rounded-full bg-[#d25611]"></span>
           <span class="font-medium">{item.name}</span>
-          <span class="text-[10px] text-[#abab9c] uppercase bg-black/40 px-1.5 py-0.5 rounded border border-white/5">{item.type}</span>
+          <span class="text-[10px] text-[#606056] uppercase bg-black/5 px-1.5 py-0.5 rounded border border-black/5">{item.type}</span>
         </div>
       ))}
     </div>

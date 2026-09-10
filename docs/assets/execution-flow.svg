@@ -2,12 +2,12 @@
   <title id="title">EcoRouter execution flow</title>
   <desc id="desc">Five steps from capability request to normalized paid result.</desc>
   <style>
-    .bg { fill: #0c0c09; }
-    .line { stroke: rgba(255, 255, 255, 0.1); stroke-width: 2; }
-    .dot { fill: #161611; stroke: #d25611; stroke-width: 2; }
+    .bg { fill: #fafaf7; stroke: rgba(0, 0, 0, 0.08); stroke-width: 1; }
+    .line { stroke: rgba(0, 0, 0, 0.1); stroke-width: 2; }
+    .dot { fill: #ffffff; stroke: #d25611; stroke-width: 2; }
     .n { fill: #d25611; font: 700 13px 'IBM Plex Mono', monospace; }
-    .h { fill: #fbfbf9; font: 700 16px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
-    .p { fill: #abab9c; font: 13px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
+    .h { fill: #0c0c09; font: 700 16px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
+    .p { fill: #606056; font: 13px 'IBM Plex Mono', monospace, -apple-system, sans-serif; }
   </style>
   <rect class="bg" width="1120" height="240" rx="16"/>
   <path class="line" d="M90 70h940"/>

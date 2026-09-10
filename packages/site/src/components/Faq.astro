@@ -27,16 +27,16 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="py-20 md:py-28 relative bg-[#0e0e0b]">
+<section id="faq" class="py-20 md:py-28 relative bg-[#fafaf7] border-t border-black/8">
   <div class="max-w-4xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-2xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1d1d16] border border-white/10 text-xs font-mono text-[#abab9c] mb-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/8 text-xs font-mono text-[#606056] mb-3 shadow-xs">
         <span>KNOWLEDGE BASE</span>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#fbfbf9] mb-3">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0c0c09] mb-3">
         Frequently Asked Questions
       </h2>
-      <p class="text-sm sm:text-base text-[#abab9c]">
+      <p class="text-sm sm:text-base text-[#606056]">
         Everything you need to know about declarative capability routing and autonomous settlement.
       </p>
     </div>
@@ -44,16 +44,16 @@ const faqs = [
     <!-- Accordion List -->
     <div class="space-y-3">
       {faqs.map((item, idx) => (
-        <details class="group rounded-xl border border-white/10 bg-[#161611] overflow-hidden transition-colors hover:border-white/20">
+        <details class="group rounded-xl border border-black/8 bg-white overflow-hidden transition-colors hover:border-black/20 shadow-xs">
           <summary class="p-5 sm:p-6 flex items-center justify-between cursor-pointer list-none select-none">
-            <span class="text-base font-medium text-[#fbfbf9] group-open:text-white pr-4">
+            <span class="text-base font-medium text-[#0c0c09] group-open:text-[#d25611] pr-4 transition-colors">
               {item.q}
             </span>
-            <span class="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs font-mono text-[#abab9c] group-hover:text-white group-open:rotate-45 transition-transform duration-200 shrink-0">
+            <span class="w-6 h-6 rounded-full bg-black/5 flex items-center justify-center text-xs font-mono text-[#606056] group-hover:text-[#0c0c09] group-open:rotate-45 transition-transform duration-200 shrink-0">
               ＋
             </span>
           </summary>
-          <div class="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-[#abab9c] leading-relaxed border-t border-white/5 pt-4">
+          <div class="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-[#606056] leading-relaxed border-t border-black/5 pt-4">
             {item.a}
           </div>
         </details>
