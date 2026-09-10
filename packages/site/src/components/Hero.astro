@@ -1,25 +1,37 @@
 ---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section class="relative pt-20 pb-10 md:pt-24 md:pb-12 bg-technical-grid">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-    <!-- Floating Technical Metadata Eyebrow (No chunky badge) -->
-    <div class="flex items-center justify-center gap-3 text-[11px] font-mono uppercase tracking-[0.2em] text-[#7D7D84] mb-6 select-none">
+<section class="relative pt-24 pb-20 md:pt-32 md:pb-28 bg-[#05070E] overflow-hidden text-white">
+  <!-- Glowing Neon Blue Routing Plates Background -->
+  <div class="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+    <img
+      src={`${basePath}/hero-bg.png`}
+      alt="Hero background with glowing routing plates"
+      class="w-full h-full object-cover object-center opacity-85 scale-105"
+    />
+    <!-- Top subtle vignette and bottom smooth fade to #F6F6F3 -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#05070E]/60 via-transparent to-[#F6F6F3]"></div>
+  </div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <!-- Floating Technical Metadata Eyebrow -->
+    <div class="flex items-center justify-center gap-3 text-[11px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] mb-6 select-none">
       <span>PLATFORM · 01</span>
-      <span class="text-[#D2D2CE]">/</span>
-      <span class="text-[#0B0B0C] font-medium flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 bg-[#725CFF] rounded-[0.5px]"></span>
+      <span class="text-white/20">/</span>
+      <span class="text-white font-medium flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 bg-[#4488FF] rounded-[0.5px] shadow-[0_0_8px_#4488FF]"></span>
         SYSTEM · ACTIVE
       </span>
     </div>
 
     <!-- Dense Modern Grotesk H1 (Geist/Inter, Title Case, Tight Tracking) -->
-    <h1 class="text-[42px] sm:text-[60px] md:text-[68px] lg:text-[74px] font-medium tracking-[-0.045em] text-[#0B0B0C] leading-[0.98] mb-6 max-w-[760px] mx-auto">
+    <h1 class="text-[42px] sm:text-[60px] md:text-[68px] lg:text-[74px] font-medium tracking-[-0.045em] text-white leading-[0.98] mb-6 max-w-[760px] mx-auto drop-shadow-md">
       Budget-bounded<br class="hidden sm:inline" /> capability spending
     </h1>
 
     <!-- Restrained Technical Supporting Copy -->
-    <p class="text-base sm:text-[17px] text-[#55555A] max-w-[580px] mx-auto mb-8 font-normal leading-[1.48]">
+    <p class="text-base sm:text-[17px] text-[#C4D2EC] max-w-[580px] mx-auto mb-8 font-normal leading-[1.48]">
       Enforce hard spend policies across HTTP 402 providers. Compare live quotes in parallel and authorize atomic micro-settlements.
     </p>
 
@@ -27,12 +39,12 @@
     <div class="flex items-center justify-center gap-3">
       <button
         onclick="copyText('pnpm add ecorouter')"
-        class="inline-flex items-center gap-2.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-[#0B0B0C] hover:bg-[#252528] text-white active:scale-98 transition-colors cursor-pointer border border-[#0B0B0C]"
+        class="inline-flex items-center gap-2.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white hover:bg-[#E8EDF5] text-[#05070E] active:scale-98 transition-colors cursor-pointer border border-white shadow-sm"
         title="Copy install command"
       >
-        <span class="text-[#7D7D84]">$</span>
+        <span class="text-[#7A8A9E]">$</span>
         <span>pnpm add ecorouter</span>
-        <svg class="w-3.5 h-3.5 text-[#7D7D84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-3.5 h-3.5 text-[#7A8A9E]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
@@ -42,7 +54,7 @@
         href="https://github.com/fozagtx/ecorouter"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-1.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white hover:bg-[#EFEFEC] text-[#0B0B0C] border border-[#D2D2CE] transition-colors"
+        class="inline-flex items-center gap-1.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-sm transition-colors"
       >
         <span>GitHub ↗</span>
       </a>
