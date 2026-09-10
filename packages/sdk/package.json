@@ -29,5 +29,14 @@
   "engines": {
     "node": ">=20"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fozagtx/ecorouter.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://fozagtx.github.io/ecorouter",
+  "bugs": {
+    "url": "https://github.com/fozagtx/ecorouter/issues"
+  },
   "license": "Apache-2.0"
 }
