@@ -5,34 +5,32 @@ const integrations = [
   { name: "LangGraph", type: "Orchestrator" },
   { name: "CrewAI", type: "Multi-Agent" },
   { name: "ElizaOS", type: "Autonomous" },
-  { name: "Mastra Engine", type: "Framework" },
   { name: "Base AgentKit", type: "On-Chain" },
   { name: "Solana Agent SDK", type: "On-Chain" },
-  { name: "Modal Labs", type: "Compute" },
-  { name: "Firecrawl", type: "Web" },
-  { name: "Tavily Search", type: "Search" },
+  { name: "Firecrawl", type: "Capability" },
+  { name: "Tavily Search", type: "Capability" },
   { name: "E2B Sandboxes", type: "Runtime" },
 ];
 ---
 
-<section class="py-10 border-y border-black/8 bg-[#fafaf7] overflow-hidden relative">
-  <div class="max-w-7xl mx-auto px-4 mb-4 text-center">
-    <span class="text-xs font-mono uppercase tracking-widest text-[#606056]">
-      Compatible with any HTTP 402 provider, MCP server, or agent runtime
+<section class="py-8 border-y border-[#D8D8D3] bg-[#F1F1EE] overflow-hidden relative font-mono">
+  <div class="max-w-6xl mx-auto px-4 mb-3 text-center">
+    <span class="text-[10.5px] uppercase tracking-[0.16em] text-[#888883] font-medium">
+      COMPATIBLE WITH HTTP 402 PROVIDERS &amp; AGENT RUNTIMES
     </span>
   </div>
 
   <div class="relative w-full overflow-hidden flex items-center">
-    <!-- Left/Right subtle fade gradients -->
-    <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#fafaf7] to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#fafaf7] to-transparent z-10 pointer-events-none"></div>
+    <!-- Fade Gradients -->
+    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#F1F1EE] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#F1F1EE] to-transparent z-10 pointer-events-none"></div>
 
-    <div class="animate-marquee flex items-center gap-4 py-2">
+    <div class="animate-marquee flex items-center gap-3 py-1">
       {integrations.concat(integrations).map((item) => (
-        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-black/8 text-xs font-mono text-[#0c0c09] shrink-0 hover:border-black/20 hover:bg-[#f4f4f0] transition-colors cursor-default shadow-xs">
-          <span class="w-2 h-2 rounded-full bg-[#d25611]"></span>
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-[3px] bg-white border border-[#D8D8D3] text-xs text-[#111111] shrink-0 hover:border-[#B8B8B2] transition-colors cursor-default">
+          <span class="w-1.5 h-1.5 rounded-[1px] bg-[#111111]"></span>
           <span class="font-medium">{item.name}</span>
-          <span class="text-[10px] text-[#606056] uppercase bg-black/5 px-1.5 py-0.5 rounded border border-black/5">{item.type}</span>
+          <span class="text-[10px] text-[#888883] uppercase bg-[#F1F1EE] px-1 py-0.5 rounded-[2px] border border-[#D8D8D3]/60">{item.type}</span>
         </div>
       ))}
     </div>

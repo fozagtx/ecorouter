@@ -2,41 +2,45 @@
 const faqs = [
   {
     q: "What is EcoRouter?",
-    a: "EcoRouter is an open-source TypeScript SDK that handles capability discovery, provider arbitrage, and x402 payment settlement directly in your application process."
+    a: "An open-source TypeScript SDK for autonomous agents to discover, evaluate, and settle HTTP 402 capability fees in-process."
   },
   {
     q: "How does provider selection work?",
-    a: "When you call execute(), EcoRouter queries all registered providers for that capability in parallel, checks their 402 challenge terms against your spending policy, and selects the optimal provider based on price and quality."
+    a: "When execute() is invoked, EcoRouter queries registered providers in parallel, filters out quotes exceeding your maxSpendUsdc policy, and routes to the lowest-cost endpoint."
   },
   {
-    q: "Is there a centralized server or proxy?",
-    a: "No. EcoRouter runs locally inside your agent runtime. Your credentials, policies, and requests never pass through third-party servers."
+    q: "Is there a centralized proxy or server?",
+    a: "No. The SDK runs completely in your application process. Your keys, policies, and queries are strictly local."
   },
   {
-    q: "How does it prevent overspending?",
-    a: "Every execution accepts a maxSpendUsdc policy. If all providers quote above your maximum limit, EcoRouter aborts the call with a NoEligibleProviderError before making any payment."
+    q: "How does it protect against runaway loops?",
+    a: "Every execution requires an explicit spending policy. If quoted fees exceed your limit, EcoRouter rejects the call before initiating any payment."
   }
 ];
 ---
 
-<section id="faq" class="py-16 md:py-20 relative bg-[#fafaf7] border-t border-black/8">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6">
-    <div class="mb-10 text-center">
-      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0c0c09]">
+<section id="faq" class="py-16 md:py-24 relative bg-white border-t border-[#D8D8D3]">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
+    <div class="space-y-2 text-center">
+      <div class="text-[10.5px] font-mono uppercase tracking-[0.16em] text-[#888883] font-medium">
+        04 // FREQUENTLY ASKED QUESTIONS
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[#111111]">
         FAQ
       </h2>
     </div>
 
-    <div class="space-y-3">
+    <!-- Flat Accordion List Separated by Thin Borders -->
+    <div class="border-y border-[#D8D8D3] divide-y divide-[#D8D8D3]">
       {faqs.map((item) => (
-        <details class="group rounded-xl border border-black/8 bg-white overflow-hidden transition-colors hover:border-black/20 shadow-2xs">
-          <summary class="p-4 sm:p-5 flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#0c0c09] group-open:text-[#d25611]">
+        <details class="group py-4">
+          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm font-medium text-[#111111] hover:text-[#4F4F4A] transition-colors">
             <span>{item.q}</span>
-            <span class="w-5 h-5 rounded-full bg-black/5 flex items-center justify-center text-xs font-mono text-[#606056] group-hover:text-[#0c0c09] group-open:rotate-45 transition-transform duration-200 shrink-0">
+            <span class="text-xs font-mono text-[#888883] group-open:rotate-45 transition-transform duration-150">
               ＋
             </span>
           </summary>
-          <div class="px-4 pb-5 sm:px-5 sm:pb-5 text-xs text-[#606056] leading-relaxed border-t border-black/5 pt-3">
+          <div class="pt-2.5 text-xs text-[#4F4F4A] leading-relaxed">
             {item.a}
           </div>
         </details>

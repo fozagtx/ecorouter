@@ -2,33 +2,36 @@
 import Logo from './Logo.astro';
 ---
 
-<footer class="py-12 border-t border-black/8 bg-white font-mono text-xs text-[#606056]">
+<footer class="py-10 border-t border-[#D8D8D3] bg-[#F1F1EE] font-mono text-xs text-[#4F4F4A]">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
     <!-- Brand -->
     <div class="flex items-center gap-2.5">
-      <div class="w-6 h-6 rounded bg-[#d25611] flex items-center justify-center text-white">
+      <div class="w-6 h-6 rounded-[3px] bg-[#111111] flex items-center justify-center text-white">
         <Logo class="w-3.5 h-3.5 text-white" />
       </div>
-      <span class="font-bold text-[#0c0c09]">EcoRouter</span>
-      <span class="text-black/20">|</span>
-      <span>Apache 2.0</span>
+      <span class="font-semibold text-[#111111]">EcoRouter</span>
+      <span class="text-[#D8D8D3]">|</span>
+      <span class="text-[11px] text-[#888883]">APACHE 2.0</span>
     </div>
 
     <!-- Navigation -->
-    <div class="flex items-center gap-6">
-      <a href="#quickstart" class="hover:text-[#0c0c09] transition-colors">Quickstart</a>
-      <a href="#simulator" class="hover:text-[#0c0c09] transition-colors">Simulator</a>
-      <a href="#faq" class="hover:text-[#0c0c09] transition-colors">FAQ</a>
-      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-[#0c0c09] transition-colors">GitHub ↗</a>
+    <div class="flex items-center gap-6 text-[11.5px]">
+      <a href="#features" class="hover:text-[#111111] transition-colors">How it works</a>
+      <a href="#quickstart" class="hover:text-[#111111] transition-colors">Quickstart</a>
+      <a href="#simulator" class="hover:text-[#111111] transition-colors">Simulator</a>
+      <a href="#faq" class="hover:text-[#111111] transition-colors">FAQ</a>
+      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-[#111111] transition-colors">GitHub ↗</a>
+      <a href="https://www.npmjs.com/package/ecorouter" target="_blank" rel="noopener noreferrer" class="hover:text-[#111111] transition-colors">npm ↗</a>
     </div>
 
-    <!-- Install command -->
+    <!-- Install Pill/Command -->
     <div>
       <button
         onclick="copyText('pnpm add ecorouter')"
-        class="px-3 py-1 rounded bg-[#f4f4f0] hover:bg-[#eaeae5] text-[#0c0c09] border border-black/8 transition-colors flex items-center gap-2 text-[11px]"
+        class="h-7 px-2.5 rounded-[3px] bg-white hover:bg-[#F3F3F0] text-[#111111] border border-[#D0D0CB] transition-colors flex items-center gap-1.5 text-[11px] cursor-pointer"
       >
-        <span>$ pnpm add ecorouter</span>
+        <span class="text-[#888883]">$</span>
+        <span>pnpm add ecorouter</span>
       </button>
     </div>
   </div>

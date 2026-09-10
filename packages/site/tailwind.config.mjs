@@ -4,55 +4,54 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#ffffff',
-        foreground: '#0c0c09',
-        card: {
-          DEFAULT: '#ffffff',
-          foreground: '#0c0c09',
+        background: '#F7F7F5',
+        surface: {
+          DEFAULT: '#FFFFFF',
+          secondary: '#F1F1EE',
         },
-        popover: {
-          DEFAULT: '#ffffff',
-          foreground: '#0c0c09',
-        },
+        foreground: '#111111',
+        secondary: '#4F4F4A',
         muted: {
-          DEFAULT: '#f4f4f0',
-          foreground: '#606056',
+          DEFAULT: '#F1F1EE',
+          foreground: '#888883',
+        },
+        border: {
+          DEFAULT: '#D8D8D3',
+          strong: '#B8B8B2',
+          subtle: '#DEDED9',
         },
         accent: {
-          DEFAULT: '#f4f4f0',
-          foreground: '#0c0c09',
+          DEFAULT: '#111111',
+          foreground: '#FFFFFF',
+          highlight: '#6558FF',
         },
-        primary: {
-          DEFAULT: '#0c0c09',
-          foreground: '#ffffff',
-        },
-        border: 'rgba(0, 0, 0, 0.08)',
-        input: 'rgba(0, 0, 0, 0.12)',
-        ring: '#d25611',
         brand: {
-          DEFAULT: '#d25611',
-          dark: '#9e400a',
-          light: '#e8804a',
+          DEFAULT: '#111111',
+          orange: '#d25611',
         },
-        destructive: '#e53e3e',
+        destructive: '#C83C3C',
       },
       fontFamily: {
-        jetbrains: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
-        sans: ['GeistSans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        jetbrains: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       borderRadius: {
-        '2xl': '16px',
-        '3xl': '24px',
-        'shell': '10px',
-        'inner': '6px',
-      },
-      lineHeight: {
-        'tightest': '0.98',
+        DEFAULT: '4px',
+        sm: '3px',
+        md: '4px',
+        lg: '6px',
+        xl: '8px',
+        pill: '9999px',
       },
       letterSpacing: {
-        'tight-title': '-0.5px',
-        'mono-eyebrow': '0.5px',
+        technical: '0.16em',
+      },
+      boxShadow: {
+        subtle: '0 1px 2px rgba(0,0,0,0.04)',
+        floating: '0 6px 24px rgba(0,0,0,0.07)',
+        popover: '0 12px 40px rgba(0,0,0,0.10)',
+        hover: '0 4px 16px rgba(0,0,0,0.05)',
       }
     },
   },
