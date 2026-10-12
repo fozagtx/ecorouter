@@ -1,5 +1,6 @@
 ---
 import TechnicalViewport from "./TechnicalViewport.astro";
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const input = "w-full h-10 bg-white border border-ink/60 rounded-[3px] px-3 text-xs font-mono text-ink focus:outline-none focus:border-ink";
 const label = "block text-[10px] uppercase tracking-[0.16em] text-ink-muted font-medium mb-1.5";
 ---
@@ -69,6 +70,7 @@ const label = "block text-[10px] uppercase tracking-[0.16em] text-ink-muted font
           </div>
         </div>
       </TechnicalViewport>
+      <a href={`${basePath}/docs/playground/`} class="inline-flex items-center gap-2 text-[13px] font-mono font-medium text-ink border-b-[1.5px] border-ink pb-0.5 hover:text-accent hover:border-accent">Validate real x402 challenges in the docs playground <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>

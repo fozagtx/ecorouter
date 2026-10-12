@@ -1,0 +1,133 @@
+---
+title: EcoRouter
+description: The router class, its config, and the execution request and result types.
+---
+
+## EcoRouterConfig
+
+<TypeTable
+  type={{
+    account: {
+      description: 'Address of the deployed ecorouter-account contract. Required, non-empty.',
+      type: 'string',
+      required: true,
+    },
+    sessionSecret: {
+      description: 'Session key secret used to sign the authorized payment. Required, non-empty.',
+      type: 'string',
+      required: true,
+    },
+    providers: {
+      description: 'Candidate providers. At least two required.',
+      type: 'ProviderConfig[]',
+      required: true,
+    },
+    paymentClient: {
+      description: 'Stellar/x402 transport you supply. Secrets never leave the local SDK.',
+      type: 'PaymentClient',
+      required: true,
+    },
+    fetch: {
+      description: 'Fetch implementation for provider probes. Defaults to global fetch.',
+      type: 'typeof fetch',
+    },
+  }}
+/>
+
+`ArbiterConfig` is an alias of `EcoRouterConfig`, and `Arbiter` is an alias of the `EcoRouter` class.
+
+## ProviderConfig
+
+<TypeTable
+  type={{
+    id: {
+      description: 'Unique provider identifier.',
+      type: 'string',
+      required: true,
+    },
+    capability: {
+      description: 'The capability this provider serves.',
+      type: '"web.search"',
+      required: true,
+    },
+    endpoint: {
+      description: 'HTTPS URL on a public hostname.',
+      type: 'string',
+      required: true,
+    },
+    qualityScore: {
+      description: 'Static quality rating, 0 to 1.',
+      type: 'number',
+      required: true,
+    },
+  }}
+/>
+
+## Constructor validation
+
+`new EcoRouter(config)` throws `TypeError` when:
+
+- `account` or `sessionSecret` is empty, or fewer than two providers are given.
+- Two providers share the same `id`.
+- An endpoint is not HTTPS, or its hostname is local (localhost, private ranges, link-local, IPv6 ULA).
+- A `qualityScore` is outside 0 to 1.
+
+## ExecuteRequest
+
+<TypeTable
+  type={{
+    executionId: {
+      description: 'Idempotency key. A random UUID is generated when omitted.',
+      type: 'string',
+    },
+    capability: {
+      description: 'Capability to purchase.',
+      type: '"web.search"',
+      required: true,
+    },
+    input: {
+      description: 'Provider input. For web.search: { query: string }.',
+      type: 'WebSearchInput',
+      required: true,
+    },
+    policy: {
+      description: 'maxSpendUsdc (decimal string, up to 7 places) and minimumQuality (0..1).',
+      type: '{ maxSpendUsdc: string; minimumQuality: number }',
+      required: true,
+    },
+  }}
+/>
+
+## EcoRouterExecutionResult
+
+<TypeTable
+  type={{
+    executionId: {
+      description: 'The idempotency key used for this run.',
+      type: 'string',
+      required: true,
+    },
+    output: {
+      description: 'Normalized provider output.',
+      type: 'WebSearchResult',
+      required: true,
+    },
+    decision: {
+      description: 'providerId, priceUsdc, qualityScore, successRate, economicCost of the winner.',
+      type: 'object',
+      required: true,
+    },
+    payment: {
+      description: 'network "stellar:testnet", asset "USDC", transactionHash.',
+      type: 'object',
+      required: true,
+    },
+    mandate: {
+      description: 'remainingUsdc after settlement.',
+      type: 'object',
+      required: true,
+    },
+  }}
+/>
+
+`ArbiterExecutionResult` is an alias of `EcoRouterExecutionResult`.

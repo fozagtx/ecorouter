@@ -5,7 +5,7 @@ import AsciiGrid from './AsciiGrid.astro';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const cols = [
   { h: "Product", links: [["How it works", "#how"], ["Why Stellar", "#stellar"], ["Testbench", "#simulator"]] },
-  { h: "Developers", links: [["Quickstart", "#quickstart"], ["GitHub", "https://github.com/fozagtx/ecorouter"], ["npm package", "https://www.npmjs.com/package/ecorouter"]] },
+  { h: "Developers", links: [["Docs", `${basePath}/docs/`], ["Quickstart", `${basePath}/docs/quickstart/`], ["Playground", `${basePath}/docs/playground/`], ["GitHub", "https://github.com/fozagtx/ecorouter"], ["npm package", "https://www.npmjs.com/package/ecorouter"]] },
   { h: "Stellar", links: [["Stellar", "https://stellar.org"], ["Soroban docs", "https://developers.stellar.org/docs/build/smart-contracts/overview"], ["Smart accounts", "https://developers.stellar.org/docs/build/guides/contract-accounts"]] },
 ];
 ---

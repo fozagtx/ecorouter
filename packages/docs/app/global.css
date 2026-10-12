@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --color-fd-primary: #3b5bdb;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-foreground: #0b0b0c;
+  --color-fd-muted-foreground: #4a4d57;
+  --color-fd-background: #ffffff;
+  --color-fd-border: #e3e5ea;
+  --color-fd-accent: #e3e5ea;
+  --color-fd-ring: #3b5bdb;
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #0b0b0c;
+  --color-fd-secondary: #f6f7f9;
+  --color-fd-secondary-foreground: #0b0b0c;
+  --color-fd-muted: #f6f7f9;
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #0b0b0c;
+}
+
+/* Match the landing site: solid 1.5px ink borders on card-like surfaces.
+   Inner dividers (border-b, divide-*, etc.) keep the light #E3E5EA tone. */
+[data-card],                      /* Cards component */
+.fd-card,
+div[class~='@container'][class~='grid'] > a,  /* prev/next footer cards */
+div[class~='rounded-xl'][class~='border'],    /* callouts, tabs */
+div[class~='rounded-2xl'][class~='bg-fd-card'], /* TypeTable */
+figure.shiki,                     /* code blocks */
+div[role='dialog'][class*='rounded-xl']    /* search dialog */
+{
+  border: 1.5px solid #0b0b0c !important;
+  box-shadow: none;
+}

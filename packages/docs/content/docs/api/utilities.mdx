@@ -1,0 +1,39 @@
+---
+title: Utilities
+description: Money parsing and provider selection helpers exported by the SDK.
+---
+
+## parseUsdc
+
+```ts
+parseUsdc(value: string): bigint
+```
+
+Parses a non-negative decimal string with at most 7 places into atomic units (USDC has 7 decimals, so `1` equals `10_000_000` atomic). Throws `TypeError` on any other input format.
+
+## formatUsdc
+
+```ts
+formatUsdc(value: bigint): string
+```
+
+Formats atomic units back to a decimal string, trimming trailing zeros. Throws `RangeError` for negative values.
+
+## selectProvider
+
+```ts
+selectProvider(candidates: Candidate[]): ScoredCandidate
+```
+
+```ts
+interface Candidate {
+  providerId: string;
+  priceAtomic: bigint;
+  qualityScore: number;
+  successRate: number;
+}
+```
+
+Scores each candidate as `economicCost = priceAtomic / (qualityScore * successRate)` and returns the lowest. Ties break on lower `priceAtomic`, then lexically smaller `providerId`. Throws `RangeError` on an empty list. The result adds `economicCost` to the input fields.
+
+All three are exported from the package root, so `import { selectProvider } from "ecorouter"` works.

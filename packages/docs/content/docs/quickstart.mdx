@@ -1,0 +1,102 @@
+---
+title: Quickstart
+description: Install EcoRouter and run your first execution.
+---
+
+## Install
+
+<Tabs items={["pnpm", "npm", "yarn"]}>
+  <Tab value="pnpm">
+
+```bash
+pnpm add ecorouter
+```
+
+  </Tab>
+  <Tab value="npm">
+
+```bash
+npm install ecorouter
+```
+
+  </Tab>
+  <Tab value="yarn">
+
+```bash
+yarn add ecorouter
+```
+
+  </Tab>
+</Tabs>
+
+## Prerequisites
+
+You need three things before the router can pay for anything:
+
+1. **A deployed `ecorouter-account` Soroban contract** holding USDC on `stellar:testnet`, with an active mandate created via `create_mandate` (see [Contract](/contract)).
+2. **A session keypair** whose public key is the mandate's `session_public_key`.
+3. **A `PaymentClient` implementation.** The SDK defines the interface but does not ship a concrete client. You supply the code that reads mandate state and submits the authorized transfer (see [Payment Client](/api/payment-client)).
+
+## Configure the router
+
+```ts
+import { EcoRouter } from "ecorouter";
+
+const router = new EcoRouter({
+  account: process.env.ECOROUTER_ACCOUNT!, // the C... contract address
+  sessionSecret: process.env.ECOROUTER_SESSION_SECRET!,
+  paymentClient: myPaymentClient,
+  providers: [
+    {
+      id: "search-alpha",
+      capability: "web.search",
+      endpoint: "https://search-alpha.example.com/search",
+      qualityScore: 0.92,
+    },
+    {
+      id: "search-beta",
+      capability: "web.search",
+      endpoint: "https://search-beta.example.com/search",
+      qualityScore: 0.85,
+    },
+  ],
+});
+```
+
+The constructor validates the config: at least two providers, unique ids, HTTPS endpoints on public hostnames, and `qualityScore` between 0 and 1.
+
+## Execute
+
+<Steps>
+<Step>
+
+### Call `router.execute`
+
+```ts
+const result = await router.execute({
+  executionId: "exec-001",
+  capability: "web.search",
+  input: { query: "Stellar Soroban smart account best practices" },
+  policy: { maxSpendUsdc: "0.05", minimumQuality: 0.8 },
+});
+```
+
+</Step>
+<Step>
+
+### Read the result
+
+```ts
+result.decision.providerId;    // winning provider id
+result.decision.economicCost;  // price / (quality * successRate)
+result.payment.transactionHash; // settlement hash on stellar:testnet
+result.mandate.remainingUsdc;   // mandate balance left, in USDC
+result.output.results;          // [{ title, url, snippet }]
+```
+
+</Step>
+</Steps>
+
+Reusing an `executionId` is safe: a completed execution returns its cached result. An id that is running, failed, or whose settlement state is unknown throws.
+
+Want to see the internals live? Try the [Playground](/playground), or read [How It Works](/how-it-works).

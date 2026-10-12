@@ -1,0 +1,55 @@
+---
+title: Smart Account Contract
+description: The ecorouter-account Soroban contract and its mandate enforcement.
+---
+
+`contracts/ecorouter-account` is a `no_std` Soroban smart account (crate type `cdylib`). It holds funds, stores a spending mandate, and authorizes outbound transfers through the `__check_auth` custom account interface. All types and behaviors below come from `contracts/ecorouter-account/src/lib.rs`.
+
+## The Mandate
+
+```rust
+pub struct Mandate {
+    pub session_public_key: BytesN<32>,
+    pub asset: Address,
+    pub total_limit: i128,
+    pub spent: i128,
+    pub max_payment: i128,
+    pub expires_at: u64,
+    pub revoked: bool,
+}
+```
+
+A single mandate is stored in instance storage under `DataKey::Mandate`; the owner address is stored under `DataKey::Owner`.
+
+## Public functions
+
+| Function | Auth | Effect |
+| --- | --- | --- |
+| `initialize(owner)` | `owner.require_auth()` | Stores the owner. Fails with `AlreadyInitialized` if called twice. |
+| `create_mandate(session_public_key, asset, total_limit, max_payment, expires_at)` | owner | Creates the mandate with `spent = 0`, `revoked = false`. Rejects non-positive limits, `max_payment > total_limit` (`InvalidAmount`), and `expires_at` in the past (`InvalidExpiration`). Emits a `mandate created` event. |
+| `revoke_mandate()` | owner | Sets `revoked = true`. Emits a `mandate revoked` event. |
+| `withdraw(asset, to, amount)` | owner | Transfers any token out of the contract via the token client. `amount` must be positive. This is the owner escape hatch; the session key can never invoke it. |
+| `get_mandate()` | none | Returns the current mandate, or `MandateNotFound`. |
+| `__check_auth(signature_payload, signature, auth_contexts)` | session key | The authorization hook invoked by the Soroban host when the account is required as an invoker. |
+
+## What `__check_auth` enforces
+
+When a session key signs an invocation that requires this account's auth, the contract checks, in order:
+
+1. A mandate exists (`MandateNotFound`), is not revoked (`MandateRevoked`), and has not expired (`MandateExpired`).
+2. The signer public key equals `mandate.session_public_key` (`WrongSigner`), and the Ed25519 signature verifies over the payload.
+3. Exactly one authorization context, and it must be a `Context::Contract` call (`UnsupportedInvocation`). Administrative functions are structurally impossible for the session key.
+4. The called contract equals `mandate.asset` (`WrongAsset`), the function is `transfer` with exactly 3 arguments (`UnsupportedInvocation`).
+5. The transfer source is the account contract itself (`WrongSource`) and `amount > 0` (`InvalidAmount`).
+6. `amount <= mandate.max_payment` (`PaymentAboveMaximum`).
+7. `spent + amount <= mandate.total_limit` (`AllowanceExceeded`), using checked arithmetic.
+
+On success the contract increments `spent` and emits a `payment authorized` event carrying asset, recipient, amount, new spent, and remaining allowance.
+
+## Errors
+
+`AccountError`: `AlreadyInitialized` (1), `NotInitialized` (2), `InvalidAmount` (3), `InvalidExpiration` (4), `MandateNotFound` (5), `MandateRevoked` (6), `MandateExpired` (7), `WrongSigner` (8), `UnsupportedInvocation` (9), `WrongAsset` (10), `WrongSource` (11), `PaymentAboveMaximum` (12), `AllowanceExceeded` (13).
+
+## Building and deploying
+
+The contract is a standard Soroban `cdylib` crate. Build and deploy with the Stellar CLI (`stellar contract build`, `stellar contract deploy`), then call `initialize` with the owner address and `create_mandate` to bind a session key, asset, and limits. The repository does not ship deploy scripts; see the Soroban docs for network-specific commands.

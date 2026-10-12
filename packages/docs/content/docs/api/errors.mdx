@@ -1,0 +1,34 @@
+---
+title: Errors
+description: Every EcoRouterErrorCode, its class, and when it is thrown.
+---
+
+All SDK errors extend `EcoRouterError` (alias `ArbiterError`), which carries `code: EcoRouterErrorCode` and an optional `executionId`.
+
+| Code | Class | Thrown when |
+| --- | --- | --- |
+| `NO_ELIGIBLE_PROVIDER` | `NoEligibleProviderError` | No provider survived capability, challenge, quality, and validation filters in `execute`. |
+| `INVALID_PAYMENT_CHALLENGE` | `InvalidPaymentChallengeError` | A provider did not return HTTP 402, omitted or malformed `payment-required`, or the challenge failed shape, network, scheme, asset, `payTo`, or amount checks. |
+| `POLICY_EXCEEDED` | `PolicyExceededError` | Challenge amount exceeds `policy.maxSpendUsdc`. |
+| `MANDATE_EXCEEDED` | `MandateExceededError` | Amount exceeds `maxPaymentAtomic` or `remainingAtomic`. |
+| `MANDATE_EXPIRED` | `MandateExpiredError` | `mandate.expiresAt` is at or before now. |
+| `MANDATE_REVOKED` | `MandateRevokedError` | The mandate is revoked. |
+| `PAYMENT_AUTHORIZATION_ERROR` | `PaymentAuthorizationError` | Your `PaymentClient` threw it; signing or authorization definitively failed. |
+| `PAYMENT_SETTLEMENT_ERROR` | `PaymentSettlementError` | Your `PaymentClient` threw it; the transfer definitively failed. |
+| `PAYMENT_SETTLEMENT_UNKNOWN` | `PaymentSettlementUnknownError` | `authorizeAndSettle` threw anything else; settlement may have succeeded. |
+| `PROVIDER_EXECUTION_ERROR` | `ProviderExecutionError` | The paid provider request failed (non-2xx or transport error). |
+| `PROVIDER_RESPONSE_ERROR` | `ProviderResponseError` | The paid response did not match `{ results: [{ title, url, snippet }] }`. |
+
+## PaymentSettlementUnknownError
+
+Beyond `code` and `executionId`, it carries:
+
+<TypeTable
+  type={{
+    providerId: { description: 'The winning provider the settlement targeted.', type: 'string' },
+    transactionHash: { description: 'Hash if the client observed one before failing.', type: 'string' },
+    paymentMetadata: { description: 'Free-form context attached by the client.', type: 'unknown' },
+  }}
+/>
+
+Executions that end `settlement_unknown` cannot be retried under the same `executionId`; the router throws instead of risking a double payment.

@@ -1,0 +1,11 @@
+{
+  "title": "EcoRouter Docs",
+  "pages": [
+    "index",
+    "quickstart",
+    "how-it-works",
+    "contract",
+    "playground",
+    "api"
+  ]
+}

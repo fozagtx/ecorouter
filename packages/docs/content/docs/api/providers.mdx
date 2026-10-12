@@ -1,0 +1,60 @@
+---
+title: Providers
+description: The HTTP contract a web.search provider must implement.
+---
+
+`HttpWebSearchProvider` (in `providers/web-search.ts`) talks to providers over plain HTTP. Any endpoint that implements this contract works with the router.
+
+## Challenge request
+
+The SDK sends the input as a JSON POST body:
+
+```
+POST /search
+content-type: application/json
+
+{ "query": "..." }
+```
+
+## Challenge response
+
+A compliant provider replies HTTP 402 with a `payment-required` header containing a base64 (or base64url) encoded JSON `PaymentChallenge`:
+
+```json
+{
+  "x402Version": 2,
+  "scheme": "exact",
+  "network": "stellar:testnet",
+  "asset": "USDC",
+  "amount": "12000",
+  "payTo": "G..."
+}
+```
+
+A non-402 status, a missing header, or malformed base64 JSON raises `InvalidPaymentChallengeError` for that provider.
+
+## Paid request
+
+After settlement the SDK retries the same POST with the signed payload:
+
+```
+POST /search
+content-type: application/json
+payment-signature: <SignedPayment.payload>
+
+{ "query": "..." }
+```
+
+## Success response
+
+HTTP 200 with a JSON body of normalized shape:
+
+```json
+{ "results": [{ "title": "...", "url": "...", "snippet": "..." }] }
+```
+
+`normalize` requires `results` to be an array whose items each have string `title`, `url`, and `snippet`. Anything else raises `ProviderResponseError`. A non-2xx response raises `ProviderExecutionError`.
+
+## Capability
+
+The `Capability` type is `"web.search"`. Providers are matched to requests by exact capability string before being probed.

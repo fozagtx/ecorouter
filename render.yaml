@@ -24,7 +24,7 @@ services:
         value: public, max-age=31536000, immutable
     envVars:
       - key: NODE_VERSION
-        value: 20
+        value: 22
       - key: SITE_URL
         value: https://ecorouter.xyz
       - key: BASE_PATH

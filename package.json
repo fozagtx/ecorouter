@@ -4,7 +4,8 @@
   "packageManager": "pnpm@10.28.1",
   "scripts": {
     "build": "pnpm --filter ecorouter build && pnpm --filter @ecorouter/site build",
-    "build:site": "pnpm --filter @ecorouter/site build",
+    "build:site": "pnpm --filter @ecorouter/site build && pnpm --filter @ecorouter/docs build",
+    "dev:docs": "pnpm --filter @ecorouter/docs dev",
     "dev:site": "pnpm --filter @ecorouter/site dev",
     "test": "pnpm --filter ecorouter test",
     "typecheck": "pnpm --filter ecorouter typecheck"

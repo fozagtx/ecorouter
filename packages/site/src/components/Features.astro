@@ -1,4 +1,5 @@
 ---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const primitives = [
   { k: "PARALLEL", title: "Ask every provider at once", body: "Each provider for a capability gets an x402 probe in parallel. Slow or broken ones time out after five seconds and drop out." },
   { k: "POLICY", title: "A hard limit on every call", body: "Each execute() carries maxSpendUsdc and minimumQuality. Quotes above the limit never reach the payment step." },
@@ -89,6 +90,10 @@ console.log(result.decision.providerId, result.payment.transactionHash, result.m
 &#125;);
 
 console.<span class="text-ink font-medium">log</span>(result.decision.providerId, result.payment.transactionHash, result.mandate.remainingUsdc);</code></pre>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 -mt-4">
+        <a href={`${basePath}/docs/quickstart/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border-[1.5px] border-ink">Full quickstart <span aria-hidden="true">→</span></a>
+        <a href={`${basePath}/docs/api/ecorouter/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-muted text-ink border-[1.5px] border-ink">API reference <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </div>
