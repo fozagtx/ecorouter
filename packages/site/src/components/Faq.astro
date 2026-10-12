@@ -1,56 +1,34 @@
 ---
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 const faqs = [
-  {
-    q: "What is EcoRouter?",
-    a: "An open-source TypeScript SDK for autonomous agents to discover, evaluate, and settle HTTP 402 capability fees in-process."
-  },
-  {
-    q: "How does provider selection work?",
-    a: "When execute() is invoked, EcoRouter queries registered providers in parallel, filters out quotes exceeding your maxSpendUsdc policy, and routes to the lowest-cost endpoint."
-  },
-  {
-    q: "Is there a centralized proxy or server?",
-    a: "No. The SDK runs completely in your application process. Your keys, policies, and queries are strictly local."
-  },
-  {
-    q: "How does it protect against runaway loops?",
-    a: "Every execution requires an explicit spending policy. If quoted fees exceed your limit, EcoRouter rejects the call before initiating any payment."
-  }
+  { q: "What is EcoRouter?", a: "An open source TypeScript SDK that lets an agent buy capabilities like web search over x402, pay in USDC on Stellar, and stay inside a budget enforced by its own Soroban smart account." },
+  { q: "Why does it run on Stellar?", a: "Soroban smart accounts can run custom authorization in __check_auth, so the spending rules sit in the agent's account itself. USDC is native on Stellar and settlement is fast and cheap enough to pay per request." },
+  { q: "What stops an agent from overspending?", a: "Two layers. The SDK rejects any quote above maxSpendUsdc before paying, and the Soroban account rejects any transfer above max_payment, past total_limit, after expires_at or once revoked." },
+  { q: "How is a provider chosen?", a: "Every eligible quote gets an economic cost of price divided by qualityScore times successRate. The lowest cost wins, then the lower price, then the provider id. No model is asked to decide." },
+  { q: "Is there a hosted server or custody?", a: "No. The SDK runs in your process, your session secret never leaves it, and funds stay in the Soroban account you own and can withdraw from at any time." },
+  { q: "Which network does it support today?", a: "Stellar testnet with USDC. Challenges for any other network or asset are rejected as invalid." },
 ];
 ---
 
-<section id="faq" class="py-16 md:py-24 relative bg-[#05070E] border-t border-white/10 text-white">
-  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(68,136,255,0.14),transparent_34%),linear-gradient(180deg,#05070E,#03050A)]"></div>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
-    <div class="space-y-2 text-center">
-      <div class="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] font-semibold">
-        04 // FREQUENTLY ASKED QUESTIONS
+<section id="faq" class="bg-surface-soft border-t border-line">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-5 sm:px-10 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10">
+      <div class="space-y-3">
+        <div class="eyebrow">04 · FAQ</div>
+        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">Questions</h2>
       </div>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-        Frequently Asked Questions
-      </h2>
-      <p class="text-xs sm:text-sm text-[#C4D2EC] max-w-xl mx-auto font-sans leading-relaxed">
-        Common questions about autonomous HTTP 402 capability arbitration, settlement, and in-process execution.
-      </p>
-    </div>
-
-    <!-- Solid High-Contrast White FAQ Card List -->
-    <div class="bg-white rounded-[2px] border border-[#D2D2CE] p-5 sm:p-8 text-[#0B0B0C] shadow-2xl divide-y divide-[#E2E2DE]">
-      {faqs.map((item) => (
-        <details class="group py-5 first:pt-0 last:pb-0">
-          <summary class="flex items-center justify-between cursor-pointer list-none select-none text-sm sm:text-base font-semibold text-[#0B0B0C] hover:text-[#000000] transition-colors gap-4">
-            <span class="leading-snug">{item.q}</span>
-            <span class="text-sm font-mono font-bold text-[#0B0B0C] group-open:rotate-45 transition-transform duration-150 shrink-0 w-6 h-6 flex items-center justify-center rounded-[2px] bg-[#F1F1EE] border border-[#D2D2CE]">
-              ＋
-            </span>
-          </summary>
-          <div class="mt-3 text-xs sm:text-sm text-[#0B0B0C] leading-relaxed font-sans pr-2 sm:pr-8 font-normal pt-2 border-t border-[#F5F5F2]">
-            {item.a}
-          </div>
-        </details>
-      ))}
+      <div class="bg-white border border-line divide-y divide-line">
+        {faqs.map((item) => (
+          <details class="group px-5 sm:px-6">
+            <summary class="flex items-center justify-between cursor-pointer list-none select-none py-5 text-[15px] font-medium text-ink gap-4">
+              <span class="leading-snug">{item.q}</span>
+              <span class="shrink-0 w-6 h-6 flex items-center justify-center border border-line text-ink-secondary transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+              </span>
+            </summary>
+            <p class="pb-5 -mt-1 text-sm text-ink-secondary leading-relaxed pr-8">{item.a}</p>
+          </details>
+        ))}
+      </div>
     </div>
   </div>
 </section>

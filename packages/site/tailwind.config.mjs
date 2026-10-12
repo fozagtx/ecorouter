@@ -4,40 +4,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#F6F6F3',
+        background: '#FFFFFF',
         surface: {
           DEFAULT: '#FFFFFF',
-          technical: '#FAFAF8',
-          secondary: '#EFEFEC',
+          soft: '#F7F8FB',
+          muted: '#F1F3F7',
         },
-        foreground: '#0B0B0C',
-        secondary: '#55555A',
-        muted: {
-          DEFAULT: '#EFEFEC',
-          foreground: '#7D7D84',
+        ink: {
+          DEFAULT: '#0B0B0C',
+          secondary: '#4A4D57',
+          muted: '#868B98',
         },
-        border: {
-          DEFAULT: '#D2D2CE',
-          technical: '#D0D0CC',
-          inner: '#DADAD6',
-          subtle: '#E9E9E5',
+        line: {
+          DEFAULT: '#E3E5EA',
+          strong: '#D2D5DD',
         },
-        registration: '#6E6E73',
         accent: {
-          DEFAULT: '#0B0B0C',
-          foreground: '#FFFFFF',
-          spectral: '#725CFF',
+          DEFAULT: '#3B5BDB',
+          soft: '#EDF1FD',
         },
-        brand: {
-          DEFAULT: '#0B0B0C',
-          orange: '#d25611',
-        },
+        ok: '#1F8A5B',
         destructive: '#C83C3C',
       },
       fontFamily: {
-        sans: ['Geist', 'Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-        mono: ['"Geist Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
-        geist: ['Geist', 'sans-serif'],
+        sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       borderRadius: {
         DEFAULT: '4px',
@@ -47,15 +38,11 @@ export default {
         xl: '8px',
         pill: '9999px',
       },
-      letterSpacing: {
-        technical: '0.16em',
-      },
       boxShadow: {
-        subtle: '0 1px 2px rgba(0,0,0,0.04)',
-        floating: '0 6px 24px rgba(0,0,0,0.07)',
-        popover: '0 12px 40px rgba(0,0,0,0.10)',
-        hover: '0 4px 16px rgba(0,0,0,0.05)',
-      }
+        subtle: '0 1px 2px rgba(16,24,40,0.04)',
+        card: '0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06)',
+        float: '0 2px 4px rgba(16,24,40,0.04), 0 24px 60px rgba(30,45,90,0.12)',
+      },
     },
   },
   plugins: [],

@@ -5,11 +5,11 @@ interface Props {
 }
 
 const {
-  title = "EcoRouter — Declarative Capability Routing for Autonomous AI Agents",
-  description = "Stop hardcoding vendor APIs. Route AI agent workflows across dynamic capabilities with deterministic economic limits, automated x402 V2 settlement, and cryptographic proofs."
+  title = "EcoRouter | Agentic spending runtime for agents on Stellar",
+  description = "Give every agent a Soroban smart account with a hard USDC budget. EcoRouter buys the capability it needs over x402, picks the best value provider, and settles on Stellar without ever spending past the mandate."
 } = Astro.props;
 
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site || "https://fozagtx.github.io/ecorouter/");
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || "https://ecorouter.xyz");
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
@@ -19,18 +19,14 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="keywords" content="AI agents, capability routing, x402, payment required, agent orchestration, autonomous payments, micro-transactions" />
-    <meta name="author" content="EcoRouter Team" />
-    <meta name="theme-color" content="#05070E" />
+    <meta name="keywords" content="Stellar, Soroban, AI agents, agent payments, x402, USDC, smart accounts, spending policy" />
+    <meta name="theme-color" content="#FFFFFF" />
     <link rel="canonical" href={canonicalUrl.href} />
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl.href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalUrl.href} />
     <meta property="twitter:title" content={title} />
@@ -38,25 +34,20 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
     <title>{title}</title>
 
-    <!-- Preload fonts: Geist, Geist Mono, Inter, IBM Plex Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href={`${basePath}/logo.svg`} />
 
     <style is:global>
       @import "../styles/global.css";
     </style>
   </head>
-  <body class="bg-[#05070E] text-[#0B0B0C] selection:bg-[#725CFF]/15 selection:text-[#0B0B0C] antialiased min-h-screen flex flex-col font-sans">
+  <body id="top" class="bg-white text-ink selection:bg-accent/15 selection:text-ink antialiased min-h-screen flex flex-col font-sans">
     <slot />
 
-    <!-- Copy Toast Notification -->
-    <div id="copy-toast" class="toast-msg">
-      ✓ Copied to clipboard
-    </div>
+    <div id="copy-toast" class="toast-msg" role="status" aria-live="polite">Copied to clipboard</div>
 
     <script>
       import Lenis from 'lenis';
@@ -65,37 +56,32 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
       if (!prefersReducedMotion) {
         const lenis = new Lenis({
-          duration: 1.15,
+          duration: 1.1,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
-          syncTouch: true,
-          touchMultiplier: 1.15,
         });
 
-        window.lenis = lenis;
+        (window as any).lenis = lenis;
 
         function raf(time: number) {
           lenis.raf(time);
           requestAnimationFrame(raf);
         }
-
         requestAnimationFrame(raf);
 
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
           anchor.addEventListener('click', (e) => {
             const targetId = (anchor as HTMLAnchorElement).getAttribute('href');
-            if (!targetId) return;
-
+            if (!targetId || targetId === '#') return;
             if (targetId === '#top') {
               e.preventDefault();
               lenis.scrollTo(0);
               return;
             }
-
             const target = document.querySelector(targetId);
             if (target) {
               e.preventDefault();
-              lenis.scrollTo(target as HTMLElement, { offset: -72 });
+              lenis.scrollTo(target as HTMLElement, { offset: -64 });
             }
           });
         });
@@ -103,29 +89,35 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     </script>
 
     <script is:inline>
-      // Global toast helper
-      window.showToast = function(text = "✓ Copied to clipboard") {
+      window.showToast = function(text = "Copied to clipboard") {
         const toast = document.getElementById('copy-toast');
         if (!toast) return;
         toast.textContent = text;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2200);
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
       };
 
-      // Copy helpers
       window.copyText = function(text) {
-        if (navigator.clipboard) {
+        if (navigator.clipboard && window.isSecureContext) {
           navigator.clipboard.writeText(text).then(() => window.showToast());
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          window.showToast();
+          return;
         }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        window.showToast();
       };
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-copy]');
+        if (btn) window.copyText(btn.getAttribute('data-copy'));
+      });
     </script>
   </body>
 </html>

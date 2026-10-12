@@ -1,134 +1,64 @@
 ---
-import TechnicalViewport from "./TechnicalViewport.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const stages = [
+  { n: "01 / PROBE", tag: "402", title: "Ask for prices", body: "Calls every provider for the capability at once and reads their x402 payment challenge.", rows: [["search-a", "0.0012"], ["search-b", "0.0018"]] },
+  { n: "02 / VALIDATE", tag: "PASS", title: "Check the mandate", body: "Network, asset, per-payment cap and your policy limit are checked before money moves.", rows: [["maxSpend", "≤ 0.05"], ["eligible", "2 / 2"]] },
+  { n: "03 / SCORE", tag: "BEST", title: "Pick the best value", body: "Price divided by quality and success rate. Same inputs, same winner, every time.", rows: [["winner", "search-a"], ["cost", "14,634"]] },
+  { n: "04 / SETTLE", tag: "USDC", title: "Pay on Stellar", body: "The session key signs, the Soroban account approves, and the paid result comes back.", rows: [["network", "stellar:testnet"], ["asset", "USDC"]] },
+];
 ---
 
-<section class="relative pt-6 pb-16 md:pt-8 md:pb-24 overflow-hidden bg-[#05070E] -mt-10">
-  <!-- Outside Background: stage-bg.png with Faded Transition Effect -->
-  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
-    <img
-      src={`${basePath}/stage-bg.png`}
-      alt="Neon execution chamber stage"
-      class="w-full h-full object-cover object-center opacity-90 scale-105"
-    />
-    <div class="absolute inset-0 bg-gradient-to-b from-[#05070E] via-[#05070E]/20 45% to-[#05070E]"></div>
-  </div>
+<section id="how" class="bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-0 sm:px-4 pb-16 md:pb-24">
+      <div class="relative overflow-hidden rounded-[6px] border border-line">
+        <img
+          src={`${basePath}/sky-stage.jpg`}
+          alt=""
+          class="absolute inset-0 w-full h-full object-cover object-top select-none pointer-events-none"
+          loading="eager"
+        />
+        <div class="relative px-3 py-10 sm:px-10 sm:py-16 md:px-16 md:py-20">
+          <div class="mx-auto max-w-[920px] bg-white/95 backdrop-blur border border-line shadow-float rounded-[4px] overflow-hidden font-mono">
+            <div class="min-h-10 px-4 py-2.5 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-accent"></span>
+                <span class="font-medium text-ink">router.execute(&#123; capability: "web.search" &#125;)</span>
+              </div>
+              <span class="inline-flex w-fit items-center gap-1.5 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ok bg-ok/10 border border-ok/25">
+                <span class="w-1 h-1 rounded-full bg-ok"></span>
+                Within mandate
+              </span>
+            </div>
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 font-mono">
-    <TechnicalViewport
-      netTag="NETWORK · ECOROUTER"
-      versionTag="VERSION · 0.1.0"
-      systemTag="SYSTEM · ACTIVE"
-      scaleTag="SCALE · 1:1"
-      layerTag="LAYER · EXECUTION PIPELINE"
-      refTag="REF · ECO-01"
-    >
-      <div class="bg-[#070A12] text-white">
-        <!-- Window / Panel Header (square, flat, 1px border) -->
-        <div class="min-h-10 px-3 sm:px-4 py-2 bg-[#090D16] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#A5BAE0]">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="w-1.5 h-1.5 bg-[#4488FF] shadow-[0_0_10px_#4488FF]"></span>
-            <span class="font-medium text-white">ecorouter.execute()</span>
-            <span class="text-[#7D8EA8] text-[11px]">// deterministic pipeline</span>
-          </div>
-          <div class="flex items-center gap-2 text-[11px] text-[#A5BAE0]">
-            <span class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white bg-emerald-400/10 border border-emerald-300/30">
-              STATUS: ACTIVE
-            </span>
-          </div>
-        </div>
+            <div class="px-4 py-5 sm:px-6 border-b border-line bg-surface-soft">
+              <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                <div class="provider-node is-winner"><span>search-a</span><strong>0.0012 USDC</strong></div>
+                <div class="provider-node animate-float-delay-1"><span>search-b</span><strong>0.0018 USDC</strong></div>
+                <div class="provider-node animate-float-delay-2"><span>mandate left</span><strong>3.80 USDC</strong></div>
+              </div>
+            </div>
 
-        <div class="execution-map relative overflow-hidden border-b border-white/10 bg-[#05070E] px-4 py-5 sm:px-6">
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div class="provider-node animate-float-delay-0">
-              <span>node-alpha</span>
-              <strong>$0.0012</strong>
-            </div>
-            <div class="provider-node animate-float-delay-1">
-              <span>node-beta</span>
-              <strong>$0.0018</strong>
-            </div>
-            <div class="provider-node animate-float-delay-2">
-              <span>policy cap</span>
-              <strong>$0.0100</strong>
-            </div>
-          </div>
-          <div class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-            <div class="h-px bg-gradient-to-r from-transparent via-[#4488FF]/70 to-[#4488FF]/20"></div>
-            <div class="rounded-[2px] border border-[#4488FF]/40 bg-[#4488FF]/10 px-3 py-1.5 text-center text-[10px] uppercase tracking-[0.18em] text-[#D8E4F8] shadow-[0_0_22px_rgba(68,136,255,0.24)]">
-              Quote race resolved
-            </div>
-            <div class="h-px bg-gradient-to-r from-[#4488FF]/20 via-[#4488FF]/70 to-transparent"></div>
-          </div>
-        </div>
-
-        <!-- 4-Stage Spreadsheet Execution Flow (clean, high-contrast, technical) -->
-        <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10 bg-[#070A12] text-xs">
-          <!-- Stage 1 -->
-          <div class="p-4 space-y-2 bg-[#070A12]">
-            <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#93A4C8]">
-              <span>01 / PROBE</span>
-              <span class="font-bold text-white">402</span>
-            </div>
-            <div class="text-white font-semibold text-xs">Parallel Probes</div>
-            <p class="text-[11px] text-[#C4D2EC] leading-normal font-sans">
-              Pings registered capability providers concurrently for live 402 terms.
-            </p>
-            <div class="bg-white/5 p-2 border border-white/10 text-[10.5px] space-y-1">
-              <div class="flex justify-between"><span>alpha:</span><span class="text-white font-semibold">$0.0012</span></div>
-              <div class="flex justify-between text-[#A5BAE0]"><span>beta:</span><span>$0.0018</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 2 -->
-          <div class="p-4 space-y-2 bg-[#070A12]">
-            <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#93A4C8]">
-              <span>02 / VALIDATE</span>
-              <span class="font-bold text-emerald-300">PASS</span>
-            </div>
-            <div class="text-white font-semibold text-xs">Policy Constraint</div>
-            <p class="text-[11px] text-[#C4D2EC] leading-normal font-sans">
-              Validates that challenged fees do not exceed maximum budget cap.
-            </p>
-            <div class="bg-white/5 p-2 border border-white/10 text-[10.5px] space-y-1">
-              <div class="flex justify-between"><span>maxSpend:</span><span class="text-white font-semibold">&le; $0.0100</span></div>
-              <div class="flex justify-between text-[#A5BAE0]"><span>eligible:</span><span>2 / 2</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 3 -->
-          <div class="p-4 space-y-2 bg-[#070A12]">
-            <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#93A4C8]">
-              <span>03 / SELECT</span>
-              <span class="font-bold text-white">BEST</span>
-            </div>
-            <div class="text-white font-semibold text-xs">Price × Quality</div>
-            <p class="text-[11px] text-[#C4D2EC] leading-normal font-sans">
-              Scores eligible endpoints deterministically by price and quality score.
-            </p>
-            <div class="bg-white/5 p-2 border border-white/10 text-[10.5px] space-y-1">
-              <div class="flex justify-between text-white font-semibold"><span>winner:</span><span>alpha</span></div>
-              <div class="flex justify-between text-[#A5BAE0]"><span>latency:</span><span>38ms</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 4 -->
-          <div class="p-4 space-y-2 bg-[#0B111D]">
-            <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#93A4C8]">
-              <span>04 / EXECUTE</span>
-              <span class="font-bold text-emerald-300">200 OK</span>
-            </div>
-            <div class="text-white font-semibold text-xs">Settlement &amp; Data</div>
-            <p class="text-[11px] text-[#C4D2EC] leading-normal font-sans">
-              Authorizes micro-payment on-chain and streams payload back.
-            </p>
-            <div class="bg-emerald-300/10 p-2 border border-emerald-300/25 text-[10.5px] space-y-1">
-              <div class="flex justify-between text-white"><span>settled:</span><span class="font-bold">$0.0012</span></div>
-              <div class="flex justify-between text-[#A5BAE0]"><span>elapsed:</span><span>42ms</span></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-line text-xs">
+              {stages.map((s, i) => (
+                <div class={`p-4 space-y-2 ${i % 2 === 1 ? 'sm:border-l lg:border-l-0 border-line' : ''} ${i >= 2 ? 'sm:border-t lg:border-t-0 border-line' : ''}`}>
+                  <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.14em] text-ink-muted">
+                    <span>{s.n}</span>
+                    <span class={`font-semibold ${s.tag === 'PASS' ? 'text-ok' : 'text-ink'}`}>{s.tag}</span>
+                  </div>
+                  <div class="text-ink font-semibold text-[13px] font-sans">{s.title}</div>
+                  <p class="text-[12px] text-ink-secondary leading-normal font-sans">{s.body}</p>
+                  <div class="bg-surface-soft p-2 border border-line text-[11px] space-y-1">
+                    {s.rows.map(([k, v]) => (
+                      <div class="flex justify-between gap-2"><span class="text-ink-muted">{k}</span><span class="text-ink font-medium truncate">{v}</span></div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </TechnicalViewport>
+    </div>
   </div>
 </section>

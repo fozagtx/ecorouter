@@ -1,76 +1,39 @@
 ---
+import CopyInstall from "./CopyInstall.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section class="relative pt-24 pb-20 md:pt-32 md:pb-28 bg-[#05070E] overflow-hidden text-white">
-  <!-- Glowing Neon Blue Routing Plates Background -->
-  <div class="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
-    <img
-      src={`${basePath}/hero-bg.png`}
-      alt="Hero background with glowing routing plates"
-      class="w-full h-full object-cover object-center opacity-85 scale-105"
-    />
-    <div class="absolute inset-0 bg-gradient-to-b from-[#05070E]/75 via-[#05070E]/15 to-[#05070E]"></div>
-  </div>
+<section class="relative bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-5 sm:px-10 pt-16 pb-10 md:pt-24 md:pb-14">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-7">
+        <span class="inline-flex items-center gap-2 h-7 pl-1.5 pr-2.5 rounded-pill border border-line bg-white text-[12px] font-mono text-ink-secondary">
+          <span class="w-4 h-4 rounded-full bg-ink flex items-center justify-center">
+            <img src={`${basePath}/logos/stellar.svg`} alt="" class="w-2.5 h-2.5 invert" />
+          </span>
+          Built on Stellar
+        </span>
+        <span class="eyebrow">Soroban · USDC · x402</span>
+      </div>
 
-  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-    <!-- Floating Technical Metadata Eyebrow -->
-    <div class="flex items-center justify-center gap-2.5 sm:gap-3 text-[10.5px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#B4C6E7] mb-6 select-none">
-      <span>PLATFORM · 01</span>
-      <span class="text-white/20">/</span>
-      <span class="text-white font-medium flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 bg-[#4488FF] rounded-[0.5px] shadow-[0_0_8px_#4488FF]"></span>
-        SYSTEM · ACTIVE
-      </span>
-    </div>
-
-    <!-- Dense Modern Grotesk H1 with Snap Edge Signs at Beginning and End -->
-    <div class="relative inline-block max-w-[780px] mx-auto px-4 sm:px-6 py-2 sm:py-3 mb-6">
-      <!-- Snap Edge Sign: Beginning (Top-Left) -->
-      <span
-        class="absolute top-0 left-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-t-[1.5px] border-l-[1.5px] border-white/80 pointer-events-none select-none"
-        aria-hidden="true"
-      ></span>
-
-      <h1 class="text-[32px] sm:text-[50px] md:text-[66px] lg:text-[74px] font-medium tracking-tight text-white leading-[1.04] sm:leading-[0.98] drop-shadow-md">
-        Budget-bounded<br class="hidden sm:inline" /> capability spending
+      <h1 class="text-[40px] leading-[1.04] sm:text-[56px] md:text-[68px] lg:text-[76px] font-medium tracking-[-0.035em] text-ink max-w-[920px]">
+        The agentic spending runtime for agents on Stellar
       </h1>
 
-      <!-- Snap Edge Sign: End (Bottom-Right) -->
-      <span
-        class="absolute bottom-0 right-0 w-3.5 h-3.5 sm:w-4 sm:h-4 border-b-[1.5px] border-r-[1.5px] border-white/80 pointer-events-none select-none"
-        aria-hidden="true"
-      ></span>
-    </div>
+      <p class="mt-6 text-[17px] sm:text-[19px] leading-[1.5] text-ink-secondary max-w-[640px]">
+        Your agent gets a Soroban smart account with a hard USDC budget. It buys the APIs it needs over x402, picks the best value provider, and settles on Stellar without ever spending past the mandate you set.
+      </p>
 
-    <!-- Restrained Technical Supporting Copy -->
-    <p class="text-sm sm:text-base md:text-[17px] text-[#D8E4F8] max-w-[580px] mx-auto mb-8 font-normal leading-relaxed sm:leading-[1.48]">
-      Enforce hard spend policies across HTTP 402 providers. Compare live quotes in parallel and authorize atomic micro-settlements.
-    </p>
-
-    <!-- Compact Rectangular Action Buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto">
-      <button
-        onclick="copyText('pnpm add ecorouter')"
-        class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white hover:bg-[#E8EDF5] text-[#05070E] active:scale-98 transition-colors cursor-pointer border border-white shadow-sm"
-        title="Copy install command"
-      >
-        <span class="text-[#7A8A9E]">$</span>
-        <span>pnpm add ecorouter</span>
-        <svg class="w-3.5 h-3.5 text-[#7A8A9E]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </svg>
-      </button>
-
-      <a
-        href="https://github.com/fozagtx/ecorouter"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-[3px] text-xs sm:text-[13px] font-mono font-medium bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-sm transition-colors"
-      >
-        <span>GitHub ↗</span>
-      </a>
+      <div class="mt-9 flex flex-col sm:flex-row gap-3">
+        <CopyInstall />
+        <a
+          href="#quickstart"
+          class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-soft text-ink border border-line-strong"
+        >
+          Read the quickstart
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>

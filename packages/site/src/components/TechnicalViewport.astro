@@ -1,61 +1,45 @@
 ---
 interface Props {
-  netTag?: string;
-  versionTag?: string;
-  systemTag?: string;
-  scaleTag?: string;
-  layerTag?: string;
-  refTag?: string;
+  topLeft?: string;
+  topRight?: string;
+  bottomLeft?: string;
+  bottomCenter?: string;
+  bottomRight?: string;
   class?: string;
-  dark?: boolean;
 }
 
 const {
-  netTag = "NETWORK · ECOROUTER",
-  versionTag = "VERSION · 0.1.0",
-  systemTag = "SYSTEM · ACTIVE",
-  scaleTag = "SCALE · 1:1",
-  layerTag = "LAYER · EXECUTION",
-  refTag = "REF · ECO-01",
+  topLeft = "NETWORK · STELLAR TESTNET",
+  topRight = "SOROBAN · ACCOUNT",
+  bottomLeft = "ASSET · USDC",
+  bottomCenter = "",
+  bottomRight = "x402 · V2 EXACT",
   class: className = "",
-  dark = true
 } = Astro.props;
 ---
 
-<div class={`technical-viewport-container w-full max-w-[1040px] mx-auto select-none ${className}`}>
-  <!-- Metadata ABOVE outer frame -->
-  <div class="flex items-end justify-between gap-4 text-[9.5px] sm:text-[10.5px] font-mono uppercase tracking-[0.12em] sm:tracking-[0.2em] mb-3 px-1 pointer-events-none">
-    <div class="space-y-0.5">
-      <div class="flex items-center gap-1.5 font-medium text-white">
-        <span class="w-1.5 h-1.5 bg-[#4488FF] rounded-[0.5px] shadow-[0_0_6px_#4488FF]"></span>
-        <span>{netTag}</span>
-      </div>
-      <div class="text-[10px] text-[#A5BAE0]">{versionTag}</div>
-    </div>
-    <div class="flex items-center gap-1.5 text-[#C4D2EC]">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span>{systemTag}</span>
-    </div>
+<div class={`w-full ${className}`}>
+  <div class="flex items-center justify-between gap-4 eyebrow !text-[10px] sm:!text-[11px] mb-2.5 px-1">
+    <span class="flex items-center gap-1.5 text-ink">
+      <span class="w-1.5 h-1.5 bg-accent"></span>
+      {topLeft}
+    </span>
+    <span>{topRight}</span>
   </div>
 
-  <!-- Outer Observation Frame -->
-  <div class="outer-technical-frame relative border border-white/15 rounded-[1px] bg-[#070A12] p-3 sm:p-6 md:p-10 transition-colors duration-200 shadow-2xl">
-    <!-- Four Inset L-shaped Camera Registration Brackets in Gutter -->
+  <div class="outer-technical-frame p-3 sm:p-6 md:p-8">
     <div class="capture-corner tl"></div>
     <div class="capture-corner tr"></div>
     <div class="capture-corner bl"></div>
     <div class="capture-corner br"></div>
-
-    <!-- Inner Product Viewport -->
-    <div class="inner-product-viewport relative z-10 bg-white border border-white/10 rounded-none overflow-hidden">
+    <div class="relative z-10 bg-white border border-line shadow-card overflow-hidden">
       <slot />
     </div>
   </div>
 
-  <!-- Metadata BELOW outer frame -->
-  <div class="flex items-center justify-between text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.18em] sm:tracking-[0.2em] text-[#A5BAE0] mt-3 px-1 pointer-events-none">
-    <span>{scaleTag}</span>
-    <span class="hidden sm:inline text-[#7D8EA8]">{layerTag}</span>
-    <span>{refTag}</span>
+  <div class="flex items-center justify-between eyebrow !text-[10px] sm:!text-[11px] mt-2.5 px-1">
+    <span>{bottomLeft}</span>
+    {bottomCenter && <span class="hidden sm:inline">{bottomCenter}</span>}
+    <span>{bottomRight}</span>
   </div>
 </div>

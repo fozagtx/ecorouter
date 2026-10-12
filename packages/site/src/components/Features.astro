@@ -1,127 +1,94 @@
 ---
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const primitives = [
+  { k: "PARALLEL", title: "Ask every provider at once", body: "Each provider for a capability gets an x402 probe in parallel. Slow or broken ones time out after five seconds and drop out." },
+  { k: "POLICY", title: "A hard limit on every call", body: "Each execute() carries maxSpendUsdc and minimumQuality. Quotes above the limit never reach the payment step." },
+  { k: "LOCAL", title: "Runs inside your agent", body: "No hosted proxy or registry. Keys stay in your process, and an executionId makes retries safe." },
+];
+const code = `import { EcoRouter } from "ecorouter";
+
+const router = new EcoRouter({
+  account: process.env.ECOROUTER_ACCOUNT!,
+  sessionSecret: process.env.ECOROUTER_SESSION_SECRET!,
+  paymentClient, // your local Stellar x402 client
+  providers: [
+    { id: "search-a", capability: "web.search", endpoint: process.env.SEARCH_A_URL!, qualityScore: 0.82 },
+    { id: "search-b", capability: "web.search", endpoint: process.env.SEARCH_B_URL!, qualityScore: 0.93 }
+  ]
+});
+
+const result = await router.execute({
+  capability: "web.search",
+  input: { query: "latest lithium carbonate prices" },
+  policy: { maxSpendUsdc: "0.05", minimumQuality: 0.8 }
+});
+
+console.log(result.decision.providerId, result.payment.transactionHash, result.mandate.remainingUsdc);`;
 ---
 
-<section id="features" class="py-16 md:py-24 relative overflow-hidden bg-[#05070E] text-white">
-  <div id="capabilities" class="absolute -top-16 pointer-events-none" aria-hidden="true"></div>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-16 relative z-10">
-    <!-- Section Header -->
-    <div class="space-y-2">
-      <div class="text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] font-medium">
-        01 // CORE SYSTEM ARCHITECTURE
-      </div>
-      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-        Deterministic capability routing primitives
-      </h2>
-      <p class="text-sm sm:text-base text-[#C4D2EC] max-w-2xl font-normal leading-relaxed">
-        Autonomous agents need to purchase external compute, web searches, and indexing without exposing infinite credit lines or hardcoded secrets.
-      </p>
-    </div>
-
-    <!-- 3 Core Technical Primitives under Curves Canopy Backdrop -->
-    <div class="relative rounded-[2px] bg-[#05070E] border border-white/10 p-5 sm:p-8 md:p-10 overflow-hidden shadow-xl">
-      <!-- Outside Backdrop: curves-bg.png with Faded Vignette -->
-      <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
-        <img
-          src={`${basePath}/curves-bg.png`}
-          alt="Glowing curved routing canopy"
-          class="w-full h-full object-cover object-top opacity-90 scale-105"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#05070E] via-transparent to-[#05070E]/30"></div>
+<section id="features" class="bg-surface-soft border-y border-line">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-12">
+      <div class="max-w-3xl space-y-3">
+        <div class="eyebrow">02 · The runtime</div>
+        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
+          Ask for a capability, not a vendor
+        </h2>
+        <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
+          Your agent says it needs web.search. EcoRouter finds who sells it, compares live prices, pays the best one in USDC on Stellar and hands back the same result shape every time.
+        </p>
       </div>
 
-      <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- 1 -->
-        <div class="p-5 sm:p-6 rounded-[1px] border border-white/20 bg-white/95 text-[#0B0B0C] shadow-lg backdrop-blur-sm space-y-3 min-w-0">
-          <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#65656C]">
-            <span>PRIMITIVE 01</span>
-            <span class="font-semibold text-[#0B0B0C] px-1.5 py-0.5 bg-[#F1F1EE] border border-[#D2D2CE]">PARALLEL</span>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {primitives.map((p, i) => (
+          <div class="bg-white border border-line p-6 space-y-3 shadow-subtle">
+            <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-ink-muted">
+              <span>Primitive 0{i + 1}</span>
+              <span class="text-ink px-1.5 py-0.5 bg-surface-soft border border-line">{p.k}</span>
+            </div>
+            <h3 class="text-[17px] font-semibold text-ink tracking-tight">{p.title}</h3>
+            <p class="text-sm text-ink-secondary leading-relaxed">{p.body}</p>
           </div>
-          <h3 class="text-sm font-semibold text-[#0B0B0C]">HTTP 402 Probing</h3>
-          <p class="text-xs text-[#3D3D42] leading-relaxed">
-            Queries registered capability endpoints simultaneously for live 402 payment requirements, verifying fees before dispatching funds.
-          </p>
-        </div>
-
-        <!-- 2 -->
-        <div class="p-5 sm:p-6 rounded-[1px] border border-white/20 bg-white/95 text-[#0B0B0C] shadow-lg backdrop-blur-sm space-y-3 min-w-0">
-          <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#65656C]">
-            <span>PRIMITIVE 02</span>
-            <span class="font-semibold text-[#0B0B0C] px-1.5 py-0.5 bg-[#F1F1EE] border border-[#D2D2CE]">POLICY</span>
-          </div>
-          <h3 class="text-sm font-semibold text-[#0B0B0C]">Deterministic Spend Caps</h3>
-          <p class="text-xs text-[#3D3D42] leading-relaxed">
-            Enforces an explicit <code class="text-[#0B0B0C] font-mono bg-[#F1F1EE] px-1 py-0.5 rounded-[2px] border border-[#D2D2CE]">maxSpendUsdc</code> policy per execution. Providers quoting above the limit are rejected.
-          </p>
-        </div>
-
-        <!-- 3 -->
-        <div class="p-5 sm:p-6 rounded-[1px] border border-white/20 bg-white/95 text-[#0B0B0C] shadow-lg backdrop-blur-sm space-y-3 min-w-0">
-          <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#65656C]">
-            <span>PRIMITIVE 03</span>
-            <span class="font-semibold text-[#0B0B0C] px-1.5 py-0.5 bg-[#F1F1EE] border border-[#D2D2CE]">LOCAL</span>
-          </div>
-          <h3 class="text-sm font-semibold text-[#0B0B0C]">In-Process &amp; Idempotent</h3>
-          <p class="text-xs text-[#3D3D42] leading-relaxed">
-            Runs directly in your application. Uses an optional <code class="text-[#0B0B0C] font-mono bg-[#F1F1EE] px-1 py-0.5 rounded-[2px] border border-[#D2D2CE]">executionId</code> for safe deterministic retries.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quickstart Code Section with Stage Backdrop Outside -->
-    <div class="relative rounded-[2px] bg-[#05070E] border border-white/10 p-5 sm:p-8 overflow-hidden shadow-xl">
-      <!-- Outside Backdrop: stage-bg.png with Faded Vignette -->
-      <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
-        <img
-          src={`${basePath}/stage-bg.png`}
-          alt="Code terminal stage"
-          class="w-full h-full object-cover object-center opacity-85 scale-105"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#05070E] via-transparent to-[#05070E]/70"></div>
+        ))}
       </div>
 
-      <div id="quickstart" class="relative z-10 rounded-[4px] border border-[#D2D2CE] bg-white overflow-hidden font-mono shadow-2xl">
-        <div class="h-9 px-4 bg-[#EFEFEC] border-b border-[#D2D2CE] flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2">
-            <span class="text-[10.5px] uppercase tracking-[0.16em] text-[#7D7D84]">02 // QUICKSTART</span>
-            <span class="text-[#7D7D84]">|</span>
-            <span class="font-medium text-[#0B0B0C]">example.ts</span>
+      <div id="quickstart" class="bg-white border border-line shadow-card overflow-hidden font-mono">
+        <div class="h-10 px-4 bg-surface-soft border-b border-line flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="eyebrow !text-[10px] hidden sm:inline">Quickstart</span>
+            <span class="text-ink-muted hidden sm:inline">/</span>
+            <span class="font-medium text-ink truncate">search-agent.ts</span>
           </div>
           <button
-            onclick="copyText(`import { EcoRouter } from 'ecorouter';\n\nconst router = new EcoRouter({\n  account: process.env.STELLAR_ACCOUNT,\n  sessionSecret: process.env.SESSION_SECRET,\n  providers: [\n    { id: 'tavily', capability: 'web-search', endpoint: 'https://api.tavily.com/x402', qualityScore: 0.95 },\n    { id: 'brave', capability: 'web-search', endpoint: 'https://api.brave.com/x402', qualityScore: 0.90 }\n  ]\n});\n\nconst result = await router.execute({\n  capability: 'web-search',\n  input: { query: 'latest open source agents' },\n  policy: { maxSpendUsdc: '0.01', minimumQuality: 0.85 }\n});\n\nconsole.log(result.providerId, result.spentUsdc);`)"
-            class="h-6 px-2 rounded-[3px] bg-white border border-[#D2D2CE] hover:bg-[#EFEFEC] text-[#0B0B0C] text-[11px] flex items-center gap-1.5 transition-colors cursor-pointer"
+            type="button"
+            data-copy={code}
+            class="h-7 px-2.5 rounded-[3px] bg-white border border-line hover:bg-surface-muted text-ink text-[11px] flex items-center gap-1.5 cursor-pointer"
           >
-            <span>Copy</span>
-            <svg class="w-3 h-3 text-[#7D7D84]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            Copy
+            <svg class="w-3 h-3 text-ink-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
           </button>
         </div>
+        <pre class="p-4 sm:p-6 text-[12px] sm:text-[12.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">import</span> &#123; EcoRouter &#125; <span class="text-accent">from</span> <span class="text-ok">"ecorouter"</span>;
 
-        <div class="p-4 sm:p-5 bg-[#141410] text-[#abab9c] text-xs leading-relaxed overflow-x-auto">
-          <pre><code><span class="text-purple-400">import</span> &#123; EcoRouter &#125; <span class="text-purple-400">from</span> <span class="text-emerald-300">"ecorouter"</span>;
-
-<span class="text-white/40">// 1. Initialize router with smart account and candidate providers</span>
-<span class="text-purple-400">const</span> router = <span class="text-purple-400">new</span> <span class="text-amber-300">EcoRouter</span>(&#123;
-  account: process.env.<span class="text-[#fbfbf9]">STELLAR_ACCOUNT</span>,
-  sessionSecret: process.env.<span class="text-[#fbfbf9]">SESSION_SECRET</span>,
+<span class="text-accent">const</span> <span class="text-ink">router</span> = <span class="text-accent">new</span> <span class="text-ink font-medium">EcoRouter</span>(&#123;
+  account: process.env.<span class="text-ink">ECOROUTER_ACCOUNT</span>!,
+  sessionSecret: process.env.<span class="text-ink">ECOROUTER_SESSION_SECRET</span>!,
+  paymentClient, <span class="text-ink-muted">// your local Stellar x402 client</span>
   providers: [
-    &#123; id: <span class="text-emerald-300">"tavily"</span>, capability: <span class="text-emerald-300">"web-search"</span>, endpoint: <span class="text-emerald-300">"https://api.tavily.com/x402"</span>, qualityScore: <span class="text-amber-300">0.95</span> &#125;,
-    &#123; id: <span class="text-emerald-300">"brave"</span>, capability: <span class="text-emerald-300">"web-search"</span>, endpoint: <span class="text-emerald-300">"https://api.brave.com/x402"</span>, qualityScore: <span class="text-amber-300">0.90</span> &#125;
+    &#123; id: <span class="text-ok">"search-a"</span>, capability: <span class="text-ok">"web.search"</span>, endpoint: process.env.<span class="text-ink">SEARCH_A_URL</span>!, qualityScore: <span class="text-ink">0.82</span> &#125;,
+    &#123; id: <span class="text-ok">"search-b"</span>, capability: <span class="text-ok">"web.search"</span>, endpoint: process.env.<span class="text-ink">SEARCH_B_URL</span>!, qualityScore: <span class="text-ink">0.93</span> &#125;
   ]
 &#125;);
 
-<span class="text-white/40">// 2. Execute capability under hard spending bounds</span>
-<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> router.<span class="text-blue-400">execute</span>(&#123;
-  capability: <span class="text-emerald-300">"web-search"</span>,
-  input: &#123; query: <span class="text-emerald-300">"latest autonomous agent runtime specifications"</span> &#125;,
-  policy: &#123; maxSpendUsdc: <span class="text-amber-300">"0.01"</span>, minimumQuality: <span class="text-amber-300">0.85</span> &#125;
+<span class="text-accent">const</span> <span class="text-ink">result</span> = <span class="text-accent">await</span> router.<span class="text-ink font-medium">execute</span>(&#123;
+  capability: <span class="text-ok">"web.search"</span>,
+  input: &#123; query: <span class="text-ok">"latest lithium carbonate prices"</span> &#125;,
+  policy: &#123; maxSpendUsdc: <span class="text-ok">"0.05"</span>, minimumQuality: <span class="text-ink">0.8</span> &#125;
 &#125;);
 
-console.<span class="text-blue-400">log</span>(result.providerId, result.spentUsdc, result.data);</code></pre>
-        </div>
+console.<span class="text-ink font-medium">log</span>(result.decision.providerId, result.payment.transactionHash, result.mandate.remainingUsdc);</code></pre>
       </div>
     </div>
   </div>

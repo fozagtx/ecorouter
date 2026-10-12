@@ -1,0 +1,19 @@
+---
+interface Props { class?: string; size?: 'sm' | 'md' }
+const { class: className = '', size = 'md' } = Astro.props;
+const h = size === 'sm' ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]';
+---
+
+<button
+  type="button"
+  data-copy="pnpm add ecorouter"
+  class={`inline-flex items-center justify-center gap-2 rounded-[3px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border border-ink cursor-pointer active:translate-y-px ${h} ${className}`}
+  title="Copy install command"
+>
+  <span class="text-white/50">$</span>
+  <span>pnpm add ecorouter</span>
+  <svg class="w-3.5 h-3.5 text-white/50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+</button>

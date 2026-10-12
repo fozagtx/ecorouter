@@ -1,139 +1,153 @@
 ---
 import TechnicalViewport from "./TechnicalViewport.astro";
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const input = "w-full h-10 bg-white border border-line-strong rounded-[3px] px-3 text-xs font-mono text-ink focus:outline-none focus:border-ink";
+const label = "block text-[10px] uppercase tracking-[0.16em] text-ink-muted font-medium mb-1.5";
 ---
 
-<section id="simulator" class="py-16 md:py-28 relative overflow-hidden bg-[#05070E] border-t border-[#D2D2CE] text-white">
-  <!-- Outside Background Image: stage-bg with Faded Transition Effect -->
-  <div class="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex items-center justify-center">
-    <img
-      src={`${basePath}/stage-bg.png`}
-      alt="Simulator testbench stage backdrop"
-      class="w-full h-full object-cover object-center opacity-90 scale-105"
-    />
-    <div class="absolute inset-0 bg-gradient-to-b from-[#05070E] via-[#05070E]/10 25% to-[#05070E]"></div>
-  </div>
-
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
-    <!-- Header -->
-    <div class="space-y-2">
-      <div class="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#93A4C8] font-medium">
-        03 // INTERACTIVE CAPABILITY TESTBENCH
+<section id="simulator" class="bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-10">
+      <div class="max-w-3xl space-y-3">
+        <div class="eyebrow">03 · Testbench</div>
+        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
+          Watch it choose who gets paid
+        </h2>
+        <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
+          Change two provider quotes and your policy. This runs the SDK's own selectProvider and USDC maths in your browser, so the winner here is the winner your agent would pay on Stellar.
+        </p>
       </div>
-      <h2 class="text-2xl sm:text-3xl font-medium tracking-[-0.035em] text-white">
-        Simulate capability execution
-      </h2>
-      <p class="text-sm sm:text-base text-[#C4D2EC] max-w-xl font-normal leading-relaxed">
-        Test how EcoRouter challenges endpoints, enforces maxSpendUsdc caps, and selects providers deterministically.
-      </p>
+
+      <TechnicalViewport topLeft="TESTBENCH · web.search" topRight="SDK · selectProvider()" bottomLeft="UNITS · 7 DECIMAL ATOMIC" bottomRight="NO FUNDS MOVE HERE">
+        <div class="p-4 sm:p-6 space-y-5 font-mono">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {["a", "b"].map((id, i) => (
+              <fieldset class="border border-line p-3 sm:p-4 space-y-3">
+                <legend class="px-1 text-[11px] text-ink font-medium">search-{id}</legend>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class={label} for={`sim-price-${id}`}>Quote (USDC)</label>
+                    <input id={`sim-price-${id}`} class={input} type="text" inputmode="decimal" value={i === 0 ? "0.0012" : "0.0018"} />
+                  </div>
+                  <div>
+                    <label class={label} for={`sim-quality-${id}`}>qualityScore</label>
+                    <input id={`sim-quality-${id}`} class={input} type="number" min="0" max="1" step="0.01" value={i === 0 ? "0.82" : "0.93"} />
+                  </div>
+                </div>
+              </fieldset>
+            ))}
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+            <div class="sm:col-span-4">
+              <label class={label} for="sim-cap">maxSpendUsdc</label>
+              <select id="sim-cap" class={input}>
+                <option value="0.05">0.05 USDC</option>
+                <option value="0.0015">0.0015 USDC (tight)</option>
+                <option value="0.001">0.001 USDC (too tight)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-4">
+              <label class={label} for="sim-minq">minimumQuality</label>
+              <input id="sim-minq" class={input} type="number" min="0" max="1" step="0.01" value="0.8" />
+            </div>
+            <div class="sm:col-span-4">
+              <button id="sim-run-btn" type="button" class="w-full h-10 px-4 rounded-[3px] bg-ink hover:bg-[#26272B] text-white text-xs font-medium flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                Run selection
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="border border-line overflow-hidden text-xs">
+            <div class="h-8 px-3 bg-surface-soft border-b border-line flex items-center justify-between text-[11px]">
+              <span class="font-medium text-ink">OUTPUT</span>
+              <span id="sim-status" class="text-ink-muted uppercase tracking-wider text-[10px] font-medium">Idle</span>
+            </div>
+            <div id="sim-console" class="bg-white p-4 min-h-[190px] max-h-[300px] overflow-y-auto space-y-1.5 text-ink-secondary leading-relaxed" data-lenis-prevent>
+              <div class="text-ink-muted">// Set the quotes and press Run selection.</div>
+            </div>
+          </div>
+        </div>
+      </TechnicalViewport>
     </div>
-
-    <!-- Simulator Technical Viewport -->
-    <TechnicalViewport
-      netTag="TESTBENCH · SIMULATOR"
-      versionTag="PROTOCOL · X402 V2"
-      systemTag="SYSTEM · READY"
-      scaleTag="RATE · EXACT"
-      layerTag="LAYER · TESTBENCH"
-      refTag="REF · SIM-02"
-    >
-      <div class="bg-white p-5 sm:p-6 space-y-6 text-[#0B0B0C] shadow-2xl">
-        <!-- Controls (40px height, 3px radius) -->
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-          <div class="sm:col-span-5 space-y-1.5 font-mono">
-            <label class="text-[10px] sm:text-[10.5px] uppercase tracking-[0.18em] text-[#5D5D64] font-medium">Capability</label>
-            <select id="sim-capability" class="w-full h-10 bg-white border border-[#D2D2CE] rounded-[3px] px-3 text-xs font-mono text-[#0B0B0C] focus:outline-none focus:border-[#0B0B0C]">
-              <option value="crawl">web-crawl (Extract Markdown)</option>
-              <option value="sandbox">python-sandbox (Code Execution)</option>
-              <option value="indexer">onchain-indexer (RPC Indexing)</option>
-            </select>
-          </div>
-
-          <div class="sm:col-span-4 space-y-1.5 font-mono">
-            <label class="text-[10px] sm:text-[10.5px] uppercase tracking-[0.18em] text-[#5D5D64] font-medium">maxSpendUsdc</label>
-            <select id="sim-cap" class="w-full h-10 bg-white border border-[#D2D2CE] rounded-[3px] px-3 text-xs font-mono text-[#0B0B0C] focus:outline-none focus:border-[#0B0B0C]">
-              <option value="0.005">$0.005 USDC (Standard)</option>
-              <option value="0.010">$0.010 USDC (High Compute)</option>
-              <option value="0.001">$0.001 USDC (Strict Budget)</option>
-            </select>
-          </div>
-
-          <div class="sm:col-span-3">
-            <button
-              id="sim-run-btn"
-              class="w-full h-10 px-4 rounded-[3px] bg-[#0B0B0C] hover:bg-[#252528] text-white font-mono text-xs font-medium active:scale-98 transition-colors flex items-center justify-center gap-2 cursor-pointer border border-[#0B0B0C]"
-            >
-              <span>Execute Probe</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Live Terminal Console -->
-        <div class="font-mono text-xs border border-[#DADAD6] rounded-none overflow-hidden">
-          <div class="h-8 px-3 bg-[#FAFAF8] border-b border-[#DADAD6] flex items-center justify-between text-[11px] text-[#404045]">
-            <span class="font-medium text-[#0B0B0C]">OUTPUT STREAM</span>
-            <span id="sim-status" class="text-[#5D5D64] uppercase tracking-wider text-[10px] font-medium">IDLE</span>
-          </div>
-
-          <div id="sim-console" class="bg-[#141410] p-4 min-h-[180px] max-h-[280px] overflow-y-auto space-y-1.5 text-[#abab9c] leading-relaxed">
-            <div class="text-white/40">// Select capability and click 'Execute Probe' to inspect runtime negotiation.</div>
-          </div>
-        </div>
-      </div>
-    </TechnicalViewport>
   </div>
 </section>
 
-<script is:inline>
-  const runBtn = document.getElementById("sim-run-btn");
-  const capSelect = document.getElementById("sim-capability");
-  const budgetSelect = document.getElementById("sim-cap");
-  const consoleEl = document.getElementById("sim-console");
-  const statusEl = document.getElementById("sim-status");
+<script>
+  import { selectProvider } from "../../../sdk/src/router/select.ts";
+  import { parseUsdc, formatUsdc } from "../../../sdk/src/money.ts";
 
-  const delay = (ms) => new Promise(res => setTimeout(res, ms));
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const runBtn = $<HTMLButtonElement>("sim-run-btn");
+  const consoleEl = $<HTMLDivElement>("sim-console");
+  const statusEl = $<HTMLSpanElement>("sim-status");
+  const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]!));
 
-  if (runBtn && consoleEl) {
-    runBtn.addEventListener("click", async () => {
-      runBtn.disabled = true;
-      runBtn.classList.add("opacity-50", "cursor-not-allowed");
-      statusEl.textContent = "RUNNING";
-      statusEl.className = "text-[#0B0B0C] font-semibold text-[10px] uppercase";
+  const setStatus = (text: string, cls: string) => {
+    statusEl.textContent = text;
+    statusEl.className = `uppercase tracking-wider text-[10px] font-semibold ${cls}`;
+  };
+  const line = (tag: string, cls: string, msg: string) => {
+    const div = document.createElement("div");
+    div.innerHTML = `<span class="${cls} font-semibold">${tag}</span> ${msg}`;
+    consoleEl.appendChild(div);
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+  };
 
-      const cap = capSelect.value;
-      const budget = budgetSelect.value;
+  runBtn?.addEventListener("click", async () => {
+    runBtn.disabled = true;
+    consoleEl.innerHTML = "";
+    setStatus("Running", "text-ink");
 
-      consoleEl.innerHTML = "";
+    try {
+      const cap = parseUsdc(($<HTMLSelectElement>("sim-cap")).value);
+      const minQ = Number(($<HTMLInputElement>("sim-minq")).value);
+      const providers = ["a", "b"].map((id) => {
+        const raw = $<HTMLInputElement>(`sim-price-${id}`).value.trim();
+        const q = Number($<HTMLInputElement>(`sim-quality-${id}`).value);
+        if (!(q > 0 && q <= 1)) throw new TypeError(`search-${id}: qualityScore must be between 0 and 1`);
+        return { providerId: `search-${id}`, priceAtomic: parseUsdc(raw), qualityScore: q, successRate: 1 };
+      });
 
-      const append = (html) => {
-        const div = document.createElement("div");
-        div.innerHTML = html;
-        consoleEl.appendChild(div);
-        consoleEl.scrollTop = consoleEl.scrollHeight;
-      };
+      line("PROBE", "text-accent", `2 providers quoted for web.search: ${providers.map((p) => `${p.providerId} ${formatUsdc(p.priceAtomic)} USDC`).join(", ")}`);
+      await delay(260);
 
-      append(`<span class="text-white/40">[00ms]</span> <span class="text-purple-400">DISPATCH</span> request: ${cap} | maxSpend: $${budget}`);
-      await delay(250);
+      const eligible = providers.filter((p) => {
+        if (p.qualityScore < minQ) {
+          line("SKIP", "text-ink-muted", `${p.providerId} quality ${p.qualityScore} &lt; minimumQuality ${minQ}`);
+          return false;
+        }
+        if (p.priceAtomic > cap) {
+          line("SKIP", "text-ink-muted", `${p.providerId} ${formatUsdc(p.priceAtomic)} USDC &gt; maxSpendUsdc ${formatUsdc(cap)}`);
+          return false;
+        }
+        line("PASS", "text-ok", `${p.providerId} within policy (${p.priceAtomic.toString()} atomic units)`);
+        return true;
+      });
+      await delay(260);
 
-      append(`<span class="text-white/40">[34ms]</span> <span class="text-amber-400">HTTP 402</span> challenged: node-alpha ($0.0008), node-beta ($0.0016)`);
+      if (!eligible.length) {
+        line("STOP", "text-destructive", "NO_ELIGIBLE_PROVIDER: nothing is paid, the agent keeps its budget");
+        setStatus("Rejected before payment", "text-destructive");
+        return;
+      }
+
+      const winner = selectProvider(eligible);
+      eligible.forEach((p) => {
+        const cost = Number(p.priceAtomic) / (p.qualityScore * p.successRate);
+        line("SCORE", "text-ink", `${p.providerId} economicCost = ${p.priceAtomic} / (${p.qualityScore} × ${p.successRate}) = ${Math.round(cost).toLocaleString()}`);
+      });
       await delay(300);
-
-      append(`<span class="text-white/40">[48ms]</span> <span class="text-blue-400">VALIDATE</span> fees &le; $${budget} policy cap ➔ <span class="text-emerald-400">OK</span>`);
-      await delay(250);
-
-      append(`<span class="text-white/40">[62ms]</span> <span class="text-purple-400">SELECT</span> node-alpha selected (score: 0.98, cost: $0.0008)`);
-      await delay(350);
-
-      append(`<span class="text-white/40">[98ms]</span> <span class="text-emerald-400 font-bold">SETTLED</span> 200 OK — 1,240 tokens returned (spent: $0.0008)`);
-
-      statusEl.textContent = "COMPLETE (200 OK)";
-      statusEl.className = "text-emerald-400 font-bold text-[10px] uppercase";
-
+      line("SELECT", "text-accent", `${winner.providerId} wins at ${formatUsdc(winner.priceAtomic)} USDC`);
+      await delay(260);
+      line("SETTLE", "text-ok", `session key signs, Soroban __check_auth approves against the mandate, ${formatUsdc(winner.priceAtomic)} USDC moves on stellar:testnet`);
+      setStatus(`Pays ${winner.providerId}`, "text-ok");
+    } catch (err) {
+      line("ERROR", "text-destructive", esc(err instanceof Error ? err.message : String(err)));
+      setStatus("Invalid input", "text-destructive");
+    } finally {
       runBtn.disabled = false;
-      runBtn.classList.remove("opacity-50", "cursor-not-allowed");
-    });
-  }
+    }
+  });
 </script>
