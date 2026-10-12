@@ -50,9 +50,13 @@
 }
 
 /* Technical frame */
+.card {
+  border: 1.5px solid #0B0B0C;
+}
+
 .outer-technical-frame {
   position: relative;
-  border: 1px solid #E3E5EA;
+  border: 1.5px solid #0B0B0C;
   background-color: #F7F8FB;
   background-image:
     linear-gradient(rgba(59, 91, 219, 0.045) 1px, transparent 1px),
@@ -86,7 +90,7 @@
   justify-content: space-between;
   min-width: 0;
   gap: 12px;
-  border: 1px solid #E3E5EA;
+  border: 1.5px solid #0B0B0C;
   background: #FFFFFF;
   color: #4A4D57;
   padding: 10px 12px;
@@ -97,7 +101,7 @@
   animation: providerPulse 4.6s ease-in-out infinite;
 }
 .provider-node strong { color: #0B0B0C; letter-spacing: 0; font-size: 12px; font-weight: 600; }
-.provider-node.is-winner { border-color: rgba(59, 91, 219, 0.45); background: #F5F7FE; }
+.provider-node.is-winner { border-color: #3B5BDB; background: #F5F7FE; box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.15); }
 .animate-float-delay-1 { animation-delay: 0.55s; }
 .animate-float-delay-2 { animation-delay: 1.1s; }
 

@@ -11,7 +11,7 @@ const stages = [
 <section id="how" class="bg-white">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="rails px-0 sm:px-4 pb-16 md:pb-24">
-      <div class="relative overflow-hidden rounded-[6px] border border-line">
+      <div class="relative overflow-hidden rounded-[6px] card">
         <img
           src={`${basePath}/sky-stage.jpg`}
           alt=""
@@ -19,7 +19,7 @@ const stages = [
           loading="eager"
         />
         <div class="relative px-3 py-10 sm:px-10 sm:py-16 md:px-16 md:py-20">
-          <div class="mx-auto max-w-[920px] bg-white/95 backdrop-blur border border-line shadow-float rounded-[4px] overflow-hidden font-mono">
+          <div class="mx-auto max-w-[920px] bg-white/95 backdrop-blur card shadow-float rounded-[4px] overflow-hidden font-mono">
             <div class="min-h-10 px-4 py-2.5 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <div class="flex flex-wrap items-center gap-2">
                 <span class="w-1.5 h-1.5 bg-accent"></span>
@@ -48,7 +48,7 @@ const stages = [
                   </div>
                   <div class="text-ink font-semibold text-[13px] font-sans">{s.title}</div>
                   <p class="text-[12px] text-ink-secondary leading-normal font-sans">{s.body}</p>
-                  <div class="bg-surface-soft p-2 border border-line text-[11px] space-y-1">
+                  <div class="bg-surface-soft p-2 border border-line-strong text-[11px] space-y-1">
                     {s.rows.map(([k, v]) => (
                       <div class="flex justify-between gap-2"><span class="text-ink-muted">{k}</span><span class="text-ink font-medium truncate">{v}</span></div>
                     ))}

@@ -28,7 +28,7 @@ const rules = [
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-[1.5px] bg-ink card">
         {reasons.map((r) => (
           <div class="bg-white p-6 space-y-3">
             <div class="font-mono text-[11px] text-ink-muted">{r.k}</div>
@@ -55,13 +55,13 @@ const rules = [
                   <div class="h-full bg-ink" style="width: 24%"></div>
                 </div>
               </div>
-              <dl class="grid grid-cols-2 gap-px bg-line border border-line text-[11px]">
+              <dl class="grid grid-cols-2 gap-px bg-line-strong border border-line-strong text-[11px]">
                 <div class="bg-white p-2.5"><dt class="text-ink-muted">asset</dt><dd class="text-ink font-medium mt-0.5">USDC (SAC)</dd></div>
                 <div class="bg-white p-2.5"><dt class="text-ink-muted">max_payment</dt><dd class="text-ink font-medium mt-0.5">0.05 USDC</dd></div>
                 <div class="bg-white p-2.5"><dt class="text-ink-muted">expires_at</dt><dd class="text-ink font-medium mt-0.5">ledger time + 24h</dd></div>
                 <div class="bg-white p-2.5"><dt class="text-ink-muted">revoked</dt><dd class="text-ink font-medium mt-0.5">false</dd></div>
               </dl>
-              <pre class="bg-surface-soft border border-line p-3 text-[11.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">pub struct</span> <span class="text-ink">Mandate</span> &#123;
+              <pre class="bg-surface-soft border border-line-strong p-3 text-[11.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">pub struct</span> <span class="text-ink">Mandate</span> &#123;
   session_public_key: BytesN&lt;32&gt;,
   asset: Address,
   total_limit: i128,

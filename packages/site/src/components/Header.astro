@@ -30,7 +30,7 @@ const links = [
         href="https://github.com/fozagtx/ecorouter"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono bg-white hover:bg-surface-soft text-ink border border-line"
+        class="inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono bg-white hover:bg-surface-soft text-ink border border-ink"
         aria-label="EcoRouter on GitHub"
       >
         <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -41,11 +41,11 @@ const links = [
       <CopyInstall size="sm" class="hidden sm:inline-flex" />
 
       <details class="md:hidden relative group">
-        <summary class="list-none cursor-pointer w-8 h-8 inline-flex items-center justify-center rounded-[3px] border border-line text-ink" aria-label="Open menu">
+        <summary class="list-none cursor-pointer w-8 h-8 inline-flex items-center justify-center rounded-[3px] border border-ink text-ink" aria-label="Open menu">
           <svg class="w-4 h-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
           <svg class="w-4 h-4 hidden group-open:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </summary>
-        <div class="absolute right-0 top-10 w-56 bg-white border border-line rounded-[4px] shadow-card p-2 font-mono text-[13px]">
+        <div class="absolute right-0 top-10 w-56 bg-white card rounded-[4px] shadow-card p-2 font-mono text-[13px]">
           {links.map((l) => <a href={l.href} class="block px-3 py-2 rounded-[3px] text-ink-secondary hover:bg-surface-soft hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
           <button type="button" data-copy="pnpm add ecorouter" class="mt-1 w-full text-left px-3 py-2 rounded-[3px] bg-ink text-white text-xs cursor-pointer">$ pnpm add ecorouter</button>
         </div>

@@ -40,7 +40,7 @@ console.log(result.decision.providerId, result.payment.transactionHash, result.m
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         {primitives.map((p, i) => (
-          <div class="bg-white border border-line p-6 space-y-3 shadow-subtle">
+          <div class="bg-white card p-6 space-y-3 shadow-subtle">
             <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-ink-muted">
               <span>Primitive 0{i + 1}</span>
               <span class="text-ink px-1.5 py-0.5 bg-surface-soft border border-line">{p.k}</span>
@@ -51,8 +51,8 @@ console.log(result.decision.providerId, result.payment.transactionHash, result.m
         ))}
       </div>
 
-      <div id="quickstart" class="bg-white border border-line shadow-card overflow-hidden font-mono">
-        <div class="h-10 px-4 bg-surface-soft border-b border-line flex items-center justify-between text-xs">
+      <div id="quickstart" class="bg-white card shadow-card overflow-hidden font-mono">
+        <div class="h-10 px-4 bg-surface-soft border-b-[1.5px] border-ink flex items-center justify-between text-xs">
           <div class="flex items-center gap-2 min-w-0">
             <span class="eyebrow !text-[10px] hidden sm:inline">Quickstart</span>
             <span class="text-ink-muted hidden sm:inline">/</span>
@@ -61,7 +61,7 @@ console.log(result.decision.providerId, result.payment.transactionHash, result.m
           <button
             type="button"
             data-copy={code}
-            class="h-7 px-2.5 rounded-[3px] bg-white border border-line hover:bg-surface-muted text-ink text-[11px] flex items-center gap-1.5 cursor-pointer"
+            class="h-7 px-2.5 rounded-[3px] bg-white border border-ink hover:bg-surface-muted text-ink text-[11px] flex items-center gap-1.5 cursor-pointer"
           >
             Copy
             <svg class="w-3 h-3 text-ink-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">

@@ -21,7 +21,7 @@ const items = [
     <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-surface-soft to-transparent z-10 pointer-events-none"></div>
     <div class="animate-marquee flex items-center gap-3 px-3">
       {items.concat(items).map((item) => (
-        <div class="flex items-center gap-2.5 px-3.5 h-10 rounded-[4px] bg-white border border-line text-[13px] text-ink shrink-0">
+        <div class="flex items-center gap-2.5 px-3.5 h-10 rounded-[4px] bg-white card text-[13px] text-ink shrink-0">
           {item.logo
             ? <img src={`${basePath}/logos/stellar.svg`} alt="" class="w-4 h-4" loading="lazy" />
             : <span class="w-1.5 h-1.5 bg-accent"></span>}
