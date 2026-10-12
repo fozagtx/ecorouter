@@ -1,5 +1,8 @@
 ---
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const ascii = Array.from({ length: 64 }, (_, r) =>
+  Array.from({ length: 240 }, (_, c) => (r % 2 === 0 ? (c % 4 === 0 ? "+" : c % 2 === 0 ? "." : " ") : " ")).join("")
+).join("\n");
 const stages = [
   { n: "01 / PROBE", tag: "402", title: "Ask for prices", body: "Calls every provider for the capability at once and reads their x402 payment challenge.", rows: [["search-a", "0.0012"], ["search-b", "0.0018"]] },
   { n: "02 / VALIDATE", tag: "PASS", title: "Check the mandate", body: "Network, asset, per-payment cap and your policy limit are checked before money moves.", rows: [["maxSpend", "≤ 0.05"], ["eligible", "2 / 2"]] },
@@ -18,6 +21,7 @@ const stages = [
           class="absolute inset-0 w-full h-full object-cover object-top select-none pointer-events-none"
           loading="eager"
         />
+        <pre aria-hidden="true" class="absolute inset-0 m-0 p-3 overflow-hidden whitespace-pre font-mono text-[12px] leading-[12px] text-accent/50 select-none pointer-events-none">{ascii}</pre>
         <div class="relative px-3 py-10 sm:px-10 sm:py-16 md:px-16 md:py-20">
           <div class="mx-auto max-w-[920px] bg-white/95 backdrop-blur card shadow-float rounded-[4px] overflow-hidden font-mono">
             <div class="min-h-10 px-4 py-2.5 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
