@@ -24,17 +24,3 @@
   --color-fd-popover: #ffffff;
   --color-fd-popover-foreground: #0b0b0c;
 }
-
-/* Match the landing site: solid 1.5px ink borders on card-like surfaces.
-   Inner dividers (border-b, divide-*, etc.) keep the light #E3E5EA tone. */
-[data-card],                      /* Cards component */
-.fd-card,
-div[class~='@container'][class~='grid'] > a,  /* prev/next footer cards */
-div[class~='rounded-xl'][class~='border'],    /* callouts, tabs */
-div[class~='rounded-2xl'][class~='bg-fd-card'], /* TypeTable */
-figure.shiki,                     /* code blocks */
-div[role='dialog'][class*='rounded-xl']    /* search dialog */
-{
-  border: 1.5px solid #0b0b0c !important;
-  box-shadow: none;
-}

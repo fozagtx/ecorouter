@@ -11,7 +11,7 @@ const inputCls =
   'w-full rounded-md border border-[#E3E5EA] bg-white px-2 py-1 text-sm text-[#0B0B0C] font-mono focus:outline-none focus:border-[#3B5BDB]';
 const labelCls = 'text-xs font-medium text-[#4A4D57]';
 const panelCls =
-  'not-prose rounded-xl border-[1.5px] border-[#0B0B0C] bg-white px-4 pb-4 pt-2';
+  'not-prose rounded-xl border border-[#E3E5EA] bg-white px-4 pb-4 pt-2';
 
 interface Row {
   providerId: string;
@@ -152,7 +152,7 @@ export function ChallengeValidator() {
         className={`mt-4 rounded-md border px-3 py-2 font-mono text-sm ${
           !outcome.error
             ? 'border-[#3B5BDB] bg-[#F5F7FE] text-[#3B5BDB]'
-            : 'border-[#0B0B0C] bg-[#F6F7F9] text-[#0B0B0C]'
+            : 'border-[#E3E5EA] bg-[#F6F7F9] text-[#0B0B0C]'
         }`}
       >
         {outcome.error
@@ -270,7 +270,7 @@ export function ProviderSelector() {
         ))}
       </div>
       <button
-        className="mt-3 rounded-md border-[1.5px] border-[#0B0B0C] bg-white px-3 py-1 text-sm font-medium text-[#0B0B0C] disabled:opacity-40"
+        className="mt-3 rounded-md border border-[#E3E5EA] bg-white px-3 py-1 text-sm font-medium text-[#0B0B0C] disabled:opacity-40"
         onClick={() =>
           setRows((prev) => [
             ...prev,
