@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import CopyInstall from './CopyInstall.astro';
+import AsciiGrid from './AsciiGrid.astro';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const cols = [
   { h: "Product", links: [["How it works", "#how"], ["Why Stellar", "#stellar"], ["Testbench", "#simulator"]] },
@@ -11,6 +12,7 @@ const cols = [
 
 <footer class="relative overflow-hidden border-t border-line bg-white">
   <img src={`${basePath}/silk-light.jpg`} alt="" class="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none" loading="lazy" />
+  <AsciiGrid rows={50} class="text-accent/40 [mask-image:linear-gradient(to_top,black_45%,transparent)]" />
   <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
     <div class="rails px-5 sm:px-10 pt-16 pb-10 space-y-12">
       <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">

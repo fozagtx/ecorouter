@@ -1,4 +1,6 @@
 ---
+import AsciiGrid from "./AsciiGrid.astro";
+
 interface Props {
   topLeft?: string;
   topRight?: string;
@@ -27,7 +29,8 @@ const {
     <span>{topRight}</span>
   </div>
 
-  <div class="outer-technical-frame p-3 sm:p-6 md:p-8">
+  <div class="outer-technical-frame overflow-hidden p-3 sm:p-6 md:p-8">
+    <AsciiGrid rows={90} class="text-accent/35" />
     <div class="capture-corner tl"></div>
     <div class="capture-corner tr"></div>
     <div class="capture-corner bl"></div>

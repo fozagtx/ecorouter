@@ -58,10 +58,6 @@
   position: relative;
   border: 1.5px solid #0B0B0C;
   background-color: #F7F8FB;
-  background-image:
-    linear-gradient(rgba(59, 91, 219, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 91, 219, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 
 .capture-corner {

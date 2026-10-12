@@ -1,13 +1,11 @@
 ---
 import CopyInstall from "./CopyInstall.astro";
+import AsciiGrid from "./AsciiGrid.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const ascii = Array.from({ length: 80 }, (_, r) =>
-  Array.from({ length: 240 }, (_, c) => (r % 2 === 0 ? (c % 4 === 0 ? "+" : c % 2 === 0 ? "." : " ") : " ")).join("")
-).join("\n");
 ---
 
 <section class="relative overflow-hidden bg-white">
-  <pre aria-hidden="true" class="absolute inset-0 m-0 p-3 overflow-hidden whitespace-pre font-mono text-[12px] leading-[12px] text-accent/40 select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_55%,transparent)]">{ascii}</pre>
+  <AsciiGrid class="text-accent/40 [mask-image:linear-gradient(to_bottom,black_55%,transparent)]" />
   <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
     <div class="rails px-5 sm:px-10 pt-16 pb-10 md:pt-24 md:pb-14">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-7">
