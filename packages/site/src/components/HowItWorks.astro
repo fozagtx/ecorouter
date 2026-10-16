@@ -1,0 +1,60 @@
+---
+const steps = [
+  {
+    n: "01",
+    tag: "Policy",
+    title: "An allowance for every spender",
+    body: "Add a person or an AI agent and give it its own policy: an allowance per period, a cap per payment, a maximum number of payments, an expiry date and the services it may pay. Pause or remove a spender at any time.",
+    rows: [["allowance", "$900 / month"], ["cap per payment", "$250"], ["payments", "20 / month"], ["expires", "Dec 31"]],
+  },
+  {
+    n: "02",
+    tag: "Registry",
+    title: "Only registered services get paid",
+    body: "Payments go to services in an on-chain registry, never to a pasted address. The pay function takes a service id. An id that is unknown or suspended reverts, so nobody can redirect money to an address they typed.",
+    rows: [["pay(…, service)", "\"inference-credits\""], ["resolves to", "G…Q7XK (payee)"], ["unknown id", "reverts"], ["suspended", "reverts"]],
+  },
+  {
+    n: "03",
+    tag: "Approval",
+    title: "Over the limit, the owner decides",
+    body: "A payment over a rule is held, not failed. Nothing moves. The spender asks for approval, and the owner sees the rule that caught it and how far over it was. Approving and paying are separate steps.",
+    rows: [["status", "held"], ["rule", "cap $250"], ["over by", "$70"], ["owner", "approve · decline"]],
+  },
+];
+---
+
+<section id="how" class="bg-white border-t border-line">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
+      <div class="max-w-3xl space-y-3">
+        <div class="eyebrow">01 · How it works</div>
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
+          One account, a rule for every spender
+        </h2>
+        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[620px]">
+          The owner funds one team account in USDC. The money stays in a Soroban contract, and every payment out of it is checked against the spender's own policy before anything settles.
+        </p>
+      </div>
+
+      <ol class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {steps.map((s) => (
+          <li class="card p-5 sm:p-6 flex flex-col gap-4 min-w-0">
+            <div class="flex items-center justify-between text-[13px] text-ink-muted">
+              <span>{s.n}</span>
+              <span class="text-ink px-3 py-1 rounded-full bg-surface-muted">{s.tag}</span>
+            </div>
+            <h3 class="text-[18px] font-semibold text-ink tracking-[-0.02em] leading-snug">{s.title}</h3>
+            <p class="text-sm text-ink-secondary leading-relaxed">{s.body}</p>
+            <div class="mt-auto bg-surface-muted rounded-xl p-3 text-[12px] space-y-2">
+              {s.rows.map(([k, v]) => (
+                <div class="flex justify-between gap-3">
+                  <span class="text-ink-muted">{k}</span>
+                  <span class={`font-medium truncate ${v === "held" || v === "$70" ? "text-warn" : v === "reverts" ? "text-destructive" : "text-ink"}`}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ol>
+  </div>
+</section>

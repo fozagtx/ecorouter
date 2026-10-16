@@ -11,3 +11,8 @@ packages/sdk/dist/
 packages/docs/.next/
 packages/docs/out/
 packages/docs/.source/
+
+# app
+packages/app/.env.local
+.agent-*.json
+.deploy/

@@ -1,0 +1,69 @@
+---
+title: SDK pipeline
+description: The execution pipeline inside router.execute in the legacy SDK.
+---
+
+Every call to `router.execute` runs the same deterministic pipeline, implemented in `packages/sdk/src/ecorouter.ts`.
+
+<Steps>
+<Step>
+
+### Idempotency check
+
+The router resolves `executionId` (or generates a random UUID), then checks its in-memory execution map. A `complete` entry returns the cached result immediately. A `running`, `failed`, or `settlement_unknown` entry throws. Otherwise the id is marked `running`.
+
+</Step>
+<Step>
+
+### Load the mandate
+
+`paymentClient.loadMandate(account)` fetches the current on-chain `MandateState`: asset, `maxPaymentAtomic`, `remainingAtomic`, `expiresAt`, `revoked`.
+
+</Step>
+<Step>
+
+### Filter and challenge providers
+
+Providers whose `capability` does not match the request are dropped. Every remaining provider gets a concurrent probe: `POST` the JSON input, expect HTTP 402 plus a `payment-required` header. Each challenge is raced against a 5000 ms timeout via `Promise.allSettled`, so one slow or broken provider cannot stall the rest.
+
+</Step>
+<Step>
+
+### Quality filter and challenge validation
+
+Providers below `policy.minimumQuality` are discarded. Each surviving challenge is checked by `validateChallenge` against the mandate and `policy.maxSpendUsdc`. Failures are discarded, not thrown. See [x402 validation](/legacy/api/x402) for the exact check order.
+
+</Step>
+<Step>
+
+### Score and select
+
+For each eligible offer the router reads the in-memory success metrics for that provider id. `successRate` is `successCount / total`, or `1` when there is no history. `selectProvider` computes `economicCost = priceAtomic / (qualityScore * successRate)` and picks the lowest, breaking ties on lower `priceAtomic`, then lexically smaller `providerId`. No eligible provider means `NoEligibleProviderError`.
+
+</Step>
+<Step>
+
+### Authorize and settle
+
+`paymentClient.authorizeAndSettle` signs the winning challenge with the session secret against the Soroban account. `PaymentAuthorizationError` and `PaymentSettlementError` propagate unchanged (the execution is marked `failed`). Any other exception marks the execution `settlement_unknown` and throws `PaymentSettlementUnknownError`, because the transfer may have gone through.
+
+</Step>
+<Step>
+
+### Paid execute and normalize
+
+The provider is retried with the `payment-signature` header. The response must be `{ results: [{ title, url, snippet }] }`; anything else raises `ProviderResponseError`. Other failures raise `ProviderExecutionError` and count against the provider's metrics.
+
+</Step>
+<Step>
+
+### Return
+
+On success the provider's `successCount` increments and the router returns `EcoRouterExecutionResult`: the execution id, normalized output, the decision record (provider, price in USDC, quality, success rate, economic cost), the payment receipt, and the remaining mandate balance.
+
+</Step>
+</Steps>
+
+<Callout type="info">
+All token amounts are atomic integers (USDC has 7 decimals), never floating point. `maxSpendUsdc` strings are parsed by `parseUsdc`.
+</Callout>

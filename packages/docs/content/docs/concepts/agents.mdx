@@ -1,0 +1,40 @@
+---
+title: Agents
+description: An AI agent is a spender with its own Stellar key and its own policy.
+---
+
+An **agent** is a spender that is a program rather than a person. It is added to the team account like any other spender, with two differences: it signs with its own Stellar key, and its payments that break a rule are refused instead of held.
+
+## What an agent can do
+
+- **Pay on a schedule.** For example, `$5 every day` to a `market-data` service.
+
+Every payment goes through the full contract check order. The agent's policy decides how much, how often, until when and to which services.
+
+## Its own key
+
+Each agent gets its own Stellar key. That key is only useful as that spender: it cannot withdraw, change policies, approve requests or pay services outside its list. If the key leaks, the most it can do is what the agent's policy already allows, and the owner can pause or remove the agent at once.
+
+## Refused means refused
+
+A person who hits a limit can ask for approval. An agent cannot: its policy's `kind` is `Agent`, and the contract answers `request_approval` with `AgentCannotRequest`. Its refused payments end with a refused receipt and nothing moves. This keeps an agent from filling the owner's Approvals screen, and it makes the policy the single place where an agent's room to spend is decided.
+
+## Setting one up
+
+1. Generate a Stellar key for the agent where it will run. The web app never holds it.
+2. On **Spenders**, add the agent's address as an *AI agent* with a tight policy: a small cap, a low allowance, a short expiry and only the services it needs.
+3. On **Agents**, record its schedule (amount, service, every hour/day/week) so the team can see what it is meant to do.
+4. Run the agent worker with its key:
+
+```bash
+AGENT_SECRET=S... TEAM_ACCOUNT_ID=C... \
+  pnpm --filter @ecorouter/app agent --service data --amount 5 --every day
+```
+
+The worker records each payment's idempotency key before submitting. After a crash it asks the contract whether that key was used (`is_key_used`) rather than paying again.
+
+5. Watch its receipts in **Activity**.
+
+In the sandbox, the browser tab plays the worker: schedules run on their own, and **Run now** runs one immediately.
+
+Suggested starting point for a data-feed agent: cap `$5`, allowance `$150 / month`, max payments `31 / month`, one approved service.

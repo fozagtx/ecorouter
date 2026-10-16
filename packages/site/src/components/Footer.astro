@@ -1,36 +1,35 @@
 ---
 import Logo from './Logo.astro';
-import CopyInstall from './CopyInstall.astro';
-import AsciiGrid from './AsciiGrid.astro';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const cols = [
-  { h: "Product", links: [["How it works", "#how"], ["Why Stellar", "#stellar"], ["Testbench", "#simulator"]] },
-  { h: "Developers", links: [["Docs", `${basePath}/docs/`], ["Quickstart", `${basePath}/docs/quickstart/`], ["Playground", `${basePath}/docs/playground/`], ["GitHub", "https://github.com/fozagtx/ecorouter"], ["npm package", "https://www.npmjs.com/package/ecorouter"]] },
-  { h: "Stellar", links: [["Stellar", "https://stellar.org"], ["Soroban docs", "https://developers.stellar.org/docs/build/smart-contracts/overview"], ["Smart accounts", "https://developers.stellar.org/docs/build/guides/contract-accounts"]] },
+  { h: "Product", links: [["Open the app", `${basePath}/app/`], ["How it works", "#how"], ["Agents", "#agents"], ["Policy check", "#policy-check"], ["Security", "#security"], ["FAQ", "#faq"]] },
+  { h: "Docs", links: [["Introduction", `${basePath}/docs/`], ["Quickstart", `${basePath}/docs/quickstart/`], ["Concepts", `${basePath}/docs/concepts/team-account/`], ["Security model", `${basePath}/docs/security/`], ["Contracts", `${basePath}/docs/contracts/`], ["GitHub", "https://github.com/fozagtx/ecorouter"]] },
+  { h: "Stellar", links: [["Stellar", "https://stellar.org"], ["Soroban docs", "https://developers.stellar.org/docs/build/smart-contracts/overview"], ["Testnet", "https://developers.stellar.org/docs/networks"], ["Freighter wallet", "https://www.freighter.app"]] },
 ];
 ---
 
-<footer class="relative overflow-hidden border-t border-line bg-white">
-  <img src={`${basePath}/silk-light.jpg`} alt="" class="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none" loading="lazy" />
-  <AsciiGrid rows={50} class="text-accent/40 [mask-image:linear-gradient(to_top,black_45%,transparent)]" />
-  <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-5 sm:px-10 pt-16 pb-10 space-y-12">
+<footer class="border-t border-line bg-white">
+  <div class="max-w-[1180px] mx-auto px-5">
+    <div class="pt-16 pb-10 space-y-12">
       <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
         <div class="space-y-3 max-w-md">
           <div class="flex items-center gap-2.5">
-            <span class="w-7 h-7 rounded-[3px] bg-ink flex items-center justify-center text-white"><Logo class="w-4 h-4 text-white" /></span>
+            <span class="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white"><Logo class="w-4 h-4 text-white" /></span>
             <span class="font-semibold text-base tracking-tight text-ink">EcoRouter</span>
           </div>
-          <p class="text-sm text-ink-secondary leading-relaxed">The spending runtime for agents on Stellar.</p>
+          <p class="text-sm text-ink-secondary leading-relaxed">Spending rules for teams and their AI agents, enforced on Stellar. Testnet only, not audited.</p>
         </div>
-        <CopyInstall />
+        <a href={`${basePath}/app/`} class="pill-cta h-11 text-[14px]">
+          Open the app
+          <span class="pill-cta-dot" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
         {cols.map((c) => (
           <div class="space-y-3">
             <div class="eyebrow">{c.h}</div>
-            <ul class="space-y-2">
+            <ul class="space-y-2.5">
               {c.links.map(([label, href]) => (
                 <li>
                   <a href={href} class="text-ink-secondary hover:text-ink" {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
@@ -43,7 +42,7 @@ const cols = [
         ))}
       </div>
 
-      <div class="pt-6 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-mono text-[11px] text-ink-muted">
+      <div class="pt-6 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[13px] text-ink-muted">
         <span>© {new Date().getFullYear()} EcoRouter contributors · Apache 2.0</span>
         <a href="#top" class="hover:text-ink">Back to top ↑</a>
       </div>

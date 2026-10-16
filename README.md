@@ -1,228 +1,122 @@
 # EcoRouter
 
-> Deterministic capability-based purchasing for autonomous agents, secured by Stellar Soroban smart accounts.
+> Spending rules for teams and their AI agents, enforced on Stellar.
 
-[![npm version](https://img.shields.io/npm/v/ecorouter.svg?style=flat-square)](https://www.npmjs.com/package/ecorouter)
-[![SDK](https://img.shields.io/badge/SDK-TypeScript-3178c6?style=flat-square)](packages/sdk)
-[![Contract](https://img.shields.io/badge/contract-Soroban%20Rust-7c3aed?style=flat-square)](contracts/ecorouter-account)
+[![Contracts](https://img.shields.io/badge/contracts-Soroban%20Rust-7c3aed?style=flat-square)](contracts)
+[![App](https://img.shields.io/badge/app-React-3178c6?style=flat-square)](packages/app)
 [![Network](https://img.shields.io/badge/network-Stellar%20Testnet-111?style=flat-square)](https://stellar.org)
-[![Protocol](https://img.shields.io/badge/x402-V2%20exact-c8ff3d?style=flat-square)](packages/sdk/src/x402)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg?style=flat-square)](LICENSE)
 
-EcoRouter lets an autonomous agent request a capability (such as `web.search`) rather than binding itself to a specific API vendor. The local SDK discovers live prices from compatible providers via HTTP 402, evaluates proposals against on-chain mandates and local spend policies, deterministically selects the optimal economic provider, settles payment in USDC, and returns normalized results.
+EcoRouter is one shared USDC account for a team's people and AI agents. Every spender pays under its own policy: an allowance per period, a cap per payment, a number of payments per period, an end date and a list of approved services. The policy is checked by the Soroban contract that holds the money, every time money moves.
 
-EcoRouter is entirely non-custodial and local-first: there are no intermediary servers, hosted databases, remote registries, or custodial wallets. All authorization is gated cryptographically on Stellar by a Soroban smart account.
+**The agent proposes. Only the contract authorizes.**
 
-![EcoRouter architecture](docs/assets/architecture.svg)
-
----
-
-## Features
-
-- **Capability-Based Routing**: Agents specify *what* they need (`web.search`), not *who* fulfills it.
-- **Deterministic Selection**: Providers are evaluated via a pure mathematical economic cost formula—never an opaque LLM prompt.
-- **On-Chain Soroban Mandates**: Budget limits, per-payment caps, expiration dates, and session keys are enforced on Stellar by smart contract logic.
-- **x402 V2 Native**: Fully compliant with x402 V2 Exact payment challenges over standard HTTP 402 status codes.
-- **Non-Custodial & Secure**: Private keys and session secrets remain local. Strict SSRF protection and atomic integer math prevent token leakage and rounding exploits.
-- **Normalized Outputs**: Regardless of provider-specific formatting, agents receive a predictable, structured response.
+- **Open the app:** [ecorouter.xyz/app](https://ecorouter.xyz/app/). The sandbox needs no wallet.
+- **Docs:** [ecorouter.xyz/docs](https://ecorouter.xyz/docs/)
 
 ---
 
-## Architecture & Workflow
+## What you can do
+
+| | |
+| --- | --- |
+| **Give every spender a policy** | Allowance per day, week or month; cap per payment; payments per period; end date; approved services. Pause or remove a spender at any time. |
+| **Pay only registered services** | `pay` takes a service id, never an address. The service registry resolves who gets paid. An id nobody registered resolves to nothing, so there is no one to pay. |
+| **Over a limit, the owner decides** | A payment outside the rules is held and nothing moves. A person can send it to the owner's **Approvals** screen with the rule that caught it and how far over it went. Approving moves no money; settlement is its own transaction, and it refuses if the service's payee changed after the request was filed. |
+| **Ask the assistant** | Type "top up our inference credits by $120". The assistant can only call one tool with four fields: a service from your list (an enum), an amount, a currency and a memo. There is no address field, so an invented recipient cannot be written down. |
+| **Run AI agents** | An agent has its own Stellar key and its own policy, and pays on a schedule. Its refused payments stop there: agents cannot file approval requests. |
+| **Read every receipt** | Paid, held, asked, approved, declined, settled. A refusal is a normal outcome, shown with the arithmetic behind it. |
+
+### Every payment passes these checks, in this order
 
 ```
-Agent Application
-       │
-       ▼  router.execute({ capability: "web.search", input: { query } })
-  ┌─────────────────────────────────────────────────────────┐
-  │ EcoRouter SDK                                           │
-  │  1. Discover: Send concurrent probe to candidate APIs   │
-  │  2. Challenge: Receive x402 V2 Exact HTTP 402 responses │
-  │  3. Validate: Check network, asset, limits & deadlines  │
-  │  4. Score: Compute economic cost deterministically      │
-  │  5. Settle: Sign via session key against Soroban account│
-  │  6. Execute: Fetch paid response and normalize data     │
-  └─────────────────────────────────────────────────────────┘
-       │                                       │
-       ▼                                       ▼
-  Selected Provider API               Stellar Soroban Contract
-  (HTTP 200 + Raw Results)            (__check_auth Mandate Gate)
+pay(spender, service, amount, memo, key)
+
+ 1  account not paused          6  key not used before (no double pay)
+ 2  spender has a policy        7  amount <= cap per payment
+ 3  spender not paused          8  payments this period < limit
+ 4  policy not expired          9  spent this period + amount <= allowance
+ 5  service on spender's list  10  registry resolves the service (not unknown, not suspended)
+                               11  account balance covers it  ->  transfer, receipt event
 ```
 
-1. **Discovery**: The SDK issues a probe request to configured provider endpoints.
-2. **Challenge**: Providers respond with an `x402 V2 exact` challenge detailing price, token asset, and recipient address.
-3. **Policy & Mandate Gate**: EcoRouter verifies that the challenge matches the configured network, token address, maximum spend limit, and active session lifetime.
-4. **Deterministic Ranking**: Eligible offers are scored by expected economic efficiency.
-5. **Settlement**: The SDK authorizes payment using the restricted session key. The Soroban smart account contract executes `__check_auth` to ensure the payment does not violate the active mandate.
-6. **Delivery**: The chosen provider verifies on-chain payment and delivers the payload, which EcoRouter normalizes into a uniform schema.
-
-![Execution flow](docs/assets/execution-flow.svg)
+The first failed check refuses the call and nothing moves. Checks 5, 7, 8 and 9 are the ones a person can ask the owner to override, once.
 
 ---
 
-## Economic Scoring
-
-Provider selection is strictly reproducible and transparent. For every eligible challenge:
-
-$$\text{Expected Effectiveness} = \text{qualityScore} \times \text{successRate}$$
-
-$$\text{Economic Cost} = \frac{\text{priceAtomic}}{\text{Expected Effectiveness}}$$
-
-- **Primary Sort**: Lowest `economicCost` wins.
-- **Tie Breakers**: If costs are equal, the lower raw price wins. If prices match, provider IDs are sorted lexically.
-- **Precision**: All token accounting uses 64-bit integer atomic units (e.g. `10,000` = `0.01 USDC`). Floating-point arithmetic is never used for currency values.
-
----
-
-## Quickstart
-
-### Installation
-
-```bash
-# pnpm
-pnpm add ecorouter
-
-# npm
-npm install ecorouter
-
-# yarn
-yarn add ecorouter
-```
-
-### Basic Usage
-
-```typescript
-import { EcoRouter } from "ecorouter";
-
-// Initialize the router with your smart account and candidate providers
-const router = new EcoRouter({
-  account: process.env.ECOROUTER_ACCOUNT_ADDRESS!,
-  sessionSecret: process.env.ECOROUTER_SESSION_SECRET!,
-  providers: [
-    {
-      id: "search-provider-alpha",
-      capability: "web.search",
-      endpoint: "https://search-a.api.net/search",
-      qualityScore: 0.92
-    },
-    {
-      id: "search-provider-beta",
-      capability: "web.search",
-      endpoint: "https://search-b.api.net/search",
-      qualityScore: 0.85
-    }
-  ]
-});
-
-// Execute capability purchase
-const response = await router.execute({
-  executionId: "exec-" + Date.now(),
-  capability: "web.search",
-  input: {
-    query: "Stellar Soroban smart account best practices"
-  },
-  policy: {
-    maxSpendUsdc: "0.05",
-    minimumQuality: 0.80
-  }
-});
-
-console.log("Selected Provider:", response.decision.selectedProviderId);
-console.log("Settlement Hash:", response.payment.transactionHash);
-console.log("Normalized Results:", response.output.results);
-```
-
----
-
-## Smart Account Contract
-
-The Soroban smart account (`contracts/ecorouter-account`) implements cryptographic session validation. It holds funds and authenticates spending through the standard `__check_auth` interface.
-
-### On-Chain Mandate Structure
-
-```rust
-pub struct Mandate {
-    pub session_public_key: BytesN<32>,
-    pub asset: Address,
-    pub total_limit: i128,
-    pub spent: i128,
-    pub max_payment: i128,
-    pub expires_at: u64,
-    pub revoked: bool,
-}
-```
-
-The smart account enforces:
-- **Session Signature Verification**: Payments must be signed by the currently active session keypair.
-- **Asset Integrity**: Only the specified asset (e.g. USDC) can be transferred under the mandate.
-- **Per-Transaction Cap**: Individual transfers cannot exceed `max_payment`.
-- **Cumulative Budget**: Total expenditures cannot exceed `total_limit`.
-- **Time Bounding**: Transactions after `expires_at` are rejected.
-- **Immediate Revocation**: The account owner can revoke active sessions at any time.
-
-### Building & Testing Contracts
-
-```bash
-# Run contract unit and integration tests
-cargo test --workspace
-
-# Build the optimized Soroban WebAssembly binary
-cargo build --target wasm32v1-none --release -p ecorouter-account
-```
-
----
-
-## Security Model
-
-- **Zero Remote Custody**: Master account keys and session secrets are stored and processed only within the local runtime.
-- **Bounded Attack Surface**: Session keys are restricted by the smart contract in both amount and time. Compromising a session key cannot drain unallocated account funds.
-- **SSRF Hardening**: The SDK strictly parses and validates provider endpoints. Requests to `localhost`, link-local, private subnet ranges, and cloud metadata endpoints (e.g. `169.254.169.254`) are prohibited.
-- **Deterministic Settlement State**: If a settlement transaction status cannot be unambiguously determined, execution halts immediately with `PAYMENT_SETTLEMENT_UNKNOWN` to prevent double-spending.
-
----
-
-## Repository Structure
+## Repository
 
 ```text
 .
-├── packages/sdk/                     # TypeScript SDK (published as ecorouter)
-│   ├── src/
-│   │   ├── ecorouter.ts              # Core router orchestrator
-│   │   ├── providers/                # x402 probe and response normalization
-│   │   ├── router/                   # Deterministic economic cost sorting
-│   │   └── x402/                     # Challenge validation & schema checks
-│   └── test/                         # Unit and integration test suites
-├── contracts/ecorouter-account/      # Stellar Soroban smart account
-│   ├── src/
-│   │   ├── lib.rs                    # Smart account entry points & __check_auth
-│   │   └── test.rs                   # Contract verification test cases
-│   └── Cargo.toml
-├── examples/
-│   └── search-agent.ts               # End-to-end agent integration example
-├── docs/                             # Static documentation & landing page
-└── Cargo.toml                        # Workspace configuration
+├── contracts/
+│   ├── team-account/        # Soroban: shared account, per-spender policies, approval queue
+│   ├── service-registry/    # Soroban: service id -> payee; unknown ids fail
+│   └── ecorouter-account/   # Legacy single-mandate smart account (SDK era)
+├── packages/
+│   ├── app/                 # The product: React app served at /app
+│   │   ├── src/engine/      #   policy mirror of the contract + in-browser sandbox
+│   │   ├── src/chain/       #   Stellar testnet backend (Soroban RPC + Freighter)
+│   │   ├── src/assistant/   #   sentence -> constrained payment draft
+│   │   └── worker/          #   agent worker: pays on a schedule with the agent's own key
+│   ├── site/                # Landing page (Astro)
+│   ├── docs/                # Documentation (Fumadocs)
+│   └── sdk/                 # Legacy capability-routing SDK
+├── scripts/deploy-testnet.sh
+└── docs/                    # Built static site: landing page, /app, /docs
 ```
 
----
-
-## Development
+## Run it
 
 ```bash
-# Install workspace dependencies
 pnpm install
-
-# Build SDK and packages
-pnpm build
-
-# Run TypeScript test suite
-pnpm test
-
-# Run Rust contract tests
-cargo test --workspace
+pnpm dev:app          # http://localhost:5173/app/ — choose "Open the sandbox"
 ```
 
----
+The sandbox is a team account in your browser with $5,000 in test dollars, two people (Ada the owner, Marcus) and two agents (Scout, Atlas). It runs a TypeScript mirror of the contract's checks (`packages/app/src/engine/policy.ts`), tested case for case against the Rust tests. Switch between Ada and Marcus in the sidebar to see both sides of an approval.
+
+### On Stellar testnet
+
+```bash
+cargo build --target wasm32v1-none --release -p service-registry -p team-account
+pnpm --filter @ecorouter/app deploy:testnet   # JS SDK only, no Stellar CLI needed
+pnpm dev:app                                  # choose "Connect Freighter"
+```
+
+`deploy:testnet` funds an owner with Friendbot, wraps testnet USDC, uploads and deploys both contracts, registers five demo services (each payee gets a USDC trustline), then reads the deployment back: owner, registry link, service list, and that an unregistered id reverts with `UnknownService`. It writes `packages/app/.env.local` and `deployments/testnet.json` (ids, wasm hashes, transaction hashes); generated secrets go to `.deploy/` (gitignored). `./scripts/deploy-testnet.sh` does the same with the Stellar CLI.
+The app reads contract ids from the committed `deployments/testnet.json`, so commit that file after a redeploy; `packages/app/.env.local` is only an optional override.
+
+Fund the team-account contract by sending it testnet USDC. Add spenders from the app (their own `G…` addresses). Agents run outside the browser with their own key:
+
+```bash
+AGENT_SECRET=S... TEAM_ACCOUNT_ID=C... \
+  pnpm --filter @ecorouter/app agent --service search --amount 4 --every day
+```
+
+The worker writes each payment's idempotency key to disk before submitting it, so after a crash it asks the contract whether that key was used instead of paying again.
+
+## Test
+
+```bash
+cargo test --workspace          # 37 team-account + 7 registry tests (+ legacy)
+pnpm --filter @ecorouter/app test
+pnpm --filter @ecorouter/app typecheck
+pnpm build:site                 # landing page, docs and app into docs/
+```
+
+Every contract rule has a test that the allowed case goes through and a test that the refused case fails with that rule's own error code.
+
+## Security and status
+
+- **Testnet only. Not audited.** The contracts have tests written by the people who wrote the contracts, and no independent review. Use test funds.
+- **Nobody but the owner can withdraw.** The USDC sits in the team-account contract. Every function that loosens a rule is owner-only.
+- **Spenders sign their own payments.** `pay` requires the spender's signature (`require_auth`). The app and the assistant only prepare calls.
+- **Known edges, kept on purpose:** a service's payee can move its own payout address, and in-policy payments follow it (an approved exception does not: it refuses to settle). The registry owner can suspend a service. Settled exceptions do not count against the spender's allowance. `set_policy` overwrites every limit at once, and a zero limit is rejected rather than meaning "no limit".
+- **What the app stores locally:** in testnet mode, display names, agent schedules and refusals that never reached the chain are kept in your browser. Everything that authorizes a payment is on chain.
+
+## Legacy SDK
+
+EcoRouter started as a TypeScript SDK for capability-based purchasing over x402 (`packages/sdk`, `contracts/ecorouter-account`). It still builds and its docs live under [Legacy SDK](https://ecorouter.xyz/docs/legacy/). New work happens in the product.
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+Apache License 2.0. See [LICENSE](LICENSE).

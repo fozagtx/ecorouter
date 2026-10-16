@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     default: 'EcoRouter Docs',
   },
   description:
-    'EcoRouter: deterministic capability-based purchasing for autonomous agents on Stellar.',
+    'EcoRouter: a shared USDC spending account on Stellar for teams and their AI agents. Every spender pays under its own on-chain policy.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

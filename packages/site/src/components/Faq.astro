@@ -1,27 +1,27 @@
 ---
 const faqs = [
-  { q: "What is EcoRouter?", a: "An open source TypeScript SDK that lets an agent buy capabilities like web search over x402, pay in USDC on Stellar, and stay inside a budget enforced by its own Soroban smart account." },
-  { q: "Why does it run on Stellar?", a: "Soroban smart accounts can run custom authorization in __check_auth, so the spending rules sit in the agent's account itself. USDC is native on Stellar and settlement is fast and cheap enough to pay per request." },
-  { q: "What stops an agent from overspending?", a: "Two layers. The SDK rejects any quote above maxSpendUsdc before paying, and the Soroban account rejects any transfer above max_payment, past total_limit, after expires_at or once revoked." },
-  { q: "How is a provider chosen?", a: "Every eligible quote gets an economic cost of price divided by qualityScore times successRate. The lowest cost wins, then the lower price, then the provider id. No model is asked to decide." },
-  { q: "Is there a hosted server or custody?", a: "No. The SDK runs in your process, your session secret never leaves it, and funds stay in the Soroban account you own and can withdraw from at any time." },
-  { q: "Which network does it support today?", a: "Stellar testnet with USDC. Challenges for any other network or asset are rejected as invalid." },
+  { q: "What is EcoRouter?", a: "A shared USDC spending account on Stellar for a team and its AI agents. The owner funds one account, and every person or agent pays from it under its own policy: an allowance per period, a cap per payment, a maximum number of payments, an expiry date and a list of approved services. A Soroban contract holds the money and enforces the policy." },
+  { q: "Can I use real money?", a: "Not yet. EcoRouter runs on Stellar testnet only and the contracts have not been audited. Use test funds. You can also try everything in the sandbox, which runs the same rules in your browser with test dollars." },
+  { q: "Can an assistant spend without limits?", a: "No. The assistant only proposes a payment. Code reads the amount from your sentence, the assistant can only pick a service from the spender's approved list, its output has no address field, and the contract then runs the full policy. Any of those stages can refuse, and the contract has the final say." },
+  { q: "What happens when a payment is blocked?", a: "If it breaks a limit such as the cap or the allowance, it is held, not failed, and nothing moves. A person can ask for approval, and the owner sees the rule that caught it and how far over it was. Approving and paying are separate steps, and the payment refuses to settle if the service's payee changed in between. Payments from a paused spender, or to an unknown or suspended service, are refused outright." },
+  { q: "Do I need a wallet?", a: "Not for the sandbox, which needs nothing installed. To use Stellar testnet you connect a Freighter wallet, and the team account and service registry contracts run on testnet." },
+  { q: "Can my team add an AI agent?", a: "Yes. Each agent is a spender with its own Stellar key and its own policy. It can pay on a schedule, for example $5 every day to a data API, or top up a service. When an agent's payment breaks a rule it stops there and does not become an approval request." },
 ];
 ---
 
-<section id="faq" class="bg-surface-soft border-t border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-5 sm:px-10 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10">
+<section id="faq" class="bg-[#FCFCF9]">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32">
+    <div class="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10">
       <div class="space-y-3">
-        <div class="eyebrow">04 · FAQ</div>
-        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">Questions</h2>
+        <div class="eyebrow">06 · FAQ</div>
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">Questions</h2>
       </div>
-      <div class="bg-white card divide-y divide-line-strong">
+      <div class="bg-white card divide-y divide-line overflow-hidden">
         {faqs.map((item) => (
           <details class="group px-5 sm:px-6">
             <summary class="flex items-center justify-between cursor-pointer list-none select-none py-5 text-[15px] font-medium text-ink gap-4">
               <span class="leading-snug">{item.q}</span>
-              <span class="shrink-0 w-6 h-6 flex items-center justify-center border border-ink text-ink transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
+              <span class="shrink-0 w-8 h-8 rounded-full bg-surface-muted text-ink flex items-center justify-center transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
               </span>
             </summary>

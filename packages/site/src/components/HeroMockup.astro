@@ -1,66 +1,137 @@
 ---
-import AsciiGrid from "./AsciiGrid.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const stages = [
-  { n: "01 / PROBE", tag: "402", title: "Ask for prices", body: "Calls every provider for the capability at once and reads their x402 payment challenge.", rows: [["search-a", "0.0012"], ["search-b", "0.0018"]] },
-  { n: "02 / VALIDATE", tag: "PASS", title: "Check the mandate", body: "Network, asset, per-payment cap and your policy limit are checked before money moves.", rows: [["maxSpend", "≤ 0.05"], ["eligible", "2 / 2"]] },
-  { n: "03 / SCORE", tag: "BEST", title: "Pick the best value", body: "Price divided by quality and success rate. Same inputs, same winner, every time.", rows: [["winner", "search-a"], ["cost", "14,634"]] },
-  { n: "04 / SETTLE", tag: "USDC", title: "Pay on Stellar", body: "The session key signs, the Soroban account approves, and the paid result comes back.", rows: [["network", "stellar:testnet"], ["asset", "USDC"]] },
+
+const spenders = [
+  { name: "Sam", kind: "Person", spent: 340, allowance: 900, cap: 250, note: "6 of 20 payments" },
+  { name: "Research agent", kind: "AI agent", spent: 1020, allowance: 1200, cap: 120, note: "tops up inference credits" },
+  { name: "Data feed agent", kind: "AI agent", spent: 80, allowance: 150, cap: 5, note: "$5 every day · market-data" },
+];
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+const activity = [
+  { who: "Data feed agent", svc: "market-data", amt: "$5.00", state: "Settled" },
+  { who: "Research agent", svc: "inference-credits", amt: "$120.00", state: "Settled" },
+  { who: "Sam", svc: "gpu-rental", amt: "$320.00", state: "Held" },
 ];
 ---
 
-<section id="how" class="bg-white">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-0 sm:px-4 pb-16 md:pb-24">
-      <div class="relative overflow-hidden rounded-[6px] card">
-        <img
-          src={`${basePath}/sky-stage.jpg`}
-          alt=""
-          class="absolute inset-0 w-full h-full object-cover object-top select-none pointer-events-none"
-          loading="eager"
-        />
-        <AsciiGrid rows={64} class="text-accent/50" />
-        <div class="relative px-3 py-10 sm:px-10 sm:py-16 md:px-16 md:py-20">
-          <div class="mx-auto max-w-[920px] bg-white/95 backdrop-blur card shadow-float rounded-[4px] overflow-hidden font-mono">
-            <div class="min-h-10 px-4 py-2.5 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-accent"></span>
-                <span class="font-medium text-ink">router.execute(&#123; capability: "web.search" &#125;)</span>
+<section class="bg-white" aria-label="Product preview">
+  <div class="max-w-[1180px] mx-auto px-5 relative z-10 mt-0 md:-mt-40 pb-24 md:pb-32">
+      <div class="outer-technical-frame p-3 sm:p-6 md:p-8">
+          <div class="mx-auto max-w-[940px] bg-white card shadow-float overflow-hidden">
+            <!-- window bar -->
+            <div class="min-h-10 px-4 py-3 border-b border-line flex flex-wrap items-center justify-between gap-2 text-[13px]">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-2 h-2 rounded-full bg-accent shrink-0"></span>
+                <span class="font-medium text-ink truncate">Team account · Overview</span>
               </div>
-              <span class="inline-flex w-fit items-center gap-1.5 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ok bg-ok/10 border border-ok/25">
+              <span class="inline-flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-[12px] text-ok bg-ok/10">
                 <span class="w-1 h-1 rounded-full bg-ok"></span>
-                Within mandate
+                Active · stellar:testnet
               </span>
             </div>
 
-            <div class="px-4 py-5 sm:px-6 border-b border-line bg-surface-soft">
-              <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                <div class="provider-node is-winner"><span>search-a</span><strong>0.0012 USDC</strong></div>
-                <div class="provider-node animate-float-delay-1"><span>search-b</span><strong>0.0018 USDC</strong></div>
-                <div class="provider-node animate-float-delay-2"><span>mandate left</span><strong>3.80 USDC</strong></div>
+            <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] divide-y lg:divide-y-0 lg:divide-x divide-line">
+              <!-- account card -->
+              <div class="p-4 sm:p-6 space-y-5 min-w-0">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                  <div class="eyebrow">Owner</div>
+                    <div class="mt-1 flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-full bg-ink text-white text-[12px] flex items-center justify-center shrink-0">A</span>
+                      <span class="text-[15px] font-semibold text-ink">Ada</span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="eyebrow">Balance</div>
+                    <div class="mt-1 font-sans tabular-nums text-[15px] font-semibold text-ink">3,560.00 <span class="text-ink-muted text-[11px] font-medium">USDC</span></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex items-baseline justify-between gap-2 mb-2">
+                    <span class="text-sm text-ink-secondary">Spent this month</span>
+                    <span class="font-sans tabular-nums text-sm text-ink"><span class="font-semibold">$1,440</span> <span class="text-ink-muted">of $2,000</span></span>
+                  </div>
+                  <div class="h-2.5 bg-surface-muted rounded-full overflow-hidden">
+                    <div class="h-full bg-ink rounded-full" style="width: 72%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[12px] text-ink-muted">
+                    <span>3 spenders</span><span>resets Nov 1</span>
+                  </div>
+                </div>
+
+                <!-- held payment -->
+                <div class="rounded-2xl border border-warn/25 bg-warn-soft p-3.5 space-y-2.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-1.5 text-[12px] text-warn font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-warn"></span>
+                      Held for approval
+                    </span>
+                    <span class="font-sans tabular-nums text-[13px] font-semibold text-ink">$320.00</span>
+                  </div>
+                  <div class="text-[13px] text-ink leading-snug">Sam → <span class="font-mono text-[12px]">gpu-rental</span></div>
+                  <div class="text-[12px] text-ink-secondary leading-relaxed">
+                    rule: per-payment cap $250 · over by <span class="font-sans tabular-nums text-warn font-semibold">$70</span>
+                  </div>
+                  <div class="flex gap-2 pt-0.5">
+                    <span class="inline-flex items-center h-8 px-3 rounded-full text-[12px] font-medium bg-ink text-white">Approve</span>
+                    <span class="inline-flex items-center h-8 px-3 rounded-full text-[12px] font-medium bg-white text-ink border border-line">Decline</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- spenders -->
+              <div class="p-4 sm:p-6 space-y-4 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="eyebrow">Spenders</span>
+                  <span class="text-[12px] text-ink-muted">Allowance / month</span>
+                </div>
+                <ul class="space-y-3">
+                  {spenders.map((s) => {
+                    const pct = Math.round((s.spent / s.allowance) * 100);
+                    return (
+                      <li class="border border-line rounded-xl bg-white p-3 space-y-2">
+                        <div class="flex items-center justify-between gap-3">
+                          <div class="flex items-center gap-2 min-w-0">
+                            <span class={`w-6 h-6 shrink-0 flex items-center justify-center text-[10px] ${s.kind === "Person" ? "rounded-full bg-surface-muted text-ink border border-line-strong" : "rounded-full bg-accent text-white"}`}>
+                              {s.kind === "Person" ? s.name[0] : "AI"}
+                            </span>
+                            <span class="text-[14px] font-medium text-ink truncate">{s.name}</span>
+                            <span class={`hidden sm:inline text-[11px] px-2.5 py-1 rounded-full ${s.kind === "Person" ? "text-ink-secondary bg-surface-muted" : "text-accent bg-accent-soft"}`}>{s.kind}</span>
+                          </div>
+                          <span class="font-sans tabular-nums text-[12px] text-ink shrink-0"><span class="font-semibold">{usd(s.spent)}</span><span class="text-ink-muted"> / {usd(s.allowance)}</span></span>
+                        </div>
+                        <div class="h-1.5 bg-surface-muted rounded-full overflow-hidden">
+                          <div class={`h-full rounded-full ${s.kind === "Person" ? "bg-ink" : "bg-accent"}`} style={`width: ${pct}%`}></div>
+                        </div>
+                        <div class="flex justify-between gap-2 text-[12px] text-ink-muted">
+                          <span class="truncate">{s.note}</span>
+                          <span class="shrink-0 tabular-nums">cap {usd(s.cap)}</span>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-line text-xs">
-              {stages.map((s, i) => (
-                <div class={`p-4 space-y-2 ${i % 2 === 1 ? 'sm:border-l lg:border-l-0 border-line' : ''} ${i >= 2 ? 'sm:border-t lg:border-t-0 border-line' : ''}`}>
-                  <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.14em] text-ink-muted">
-                    <span>{s.n}</span>
-                    <span class={`font-semibold ${s.tag === 'PASS' ? 'text-ok' : 'text-ink'}`}>{s.tag}</span>
-                  </div>
-                  <div class="text-ink font-semibold text-[13px] font-sans">{s.title}</div>
-                  <p class="text-[12px] text-ink-secondary leading-normal font-sans">{s.body}</p>
-                  <div class="bg-surface-soft p-2 border border-line-strong text-[11px] space-y-1">
-                    {s.rows.map(([k, v]) => (
-                      <div class="flex justify-between gap-2"><span class="text-ink-muted">{k}</span><span class="text-ink font-medium truncate">{v}</span></div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <!-- activity -->
+            <div class="border-t border-line bg-surface-soft px-4 sm:px-6 py-3 text-[12px]">
+              <div class="eyebrow mb-2">Recent receipts</div>
+              <ul class="divide-y divide-line">
+                {activity.map((a) => (
+                  <li class="py-1.5 flex items-center justify-between gap-3">
+                    <span class="min-w-0 truncate text-ink-secondary"><span class="text-ink">{a.who}</span> → {a.svc}</span>
+                    <span class="flex items-center gap-3 shrink-0">
+                      <span class="font-sans tabular-nums text-ink">{a.amt}</span>
+                      <span class={`w-[64px] text-right text-[11px] font-medium ${a.state === "Held" ? "text-warn" : "text-ok"}`}>{a.state}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </section>

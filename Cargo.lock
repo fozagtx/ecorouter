@@ -1322,6 +1322,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "service-registry"
+version = "0.1.0"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
 name = "sha2"
 version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1654,6 +1661,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "team-account"
+version = "0.1.0"
+dependencies = [
+ "service-registry",
+ "soroban-sdk",
 ]
 
 [[package]]

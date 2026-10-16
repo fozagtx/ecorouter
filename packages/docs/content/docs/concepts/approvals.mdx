@@ -1,0 +1,32 @@
+---
+title: Approvals
+description: Over a limit, a payment is held, not failed, and the owner decides.
+---
+
+When a person's payment breaks one of four rules, it is **held**: the service is not on their approved list, the amount is over the cap per payment, they have used up their payments for the period, or the amount is over the allowance left. Nothing moves. The payment is not lost either: the spender can ask the owner for an exception to that one payment.
+
+## The flow
+
+1. **Held.** The spender sees which rule caught the payment and how far over it was, for example `per-payment cap $250 · over by $70`.
+2. **Ask for approval.** The spender files a request (`request_approval`). It lands on the owner's **Approvals** screen with the spender, service, amount, memo, the rule that caught it and the overage. The contract also records the service's payee at that moment. Requests expire after 7 days.
+3. **Approve or decline.** The owner decides. Declining closes the request and writes a declined receipt.
+4. **Settle.** Approving does not move money. Settlement (`settle`) is its own transaction, sent by the owner or by the spender who asked. It refuses if the service's payee changed since the request was filed, and also if the account is paused, the request expired, the service is now unknown or suspended, or the balance is too low. A settled exception does not count against the spender's allowance.
+
+Keeping approval and settlement separate means an approval is a decision about one specific payment to one specific payee, not a blank cheque.
+
+## What cannot be approved
+
+Some checks cannot be overridden by an approval:
+
+- the account or the spender is paused,
+- the caller is not a spender, or the policy has expired,
+- the amount is zero or negative,
+- the replay key was already used,
+- the service is unknown or suspended in the registry,
+- the account does not hold enough USDC.
+
+These are **refused** outright. Even a request for a service outside the spender's list must name a service the registry resolves; payments never go to a raw address.
+
+## Agents do not ask
+
+An agent's payment that breaks a limit is refused and stops there. It does not create an approval request. If an agent needs more room, the owner changes its policy. See [Agents](/concepts/agents).

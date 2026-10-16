@@ -3,9 +3,9 @@
   "pages": [
     "index",
     "quickstart",
-    "how-it-works",
-    "contract",
-    "playground",
-    "api"
+    "concepts",
+    "security",
+    "contracts",
+    "legacy"
   ]
 }

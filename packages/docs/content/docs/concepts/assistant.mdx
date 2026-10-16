@@ -1,0 +1,28 @@
+---
+title: Assistant
+description: Ask for a payment in plain words. Five stages check it, and any one can refuse.
+---
+
+The **assistant** lets a spender type a sentence such as `top up our inference credits by $120` instead of filling in the payment form. What it produces is a **proposal**. It has no power to pay; the contract still decides.
+
+## The five stages
+
+| Stage | What happens | Refuses when |
+| --- | --- | --- |
+| 1. Sentence | Code, not the model, reads the amount from the text. | There is no amount, or more than one different amount. |
+| 2. Assistant | The model picks a service, but only from the spender's approved list. | No approved service fits the request. |
+| 3. Schema | The output must match a fixed shape: `{ service, amount, memo }`. | The output does not match the shape. |
+| 4. Registry | The service id must resolve in the on-chain registry. | The id is unknown or suspended. |
+| 5. Policy | The full contract policy runs. | A rule fails. A person's limit becomes a hold; anything else is refused. |
+
+## Why a hallucinated recipient cannot happen
+
+The assistant's output shape has **no address field**. The only way to name a destination is a service id, and the only ids it may choose are on the spender's list. An invented address has nowhere to go, and an invented id fails at the registry.
+
+## Why the amount comes from code
+
+Amounts are read from the sentence by deterministic code and compared with what the model returns. The model cannot change the amount you typed. If the sentence is ambiguous, the request stops at stage 1 and asks you to be specific.
+
+## What the assistant cannot do
+
+It cannot add services to a list, raise a cap, approve a request or pay an address. Those are owner actions or do not exist at all.

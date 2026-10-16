@@ -21,6 +21,11 @@ export function baseOptions(): BaseLayoutProps {
     },
     links: [
       {
+        text: 'Open the app',
+        url: 'https://ecorouter.xyz/app/',
+        external: true,
+      },
+      {
         text: 'Home',
         url: 'https://ecorouter.xyz/',
         external: true,

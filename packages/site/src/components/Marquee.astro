@@ -2,31 +2,31 @@
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const items = [
   { name: "Stellar network", type: "Settlement", logo: true },
-  { name: "Soroban smart accounts", type: "Custody" },
-  { name: "__check_auth mandates", type: "Policy" },
+  { name: "Soroban team account", type: "Custody" },
+  { name: "Per-spender policies", type: "Rules" },
   { name: "USDC on Stellar", type: "Asset", logo: true },
-  { name: "Stellar Asset Contract", type: "Token" },
-  { name: "x402 V2 exact", type: "Payments" },
-  { name: "ed25519 session keys", type: "Signing" },
+  { name: "On-chain service registry", type: "Payees" },
+  { name: "Approval requests", type: "Control" },
+  { name: "Receipts as contract events", type: "Audit" },
   { name: "stellar:testnet", type: "Network", logo: true },
 ];
 ---
 
-<section class="border-y border-line bg-surface-soft overflow-hidden relative">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-    <span class="eyebrow">The Stellar stack it runs on</span>
+<section class="bg-[#FCFCF9] overflow-hidden relative">
+  <div class="max-w-[1180px] mx-auto px-5 pt-8">
+    <span class="eyebrow">What every payment runs through</span>
   </div>
-  <div class="relative w-full overflow-hidden flex items-center pb-6 pt-2">
-    <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-surface-soft to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-surface-soft to-transparent z-10 pointer-events-none"></div>
-    <div class="animate-marquee flex items-center gap-3 px-3">
+  <div class="relative w-full overflow-hidden flex items-center py-5">
+    <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#FCFCF9] to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#FCFCF9] to-transparent z-10 pointer-events-none"></div>
+    <div class="animate-marquee flex items-center gap-8 px-5">
       {items.concat(items).map((item) => (
-        <div class="flex items-center gap-2.5 px-3.5 h-10 rounded-[4px] bg-white card text-[13px] text-ink shrink-0">
+        <div class="flex items-center gap-2.5 text-[14px] text-ink-secondary shrink-0">
           {item.logo
-            ? <img src={`${basePath}/logos/stellar.svg`} alt="" class="w-4 h-4" loading="lazy" />
-            : <span class="w-1.5 h-1.5 bg-accent"></span>}
+            ? <img src={`${basePath}/logos/stellar.svg`} alt="" class="w-4 h-4 opacity-50" loading="lazy" />
+            : <span class="w-1.5 h-1.5 rounded-full bg-ink-muted"></span>}
           <span class="font-medium">{item.name}</span>
-          <span class="text-[10px] font-mono text-ink-muted uppercase bg-surface-soft px-1.5 py-0.5 rounded-[2px] border border-line">{item.type}</span>
+          <span class="text-[12px] text-ink-muted">{item.type}</span>
         </div>
       ))}
     </div>
