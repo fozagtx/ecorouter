@@ -83,6 +83,7 @@ pnpm dev:app                                  # choose "Connect Freighter"
 ```
 
 `deploy:testnet` funds an owner with Friendbot, wraps testnet USDC, uploads and deploys both contracts, registers five demo services (each payee gets a USDC trustline), then reads the deployment back: owner, registry link, service list, and that an unregistered id reverts with `UnknownService`. It writes `packages/app/.env.local` and `deployments/testnet.json` (ids, wasm hashes, transaction hashes); generated secrets go to `.deploy/` (gitignored). `./scripts/deploy-testnet.sh` does the same with the Stellar CLI.
+The app reads contract ids from the committed `deployments/testnet.json`, so commit that file after a redeploy; `packages/app/.env.local` is only an optional override.
 
 Fund the team-account contract by sending it testnet USDC. Add spenders from the app (their own `G…` addresses). Agents run outside the browser with their own key:
 

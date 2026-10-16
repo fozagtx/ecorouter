@@ -1,0 +1,51 @@
+{
+  "network": "testnet",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "deployedAt": "2026-10-16T20:16:56.516Z",
+  "txs": {
+    "upload registry": "1bcb8b1e37413caaffbdbd64d72ba2300e5ea9283b3887ad60c95484a557868a",
+    "deploy registry": "b5030a721acb49e629e3b6e050efed3f28069d22bb2c66358bcd6f8ea09cc4be",
+    "upload teamAccount": "9b01f1468fa41f27bc8afc6adf9a46130bdb13d66ed66174998931d8ea8fa3b4",
+    "deploy teamAccount": "638322ab55104b9f5dd816c87515ffb704aaeadc376c9b6b50d377127474dd69",
+    "register inference": "50af1d1c1305e3da3effc6f326f83a9470859b5736d78ceb312f0fdfa8841b27",
+    "register search": "5db8c927f469dd7684952078c611561222c62a7fd0dc711075acad4a139cff63",
+    "register data": "0b3116462deda7070707524ec63c6d4ae934fe4a575569cb3aadec2472e69be2",
+    "register gpu": "d45e8ef645678b77e209c1a6a4190fd583b3e34c733c710da36658bcbf83c639",
+    "register storage": "89e40117243ac95862fadb40700a0d61d4117a884e5aa92ed284c73dbaca3e02"
+  },
+  "owner": "GAC32UPERV6U2QDR2XZPDT6Z3L3BEMHBRKATB765MOBGNCY3L4YJE53H",
+  "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+  "registry": {
+    "contractId": "CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET",
+    "wasmHash": "a8a7b12ecdfa9349535c9f4f0380bafa309ed5d23fe7bff62567933de58defc9",
+    "wasmBytes": 13612
+  },
+  "teamAccount": {
+    "contractId": "CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB",
+    "wasmHash": "e85447574a13bb6ca544fbba554422d4b803668927c4aeee0f6d5e950786683f",
+    "wasmBytes": 45571
+  },
+  "services": {
+    "inference": {
+      "name": "Inference credits",
+      "payee": "GDJ3SEG6X36I35QV3SV4ZV6MKN76UTAFLVVFLTCG7YVVOHDIAGCIRIUM"
+    },
+    "search": {
+      "name": "Web search API",
+      "payee": "GC42JB6RR4Z5PK7DQIEXWC3IL3MX6SLKIKPOM5MPLIODRGI4BVIJ7DXY"
+    },
+    "data": {
+      "name": "Market data feed",
+      "payee": "GCL2AGNPVOQ7GUU2ZGDQ5L6WJJVPSYZBLSS6YPS6FEKT6IRHWGKCG5LU"
+    },
+    "gpu": {
+      "name": "GPU hours",
+      "payee": "GAATM7XUUCBRW2QT5NN4SG7C2VWURDPP4DTP7RPVOC7N7BKJHDGDB7WG"
+    },
+    "storage": {
+      "name": "Object storage",
+      "payee": "GD2EGCAOOLGFSI442SM7NWDRPMTEGADQQ2A77FYDW6LBIGCGSX2TYITI"
+    }
+  },
+  "readBack": "ok"
+}
