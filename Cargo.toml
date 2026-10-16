@@ -1,6 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["contracts/ecorouter-account"]
+members = [
+    "contracts/ecorouter-account",
+    "contracts/service-registry",
+    "contracts/team-account",
+]
 
 [workspace.package]
 edition = "2021"
@@ -17,3 +21,6 @@ overflow-checks = true
 lto = true
 codegen-units = 1
 panic = "abort"
+debug = 0
+strip = "symbols"
+debug-assertions = false

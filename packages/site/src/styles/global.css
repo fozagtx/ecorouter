@@ -79,33 +79,6 @@
 .outer-technical-frame:hover .capture-corner.bl { bottom: 8px; left: 8px; }
 .outer-technical-frame:hover .capture-corner.br { bottom: 8px; right: 8px; }
 
-/* Provider quote nodes in the hero panel */
-.provider-node {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 0;
-  gap: 12px;
-  border: 1.5px solid #0B0B0C;
-  background: #FFFFFF;
-  color: #4A4D57;
-  padding: 10px 12px;
-  font-family: "Geist Mono", ui-monospace, monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  animation: providerPulse 4.6s ease-in-out infinite;
-}
-.provider-node strong { color: #0B0B0C; letter-spacing: 0; font-size: 12px; font-weight: 600; }
-.provider-node.is-winner { border-color: #3B5BDB; background: #F5F7FE; box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.15); }
-.animate-float-delay-1 { animation-delay: 0.55s; }
-.animate-float-delay-2 { animation-delay: 1.1s; }
-
-@keyframes providerPulse {
-  0%, 100% { transform: translateY(0); }
-  45% { transform: translateY(-2px); }
-}
-
 /* Toast */
 .toast-msg {
   position: fixed;

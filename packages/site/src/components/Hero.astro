@@ -1,5 +1,4 @@
 ---
-import CopyInstall from "./CopyInstall.astro";
 import AsciiGrid from "./AsciiGrid.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
@@ -15,26 +14,38 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           </span>
           Built on Stellar
         </span>
+        <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-pill border border-line-strong bg-white text-[12px] font-mono text-ink-muted">
+          <span class="w-1.5 h-1.5 rounded-full bg-warn"></span>
+          Testnet only · not audited
+        </span>
       </div>
 
-      <h1 class="text-[40px] leading-[1.04] sm:text-[56px] md:text-[68px] lg:text-[76px] font-medium tracking-[-0.035em] text-ink max-w-[920px]">
-        The spending runtime for agents on Stellar
+      <h1 class="text-[38px] leading-[1.04] sm:text-[56px] md:text-[68px] lg:text-[76px] font-medium tracking-[-0.035em] text-ink max-w-[960px]">
+        Spending rules for teams and their AI agents, enforced on Stellar
       </h1>
 
-      <p class="mt-6 text-[17px] sm:text-[19px] leading-[1.5] text-ink-secondary max-w-[640px]">
-        Your agent gets a Soroban smart account with a hard USDC budget. It buys the APIs it needs over x402, picks the best value provider, and settles on Stellar without ever spending past the mandate you set.
+      <p class="mt-6 text-[17px] sm:text-[19px] leading-[1.5] text-ink-secondary max-w-[660px]">
+        One shared USDC account. Every person and every agent on your team pays under its own allowance, per-payment cap and list of approved services.
+        <span class="text-ink font-medium">The agent proposes. Only the contract authorizes.</span>
       </p>
 
       <div class="mt-9 flex flex-col sm:flex-row gap-3">
-        <CopyInstall />
         <a
-          href={`${basePath}/docs/quickstart/`}
-          class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-soft text-ink border-[1.5px] border-ink"
+          href={`${basePath}/app/`}
+          class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border-[1.5px] border-ink"
         >
-          Read the quickstart
+          Open the app
           <span aria-hidden="true">→</span>
         </a>
+        <a
+          href="#how"
+          class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-soft text-ink border-[1.5px] border-ink"
+        >
+          See how it works
+          <span aria-hidden="true">↓</span>
+        </a>
       </div>
+      <p class="mt-4 font-mono text-[11px] text-ink-muted">Try the sandbox with test dollars. No wallet needed.</p>
     </div>
   </div>
 </section>

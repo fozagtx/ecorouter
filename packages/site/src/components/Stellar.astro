@@ -1,17 +1,18 @@
 ---
 import TechnicalViewport from "./TechnicalViewport.astro";
 const reasons = [
-  { k: "01", title: "The budget lives in the contract", body: "A Soroban smart account checks every payment in __check_auth. A leaked session key still cannot spend past the mandate." },
-  { k: "02", title: "USDC is native on Stellar", body: "Agents pay providers in USDC through the Stellar Asset Contract, with amounts kept in exact 7 decimal integer units." },
-  { k: "03", title: "Settlement fits a request", body: "Ledgers close in seconds and fees are a fraction of a cent, so paying per API call actually makes sense." },
+  { k: "01", title: "The money sits in a contract", body: "Team funds are held by a Soroban contract, not by any one person's wallet or by an agent's key. A leaked agent key can only do what that agent's policy allows." },
+  { k: "02", title: "USDC is native on Stellar", body: "Payments are in USDC through the Stellar Asset Contract, kept in exact 7-decimal integer units, so the arithmetic you see is the arithmetic that runs." },
+  { k: "03", title: "Small payments make sense", body: "Ledgers close in seconds and fees are a fraction of a cent, so an agent paying $5 a day to a data service costs what it should." },
 ];
 const rules = [
-  ["Session signature", "Only the active session key can sign"],
-  ["Asset lock", "Only the mandate asset can move"],
-  ["max_payment", "Caps every single transfer"],
-  ["total_limit", "Caps total spend over the session"],
-  ["expires_at", "Rejects anything after expiry"],
-  ["revoked", "Owner can cut the agent off instantly"],
+  ["allowance", "How much per period"],
+  ["max_payment", "The most any one payment can be"],
+  ["max_payments", "How many payments per period"],
+  ["period", "Length of one period, in seconds"],
+  ["expires_at", "After this, the policy stops authorizing"],
+  ["services", "The only service ids this spender may pay"],
+  ["paused", "Owner can stop the spender instantly"],
 ];
 ---
 
@@ -19,12 +20,12 @@ const rules = [
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-12">
       <div class="max-w-3xl space-y-3">
-        <div class="eyebrow">01 · Why Stellar</div>
+        <div class="eyebrow">05 · Why Stellar</div>
         <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
-          Agents get a wallet with rules they cannot break
+          Rules written into the account, settled in seconds
         </h2>
         <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
-          An agent that pays for APIs on a normal key can drain it in one bad loop. On Stellar the spending rules are written into the agent's own Soroban account, so every payment is checked on chain before it settles.
+          A shared card or a shared key trusts whoever holds it. On Stellar the spending rules live in the team account itself, so every payment is checked on chain, by the contract that holds the money, before it settles.
         </p>
       </div>
 
@@ -39,43 +40,46 @@ const rules = [
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-8 items-start">
-        <TechnicalViewport topLeft="CONTRACT · ECOROUTER-ACCOUNT" topRight="SOROBAN · RUST" bottomLeft="ENTRY · __CHECK_AUTH" bottomRight="EXAMPLE MANDATE">
+        <TechnicalViewport topLeft="CONTRACT · TEAM-ACCOUNT" topRight="SOROBAN · RUST" bottomLeft="CALL · policy() · usage()" bottomRight="EXAMPLE POLICY">
           <div class="font-mono text-xs">
-            <div class="h-9 px-4 border-b border-line flex items-center justify-between bg-surface-soft">
-              <span class="text-ink font-medium">get_mandate()</span>
-              <span class="text-[10px] uppercase tracking-wider text-ok">active</span>
+            <div class="h-9 px-4 border-b border-line flex items-center justify-between gap-2 bg-surface-soft">
+              <span class="text-ink font-medium truncate">policy(sam) · usage(sam)</span>
+              <span class="text-[10px] uppercase tracking-wider text-ok shrink-0">active</span>
             </div>
             <div class="p-4 sm:p-5 space-y-4">
               <div>
-                <div class="flex justify-between text-[11px] text-ink-muted mb-1.5">
-                  <span>spent / total_limit</span>
-                  <span class="text-ink font-medium">1.20 / 5.00 USDC</span>
+                <div class="flex justify-between gap-2 text-[11px] text-ink-muted mb-1.5">
+                  <span>spent / allowance</span>
+                  <span class="text-ink font-medium">340 / 900 USDC</span>
                 </div>
                 <div class="h-2 bg-surface-muted border border-line overflow-hidden">
-                  <div class="h-full bg-ink" style="width: 24%"></div>
+                  <div class="h-full bg-ink" style="width: 38%"></div>
                 </div>
               </div>
               <dl class="grid grid-cols-2 gap-px bg-line-strong border border-line-strong text-[11px]">
-                <div class="bg-white p-2.5"><dt class="text-ink-muted">asset</dt><dd class="text-ink font-medium mt-0.5">USDC (SAC)</dd></div>
-                <div class="bg-white p-2.5"><dt class="text-ink-muted">max_payment</dt><dd class="text-ink font-medium mt-0.5">0.05 USDC</dd></div>
-                <div class="bg-white p-2.5"><dt class="text-ink-muted">expires_at</dt><dd class="text-ink font-medium mt-0.5">ledger time + 24h</dd></div>
-                <div class="bg-white p-2.5"><dt class="text-ink-muted">revoked</dt><dd class="text-ink font-medium mt-0.5">false</dd></div>
+                <div class="bg-white p-2.5"><dt class="text-ink-muted">max_payment</dt><dd class="text-ink font-medium mt-0.5">250 USDC</dd></div>
+                <div class="bg-white p-2.5"><dt class="text-ink-muted">max_payments</dt><dd class="text-ink font-medium mt-0.5">20 / period</dd></div>
+                <div class="bg-white p-2.5"><dt class="text-ink-muted">expires_at</dt><dd class="text-ink font-medium mt-0.5">2026-12-31</dd></div>
+                <div class="bg-white p-2.5"><dt class="text-ink-muted">kind</dt><dd class="text-ink font-medium mt-0.5">Person</dd></div>
               </dl>
-              <pre class="bg-surface-soft border border-line-strong p-3 text-[11.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">pub struct</span> <span class="text-ink">Mandate</span> &#123;
-  session_public_key: BytesN&lt;32&gt;,
-  asset: Address,
-  total_limit: i128,
-  spent: i128,
+              <pre class="bg-surface-soft border border-line-strong p-3 text-[11.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">pub struct</span> <span class="text-ink">Policy</span> &#123;
+  kind: SpenderKind,   <span class="text-ink-muted">// Person | Agent</span>
+  label: String,
+  allowance: i128,
+  period: u64,
   max_payment: i128,
+  max_payments: u32,
   expires_at: u64,
-  revoked: bool,
+  services: Vec&lt;Symbol&gt;,
+  paused: bool,
+  anchor: u64,
 &#125;</code></pre>
             </div>
           </div>
         </TechnicalViewport>
 
         <div class="space-y-4 lg:pt-8">
-          <div class="eyebrow">Enforced on chain, every payment</div>
+          <div class="eyebrow">One policy per spender</div>
           <ul class="divide-y divide-line border-y border-line">
             {rules.map(([k, v]) => (
               <li class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 py-3.5">
@@ -85,7 +89,7 @@ const rules = [
             ))}
           </ul>
           <p class="text-sm text-ink-secondary leading-relaxed">
-            If a settlement result is ever unclear, the SDK stops with <code class="font-mono text-[12px] text-ink bg-surface-muted px-1 py-0.5 border border-line">PAYMENT_SETTLEMENT_UNKNOWN</code> instead of paying twice.
+            Every settled payment emits a receipt event, and every receipt in the app links to its Stellar transaction so anyone on the team can verify it.
           </p>
         </div>
       </div>

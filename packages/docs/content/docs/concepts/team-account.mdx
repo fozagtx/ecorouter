@@ -1,0 +1,36 @@
+---
+title: Team account
+description: One shared USDC account, held by a Soroban contract, that every spender pays from.
+---
+
+A team account is one instance of the `team-account` contract on Stellar. It holds the team's USDC and a policy for every spender. Nobody holds the money directly: not the owner's wallet, not a teammate, not an agent's key. Money leaves the account only through the contract's own functions, after its checks pass.
+
+## The owner
+
+Each team account has one **owner**, the address that created it. Only the owner can:
+
+- withdraw funds,
+- add, change, pause, resume and remove spenders,
+- pause and unpause the whole account,
+- approve or decline approval requests,
+- hand ownership to another address (a two-step propose and accept).
+
+Anyone can fund the account: it is an ordinary USDC transfer to the contract's address. The app's **Deposit** action does exactly that.
+
+In the app, the owner sees the **Overview** (balance, spend this period, spenders) and the **Approvals** screen.
+
+## Balance and spend
+
+The balance is the USDC the contract holds. "Spent this period" is the sum of what spenders have paid inside their current periods. Each spender's allowance is tracked separately, so one spender running out never blocks another.
+
+Amounts are USDC in 7-decimal integer units on chain. The app shows dollars and cents, and its pre-check uses the same integer arithmetic as the contract.
+
+## Pausing the account
+
+Pausing the account stops every payment from every spender at the first check, before anything else is looked at. It also blocks settlement of approved requests. Deposits and owner actions still work. Unpause to resume.
+
+## Sandbox vs testnet
+
+In the sandbox, the team account is a TypeScript object in your browser that mirrors the contract's rules and check order. On testnet, it is a deployed `team-account` contract and every change is a signed transaction.
+
+See [Contracts reference](/contracts#team-account) for the functions.

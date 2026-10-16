@@ -1,6 +1,5 @@
 ---
 import AsciiGrid from "./AsciiGrid.astro";
-import CopyInstall from "./CopyInstall.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
@@ -11,15 +10,17 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         <AsciiGrid rows={40} class="text-accent/40 [mask-image:linear-gradient(to_left,black_30%,transparent_85%)]" />
         <div class="relative px-6 py-14 sm:px-12 sm:py-20 max-w-[720px] space-y-6">
           <h2 class="text-[34px] sm:text-[48px] leading-[1.05] font-medium tracking-[-0.03em] text-ink">
-            Give your agent a budget it cannot break
+            Give your team and its agents a budget they cannot break
           </h2>
           <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed max-w-[540px]">
-            Set the limit once in a Soroban account. Your agent buys what it needs on Stellar and stops at the line you drew.
+            Open the sandbox and run a team with test dollars in your browser, no wallet needed. When you are ready, connect Freighter and do the same on Stellar testnet.
           </p>
           <div class="flex flex-col sm:flex-row gap-3">
-            <CopyInstall />
-            <a href={`${basePath}/docs/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-muted text-ink border-[1.5px] border-ink">
-              Read the docs <span aria-hidden="true">→</span>
+            <a href={`${basePath}/app/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border-[1.5px] border-ink">
+              Open the app <span aria-hidden="true">→</span>
+            </a>
+            <a href={`${basePath}/docs/quickstart/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-muted text-ink border-[1.5px] border-ink">
+              Read the quickstart <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>

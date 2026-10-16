@@ -1,0 +1,12 @@
+---
+title: SDK playground
+description: Run the legacy SDK validation and selection functions in your browser.
+---
+
+import { ChallengeValidator, ProviderSelector } from '@/components/playground';
+
+These panels import the actual functions from `packages/sdk/src` (`validateChallenge`, `selectProvider`, `parseUsdc`, `formatUsdc`) and run them locally in your browser on every change. No network calls and no payments happen; nothing is signed or sent anywhere.
+
+<ChallengeValidator />
+
+<ProviderSelector />

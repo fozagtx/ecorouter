@@ -1,12 +1,11 @@
 ---
 import Logo from "./Logo.astro";
-import CopyInstall from "./CopyInstall.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const links = [
   { href: "#how", label: "How it works" },
-  { href: "#stellar", label: "Stellar" },
+  { href: "#agents", label: "Agents" },
+  { href: "#security", label: "Security" },
   { href: `${basePath}/docs/`, label: "Docs" },
-  { href: "#simulator", label: "Testbench" },
   { href: "#faq", label: "FAQ" },
 ];
 ---
@@ -18,10 +17,10 @@ const links = [
         <Logo class="w-4 h-4 text-white" />
       </span>
       <span class="font-semibold text-[15px] tracking-tight text-ink">EcoRouter</span>
-      <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[10px] font-mono font-medium bg-surface-muted text-ink-secondary border border-line uppercase tracking-wider">v0.1.0</span>
+      <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[10px] font-mono font-medium bg-surface-muted text-ink-secondary border border-line uppercase tracking-wider">Testnet</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-7 text-[13px] font-mono text-ink-secondary">
+    <nav class="hidden lg:flex items-center gap-7 text-[13px] font-mono text-ink-secondary">
       {links.map((l) => <a href={l.href} class="hover:text-ink">{l.label}</a>)}
     </nav>
 
@@ -30,7 +29,7 @@ const links = [
         href="https://github.com/fozagtx/ecorouter"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono bg-white hover:bg-surface-soft text-ink border border-ink"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono bg-white hover:bg-surface-soft text-ink border border-ink"
         aria-label="EcoRouter on GitHub"
       >
         <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -38,16 +37,22 @@ const links = [
         </svg>
         <span class="hidden sm:inline">GitHub</span>
       </a>
-      <CopyInstall size="sm" class="hidden sm:inline-flex" />
+      <a
+        href={`${basePath}/app/`}
+        class="inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono font-medium bg-ink hover:bg-[#26272B] text-white border border-ink whitespace-nowrap"
+      >
+        Open the app <span aria-hidden="true">→</span>
+      </a>
 
-      <details class="md:hidden relative group">
+      <details class="lg:hidden relative group">
         <summary class="list-none cursor-pointer w-8 h-8 inline-flex items-center justify-center rounded-[3px] border border-ink text-ink" aria-label="Open menu">
           <svg class="w-4 h-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
           <svg class="w-4 h-4 hidden group-open:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </summary>
         <div class="absolute right-0 top-10 w-56 bg-white card rounded-[4px] shadow-card p-2 font-mono text-[13px]">
           {links.map((l) => <a href={l.href} class="block px-3 py-2 rounded-[3px] text-ink-secondary hover:bg-surface-soft hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
-          <button type="button" data-copy="pnpm add ecorouter" class="mt-1 w-full text-left px-3 py-2 rounded-[3px] bg-ink text-white text-xs cursor-pointer">$ pnpm add ecorouter</button>
+          <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="block px-3 py-2 rounded-[3px] text-ink-secondary hover:bg-surface-soft hover:text-ink">GitHub <span aria-hidden="true">↗</span></a>
+          <a href={`${basePath}/app/`} class="mt-1 block w-full text-left px-3 py-2 rounded-[3px] bg-ink text-white text-xs">Open the app →</a>
         </div>
       </details>
     </div>

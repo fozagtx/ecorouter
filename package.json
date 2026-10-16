@@ -3,12 +3,14 @@
   "private": true,
   "packageManager": "pnpm@10.28.1",
   "scripts": {
-    "build": "pnpm --filter ecorouter build && pnpm --filter @ecorouter/site build",
-    "build:site": "pnpm --filter @ecorouter/site build && pnpm --filter @ecorouter/docs build",
+    "build": "pnpm --filter ecorouter build && pnpm build:site",
+    "build:site": "pnpm --filter @ecorouter/site build && pnpm --filter @ecorouter/docs build && pnpm --filter @ecorouter/app build",
+    "dev:app": "pnpm --filter @ecorouter/app dev",
     "dev:docs": "pnpm --filter @ecorouter/docs dev",
     "dev:site": "pnpm --filter @ecorouter/site dev",
-    "test": "pnpm --filter ecorouter test",
-    "typecheck": "pnpm --filter ecorouter typecheck"
+    "test": "pnpm --filter ecorouter test && pnpm --filter @ecorouter/app test",
+    "test:contracts": "cargo test --workspace",
+    "typecheck": "pnpm --filter ecorouter typecheck && pnpm --filter @ecorouter/app typecheck"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

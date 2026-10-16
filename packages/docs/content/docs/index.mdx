@@ -1,16 +1,42 @@
 ---
 title: Introduction
-description: What EcoRouter is and how the pieces fit together.
+description: EcoRouter is a shared USDC spending account on Stellar for teams and their AI agents.
 ---
 
-EcoRouter is a local TypeScript SDK for capability-based purchasing by autonomous agents. Instead of hardcoding an API vendor, your agent asks for a capability such as `web.search`. The SDK probes configured providers over HTTP 402 (x402 V2 `exact`), validates each offer against your local spend policy and the on-chain Soroban mandate, picks the best value deterministically, settles the payment in USDC on `stellar:testnet`, and normalizes the response into one predictable shape.
+EcoRouter gives a team one shared USDC account on Stellar. Every spender on that account, whether a person or an AI agent, pays under its own on-chain policy: an allowance per period, a cap per payment, a maximum number of payments, an expiry date and a list of approved services. The policy is enforced by a Soroban contract that holds the money.
 
-Everything runs on your machine. There are no hosted services, no registries, and no custodial wallets. Payment authorization is enforced on Stellar by the `ecorouter-account` Soroban smart account, which gates every transfer through `__check_auth` against a mandate you control.
+> **The agent proposes. Only the contract authorizes.**
+
+An assistant or an agent can suggest a payment, and the app can pre-check it, but neither can move money on its own. The only thing that moves money is the `team-account` contract, and it runs the same checks on every payment, in the same order.
+
+<Callout type="warn" title="Honest status">
+EcoRouter runs on **Stellar testnet only** and the contracts are **not audited**. Use test funds. The sandbox runs the same rules in your browser, using a TypeScript mirror of the contract, so you can try everything without a wallet.
+</Callout>
+
+## What a team does with it
+
+1. **Fund one account.** The owner deposits USDC into the team account contract.
+2. **Add spenders.** Each person or agent gets a policy. The owner can pause or remove a spender at any time.
+3. **Pay registered services.** Payments go to services in the on-chain [service registry](/concepts/services), named by id, never by address.
+4. **Hold what breaks a rule.** A payment over a limit is held, not failed. Nothing moves until the owner approves and the payment is settled in a separate step.
+5. **Keep a receipt for everything.** Settled, held, declined and refused payments all show up in Activity, with a link to the Stellar transaction when one exists.
+
+## Two ways in
+
+| | Sandbox | Stellar testnet |
+| --- | --- | --- |
+| Wallet | None | Freighter, set to Testnet |
+| Money | Test dollars in your browser | Test USDC on Stellar testnet |
+| Rules | TypeScript mirror of the contract | `team-account` and `service-registry` contracts |
+| Receipts | Local | Contract events with transaction links |
+
+Open the app at [ecorouter.xyz/app](https://ecorouter.xyz/app/) and pick one.
 
 <Cards>
-  <Card title="Quickstart" href="/quickstart" description="Install the SDK and run your first paid execution." />
-  <Card title="How It Works" href="/how-it-works" description="The exact pipeline from probe to normalized result." />
-  <Card title="Smart Account Contract" href="/contract" description="The Soroban mandate and what __check_auth enforces." />
-  <Card title="API Reference" href="/api/ecorouter" description="Every interface, function, and error in the SDK." />
-  <Card title="Playground" href="/playground" description="Run the real validation and selection functions in your browser." />
+  <Card title="Quickstart" href="/quickstart" description="Run a team in the sandbox, then on Stellar testnet with Freighter." />
+  <Card title="Team account" href="/concepts/team-account" description="The shared account, its owner and its balance." />
+  <Card title="Spenders and policies" href="/concepts/spenders" description="Allowance, cap, payment count, expiry and approved services." />
+  <Card title="Security model" href="/security" description="The exact check order, and what is not done yet." />
+  <Card title="Contracts reference" href="/contracts" description="Functions on team-account and service-registry." />
+  <Card title="Agents" href="/concepts/agents" description="Give an AI agent its own key and policy." />
 </Cards>

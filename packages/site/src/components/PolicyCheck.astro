@@ -1,0 +1,273 @@
+---
+import TechnicalViewport from "./TechnicalViewport.astro";
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const input = "w-full h-10 bg-white border border-ink/60 rounded-[3px] px-3 text-xs font-mono text-ink focus:outline-none focus:border-ink";
+const label = "block text-[10px] uppercase tracking-[0.16em] text-ink-muted font-medium mb-1.5";
+const presets = [
+  { label: "In policy", spender: "sam", service: "inference-credits", amount: "120" },
+  { label: "Over the cap", spender: "sam", service: "gpu-rental", amount: "320" },
+  { label: "Agent over cap", spender: "datafeed", service: "market-data", amount: "40" },
+  { label: "Not on the list", spender: "sam", service: "search-api", amount: "40" },
+  { label: "Unknown service", spender: "sam", service: "pay-me-here", amount: "40" },
+  { label: "Suspended service", spender: "research", service: "legacy-search", amount: "20" },
+];
+---
+
+<section id="policy-check" class="bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-10">
+      <div class="max-w-3xl space-y-3">
+        <div class="eyebrow">03 · Policy check</div>
+        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
+          Try a payment against the rules
+        </h2>
+        <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
+          Pick a spender, a service and an amount. The checks below run in the same order as the contract and stop at the first rule that says no. Nothing is signed and no funds move here.
+        </p>
+      </div>
+
+      <TechnicalViewport topLeft="POLICY CHECK · ADA'S TEAM" topRight="SANDBOX" bottomLeft="ORDER · SAME AS pay()" bottomRight="NO FUNDS MOVE HERE">
+        <div class="p-4 sm:p-6 space-y-5 font-mono">
+          <div class="flex flex-wrap gap-2" role="group" aria-label="Example payments">
+            {presets.map((p) => (
+              <button
+                type="button"
+                class="pc-preset h-7 px-2.5 rounded-[3px] border border-ink/60 bg-white hover:bg-surface-soft text-[11px] text-ink cursor-pointer"
+                data-spender={p.spender}
+                data-service={p.service}
+                data-amount={p.amount}
+              >{p.label}</button>
+            ))}
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+            <div class="sm:col-span-4">
+              <label class={label} for="pc-spender">Spender</label>
+              <select id="pc-spender" class={input}>
+                <option value="sam">Sam · person</option>
+                <option value="research">Research agent · AI agent</option>
+                <option value="datafeed">Data feed agent · AI agent</option>
+              </select>
+            </div>
+            <div class="sm:col-span-4">
+              <label class={label} for="pc-service">Service id</label>
+              <input id="pc-service" class={input} type="text" list="pc-services" value="gpu-rental" autocomplete="off" spellcheck="false" />
+              <datalist id="pc-services">
+                <option value="gpu-rental"></option>
+                <option value="design-tools"></option>
+                <option value="inference-credits"></option>
+                <option value="search-api"></option>
+                <option value="market-data"></option>
+                <option value="legacy-search"></option>
+              </datalist>
+            </div>
+            <div class="sm:col-span-4">
+              <label class={label} for="pc-amount">Amount (USD)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-muted">$</span>
+                <input id="pc-amount" class={`${input} pl-6`} type="text" inputmode="decimal" value="320" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <label class="inline-flex items-center gap-2 text-[11px] text-ink-secondary cursor-pointer select-none">
+            <input id="pc-paused" type="checkbox" class="accent-ink w-3.5 h-3.5" />
+            Pause this spender
+          </label>
+
+          <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-4">
+            <div class="card overflow-hidden text-xs min-w-0">
+              <div class="h-8 px-3 bg-surface-soft border-b-[1.5px] border-ink flex items-center justify-between text-[11px]">
+                <span class="font-medium text-ink">CONTRACT CHECKS</span>
+                <span class="text-ink-muted uppercase tracking-wider text-[10px]">in order</span>
+              </div>
+              <ol id="pc-checks" class="bg-white divide-y divide-line" aria-live="polite"></ol>
+            </div>
+
+            <div class="space-y-4 min-w-0">
+              <div id="pc-result" class="border-[1.5px] p-4 space-y-2" aria-live="polite"></div>
+              <div class="card overflow-hidden text-xs">
+                <div class="h-8 px-3 bg-surface-soft border-b-[1.5px] border-ink flex items-center text-[11px]">
+                  <span class="font-medium text-ink">ARITHMETIC</span>
+                </div>
+                <div id="pc-math" class="bg-white p-3 space-y-1.5 text-[11.5px] text-ink-secondary leading-relaxed"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TechnicalViewport>
+      <a href={`${basePath}/app/`} class="inline-flex items-center gap-2 text-[13px] font-mono font-medium text-ink border-b-[1.5px] border-ink pb-0.5 hover:text-accent hover:border-accent">Run real payments in the sandbox <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Kind = "person" | "agent";
+  interface Spender {
+    name: string;
+    kind: Kind;
+    cap: number; // cents
+    allowance: number; // cents per month
+    spent: number; // cents this month
+    maxPayments: number;
+    payments: number;
+    expires: string;
+    services: string[];
+  }
+
+  const OWNER = "Ada";
+  const BALANCE = 356000; // cents
+  const spenders: Record<string, Spender> = {
+    sam: { name: "Sam", kind: "person", cap: 25000, allowance: 90000, spent: 34000, maxPayments: 20, payments: 6, expires: "Dec 31, 2026", services: ["gpu-rental", "design-tools", "inference-credits"] },
+    research: { name: "Research agent", kind: "agent", cap: 12000, allowance: 120000, spent: 102000, maxPayments: 40, payments: 31, expires: "Mar 31, 2027", services: ["inference-credits", "search-api", "legacy-search"] },
+    datafeed: { name: "Data feed agent", kind: "agent", cap: 500, allowance: 15000, spent: 8000, maxPayments: 31, payments: 16, expires: "Jan 31, 2027", services: ["market-data"] },
+  };
+  const registry: Record<string, "active" | "suspended"> = {
+    "gpu-rental": "active",
+    "design-tools": "active",
+    "inference-credits": "active",
+    "search-api": "active",
+    "market-data": "active",
+    "legacy-search": "suspended",
+  };
+
+  const CHECK_NAMES = [
+    "Account paused?", "Spender exists", "Spender paused?", "Policy expired?", "Amount > 0",
+    "Service on allowlist", "Replay key unused", "Per-payment cap", "Payments this period",
+    "Allowance left", "Registry resolves service", "Balance covers it", "Transfer + receipt",
+  ];
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const spenderEl = $<HTMLSelectElement>("pc-spender");
+  const serviceEl = $<HTMLInputElement>("pc-service");
+  const amountEl = $<HTMLInputElement>("pc-amount");
+  const pausedEl = $<HTMLInputElement>("pc-paused");
+  const checksEl = $<HTMLOListElement>("pc-checks");
+  const resultEl = $<HTMLDivElement>("pc-result");
+  const mathEl = $<HTMLDivElement>("pc-math");
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+  const usd = (cents: number) => `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  type Outcome = "pass" | "limit" | "refuse";
+  interface Check { name: string; detail: string; outcome: Outcome }
+
+  function parseCents(raw: string): number | null {
+    const v = raw.trim().replace(/^\$/, "").replace(/,/g, "");
+    if (!/^\d+(\.\d{1,2})?$/.test(v)) return null;
+    const [whole, frac = ""] = v.split(".");
+    return Number(whole) * 100 + Number((frac + "00").slice(0, 2));
+  }
+
+  function run() {
+    const s = spenders[spenderEl.value];
+    const service = serviceEl.value.trim();
+    const amount = parseCents(amountEl.value);
+    const left = s.allowance - s.spent;
+
+    const checks: Check[] = [];
+    const steps: Array<() => Check> = [
+      () => ({ name: "Account paused?", detail: "team account is active", outcome: "pass" }),
+      () => ({ name: "Spender exists", detail: `${s.name} is on the account`, outcome: "pass" }),
+      () => pausedEl.checked
+        ? { name: "Spender paused?", detail: `${s.name} is paused by ${OWNER}`, outcome: "refuse" }
+        : { name: "Spender paused?", detail: "not paused", outcome: "pass" },
+      () => ({ name: "Policy expired?", detail: `valid until ${s.expires}`, outcome: "pass" }),
+      () => amount === null || amount <= 0
+        ? { name: "Amount > 0", detail: amount === null ? "not a valid amount" : "amount must be above zero", outcome: "refuse" }
+        : { name: "Amount > 0", detail: usd(amount), outcome: "pass" },
+      () => s.services.includes(service)
+        ? { name: "Service on allowlist", detail: `"${esc(service)}" is approved for ${s.name}`, outcome: "pass" }
+        : { name: "Service on allowlist", detail: `"${esc(service) || "(empty)"}" is not on ${s.name}'s list`, outcome: "limit" },
+      () => ({ name: "Replay key unused", detail: "fresh key for this payment", outcome: "pass" }),
+      () => amount! <= s.cap
+        ? { name: "Per-payment cap", detail: `${usd(amount!)} ≤ ${usd(s.cap)}`, outcome: "pass" }
+        : { name: "Per-payment cap", detail: `${usd(amount!)} > ${usd(s.cap)}`, outcome: "limit" },
+      () => s.payments + 1 <= s.maxPayments
+        ? { name: "Payments this period", detail: `${s.payments + 1} of ${s.maxPayments}`, outcome: "pass" }
+        : { name: "Payments this period", detail: `${s.payments + 1} > ${s.maxPayments}`, outcome: "limit" },
+      () => amount! <= left
+        ? { name: "Allowance left", detail: `${usd(amount!)} ≤ ${usd(left)} left`, outcome: "pass" }
+        : { name: "Allowance left", detail: `${usd(amount!)} > ${usd(left)} left`, outcome: "limit" },
+      () => registry[service] === "active"
+        ? { name: "Registry resolves service", detail: `"${esc(service)}" → registered payee`, outcome: "pass" }
+        : { name: "Registry resolves service", detail: `"${esc(service)}" is ${registry[service] === "suspended" ? "suspended" : "unknown"} · reverts`, outcome: "refuse" },
+      () => ({ name: "Balance covers it", detail: `team account holds ${usd(BALANCE)}`, outcome: amount! <= BALANCE ? "pass" : "refuse" }),
+      () => ({ name: "Transfer + receipt", detail: `${amount ? usd(amount) : ""} USDC to the payee · receipt event`, outcome: "pass" }),
+    ];
+
+    let failed: Check | null = null;
+    for (const step of steps) {
+      const c = step();
+      checks.push(c);
+      if (c.outcome !== "pass") { failed = c; break; }
+    }
+    const reached = checks.length;
+
+    checksEl.innerHTML = steps.map((_, i) => {
+      const n = String(i + 1).padStart(2, "0");
+      if (i >= reached) {
+        return `<li class="px-3 py-2 flex items-center gap-3 text-ink-muted"><span class="w-5 shrink-0">${n}</span><span class="flex-1 min-w-0 truncate">${CHECK_NAMES[i]}</span><span class="shrink-0 text-[10px] uppercase tracking-wider"><span class="hidden sm:inline">not reached</span><span class="sm:hidden">skip</span></span></li>`;
+      }
+      const c = checks[i];
+      const tag = c.outcome === "pass" ? ["ok", "text-ok"] : c.outcome === "limit" ? ["held", "text-warn"] : ["stop", "text-destructive"];
+      if (c.outcome === "limit" && (s.kind === "agent" || registry[service] !== "active")) tag[0] = "stop";
+      const row = c.outcome === "pass" ? "" : c.outcome === "limit" ? "bg-warn-soft" : "bg-destructive/5";
+      return `<li class="px-3 py-2 flex items-start gap-3 ${row}"><span class="w-5 shrink-0 text-ink-muted">${n}</span><span class="flex-1 min-w-0"><span class="block text-ink">${c.name}</span><span class="block text-[11px] text-ink-secondary break-words">${c.detail}</span></span><span class="shrink-0 text-[10px] uppercase tracking-wider font-semibold ${tag[1]}">${tag[0]}</span></li>`;
+    }).join("");
+
+    // Result
+    let tone: string, title: string, body: string;
+    if (!failed) {
+      tone = "border-ok bg-ok/5";
+      title = `<span class="text-ok">Paid</span>`;
+      body = `${usd(amount!)} settles on Stellar to <span class="text-ink">${esc(service)}</span>. A receipt is written with a link to the transaction.`;
+    } else if (failed.outcome === "limit" && s.kind === "person" && registry[service] !== "active") {
+      tone = "border-destructive bg-destructive/5";
+      title = `<span class="text-destructive">Refused · ${failed.name.toLowerCase()}</span>`;
+      body = `"${esc(service) || "(empty)"}" is not a registered, active service, so there is nothing to approve. Payments only go to services in the registry.`;
+    } else if (failed.outcome === "limit" && s.kind === "person") {
+      tone = "border-warn bg-warn-soft";
+      title = `<span class="text-warn">Held by rule · ${failed.name.toLowerCase()}</span>`;
+      body = `Nothing moves. ${s.name} can ask for approval, and the request reaches ${OWNER} with the rule and how far over it is.`;
+    } else if (failed.outcome === "limit") {
+      tone = "border-destructive bg-destructive/5";
+      title = `<span class="text-destructive">Refused by rule · ${failed.name.toLowerCase()}</span>`;
+      body = `Nothing moves. Agent payments that break a rule stop here and do not become approval requests.`;
+    } else {
+      tone = "border-destructive bg-destructive/5";
+      title = `<span class="text-destructive">Refused · ${failed.name.toLowerCase()}</span>`;
+      body = `The contract reverts. This is not something an approval can override.`;
+    }
+    resultEl.className = `border-[1.5px] p-4 space-y-2 ${tone}`;
+    resultEl.innerHTML = `<div class="text-[10px] uppercase tracking-[0.16em] text-ink-muted">Result</div><div class="text-[15px] font-semibold">${title}</div><p class="text-[12px] text-ink-secondary leading-relaxed font-sans">${body}</p>`;
+
+    // Arithmetic
+    const lines: string[] = [];
+    const kv = (k: string, v: string) => `<div class="flex justify-between gap-3"><span class="text-ink-muted shrink-0">${k}</span><span class="text-right text-ink break-words min-w-0">${v}</span></div>`;
+    lines.push(kv("cap per payment", usd(s.cap)));
+    lines.push(kv("allowance", `${usd(s.allowance)} − ${usd(s.spent)} spent = <b>${usd(left)}</b> left`));
+    lines.push(kv("payments", `${s.payments} of ${s.maxPayments} used`));
+    if (amount !== null && amount > 0) {
+      if (amount > s.cap) lines.push(kv("over cap by", `<span class="text-warn font-semibold">${usd(amount - s.cap)}</span>`));
+      if (amount > left) lines.push(kv("over allowance by", `<span class="text-warn font-semibold">${usd(amount - left)}</span>`));
+      if (!failed) lines.push(kv("left after", `${usd(left)} − ${usd(amount)} = <b>${usd(left - amount)}</b>`));
+    }
+    mathEl.innerHTML = lines.join("");
+  }
+
+  [spenderEl, serviceEl, amountEl, pausedEl].forEach((el) => {
+    el.addEventListener("input", run);
+    el.addEventListener("change", run);
+  });
+  document.querySelectorAll<HTMLButtonElement>(".pc-preset").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      spenderEl.value = btn.dataset.spender!;
+      serviceEl.value = btn.dataset.service!;
+      amountEl.value = btn.dataset.amount!;
+      pausedEl.checked = false;
+      run();
+    });
+  });
+  run();
+</script>

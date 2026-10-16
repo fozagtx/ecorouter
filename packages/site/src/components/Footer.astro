@@ -1,12 +1,11 @@
 ---
 import Logo from './Logo.astro';
-import CopyInstall from './CopyInstall.astro';
 import AsciiGrid from './AsciiGrid.astro';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const cols = [
-  { h: "Product", links: [["How it works", "#how"], ["Why Stellar", "#stellar"], ["Testbench", "#simulator"]] },
-  { h: "Developers", links: [["Docs", `${basePath}/docs/`], ["Quickstart", `${basePath}/docs/quickstart/`], ["Playground", `${basePath}/docs/playground/`], ["GitHub", "https://github.com/fozagtx/ecorouter"], ["npm package", "https://www.npmjs.com/package/ecorouter"]] },
-  { h: "Stellar", links: [["Stellar", "https://stellar.org"], ["Soroban docs", "https://developers.stellar.org/docs/build/smart-contracts/overview"], ["Smart accounts", "https://developers.stellar.org/docs/build/guides/contract-accounts"]] },
+  { h: "Product", links: [["Open the app", `${basePath}/app/`], ["How it works", "#how"], ["Agents", "#agents"], ["Policy check", "#policy-check"], ["Security", "#security"], ["FAQ", "#faq"]] },
+  { h: "Docs", links: [["Introduction", `${basePath}/docs/`], ["Quickstart", `${basePath}/docs/quickstart/`], ["Concepts", `${basePath}/docs/concepts/team-account/`], ["Security model", `${basePath}/docs/security/`], ["Contracts", `${basePath}/docs/contracts/`], ["GitHub", "https://github.com/fozagtx/ecorouter"]] },
+  { h: "Stellar", links: [["Stellar", "https://stellar.org"], ["Soroban docs", "https://developers.stellar.org/docs/build/smart-contracts/overview"], ["Testnet", "https://developers.stellar.org/docs/networks"], ["Freighter wallet", "https://www.freighter.app"]] },
 ];
 ---
 
@@ -21,9 +20,11 @@ const cols = [
             <span class="w-7 h-7 rounded-[3px] bg-ink flex items-center justify-center text-white"><Logo class="w-4 h-4 text-white" /></span>
             <span class="font-semibold text-base tracking-tight text-ink">EcoRouter</span>
           </div>
-          <p class="text-sm text-ink-secondary leading-relaxed">The spending runtime for agents on Stellar.</p>
+          <p class="text-sm text-ink-secondary leading-relaxed">Spending rules for teams and their AI agents, enforced on Stellar. Testnet only, not audited.</p>
         </div>
-        <CopyInstall />
+        <a href={`${basePath}/app/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border-[1.5px] border-ink">
+          Open the app <span aria-hidden="true">→</span>
+        </a>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">

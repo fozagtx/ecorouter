@@ -1,0 +1,20 @@
+---
+title: SDK overview
+description: The original EcoRouter TypeScript SDK for capability routing over x402. Kept for reference.
+---
+
+<Callout type="warn" title="Legacy">
+This section documents the original EcoRouter SDK. EcoRouter is now a product: a shared USDC spending account for teams and their AI agents. Start with the [introduction](/) for the current product. The SDK pages are kept for reference and are not where new work happens.
+</Callout>
+
+EcoRouter is a local TypeScript SDK for capability-based purchasing by autonomous agents. Instead of hardcoding an API vendor, your agent asks for a capability such as `web.search`. The SDK probes configured providers over HTTP 402 (x402 V2 `exact`), validates each offer against your local spend policy and the on-chain Soroban mandate, picks the best value deterministically, settles the payment in USDC on `stellar:testnet`, and normalizes the response into one predictable shape.
+
+Everything runs on your machine. There are no hosted services, no registries, and no custodial wallets. Payment authorization is enforced on Stellar by the `ecorouter-account` Soroban smart account, which gates every transfer through `__check_auth` against a mandate you control.
+
+<Cards>
+  <Card title="Quickstart" href="/legacy/quickstart" description="Install the SDK and run your first paid execution." />
+  <Card title="How It Works" href="/legacy/how-it-works" description="The exact pipeline from probe to normalized result." />
+  <Card title="Smart Account Contract" href="/legacy/contract" description="The Soroban mandate and what __check_auth enforces." />
+  <Card title="API Reference" href="/legacy/api/ecorouter" description="Every interface, function, and error in the SDK." />
+  <Card title="Playground" href="/legacy/playground" description="Run the real validation and selection functions in your browser." />
+</Cards>

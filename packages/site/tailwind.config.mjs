@@ -24,6 +24,10 @@ export default {
           soft: '#EDF1FD',
         },
         ok: '#1F8A5B',
+        warn: {
+          DEFAULT: '#B45309',
+          soft: '#FFF7E6',
+        },
         destructive: '#C83C3C',
       },
       fontFamily: {

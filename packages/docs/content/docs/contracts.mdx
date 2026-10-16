@@ -1,0 +1,146 @@
+---
+title: Contracts reference
+description: Public functions, types, events and errors of the team-account and service-registry Soroban contracts.
+---
+
+Two Soroban contracts make up EcoRouter on Stellar. Both live in the repository under `contracts/`.
+
+| Contract | Path | Purpose |
+| --- | --- | --- |
+| `team-account` | `contracts/team-account` | Holds the team's USDC, stores a policy per spender, runs the checks and pays. |
+| `service-registry` | `contracts/service-registry` | Resolves a service id to the address that gets paid. |
+
+<Callout>
+This page summarizes the public interface. The Rust source in `contracts/` is authoritative. Amounts are in the asset's atomic units (USDC has 7 decimals). Times are ledger timestamps in seconds.
+</Callout>
+
+## team-account
+
+### Construction
+
+`__constructor(owner, asset, registry)` sets the owner, the token contract to pay in (USDC) and the service registry. The account starts unpaused with no spenders.
+
+There is no deposit function. To fund the account, transfer USDC to the contract's address; `balance()` reads the contract's token balance.
+
+### Owner functions
+
+All of these require the owner's signature.
+
+| Function | Effect |
+| --- | --- |
+| `set_policy(spender, input: PolicyInput)` | Creates a spender or fully replaces its policy. A new spender starts a fresh period; an existing one keeps its period, usage and pause state. Fails with `InvalidPolicy` if any limit is not positive, `max_payment > allowance`, `expires_at` is not in the future, or more than 32 services are listed. |
+| `set_spender_paused(spender, paused)` | Pauses or resumes one spender. |
+| `remove_spender(spender)` | Deletes the spender's policy and usage. |
+| `set_paused(paused)` | Pauses or resumes the whole account. A paused account authorizes nothing, including settlement of approved requests. |
+| `withdraw(to, amount)` | Moves USDC out of the account. |
+| `approve(id)` | Approves a pending, unexpired request. Moves no money. |
+| `decline(id)` | Declines a pending or approved-but-unsettled request. |
+| `propose_owner(new_owner)` | First step of an ownership transfer. The new owner calls `accept_owner()`. |
+
+### Spender functions
+
+| Function | Auth | Effect |
+| --- | --- | --- |
+| `pay(spender, service, amount, memo, key) -> Receipt` | spender | Runs the checks below, transfers to the payee the registry returns, and emits a `pay` event. There is no recipient parameter. `key` is a 32-byte one-time key chosen by the caller, so a retried submission can never pay twice. |
+| `request_approval(spender, service, amount, memo) -> u64` | spender | Files a request for a payment that one of the exception-eligible rules refused. People only. Records the rule, how far over it was, and the payee the registry returns now. Nothing moves. Requests expire after 7 days. |
+| `settle(id, caller)` | owner or the spender who filed it | Pays an approved request. Refuses if the account is paused, the request is not approved or has expired, the service no longer resolves, **the payee changed since the request was filed** (`PayeeChanged`), or the balance is too low. Settled exceptions do not consume the spender's allowance. |
+
+### Check order in `pay`
+
+1. Account paused → `AccountPaused`
+2. Spender exists → `UnknownSpender`
+3. Spender paused → `SpenderPaused`
+4. Policy expired → `PolicyExpired`
+5. Amount > 0 → `InvalidAmount`
+6. Service on the spender's allowlist → `ServiceNotAllowed`
+7. Replay key unused → `DuplicatePayment`
+8. Per-payment cap (`max_payment`) → `OverPaymentCap`
+9. Payments per period (`max_payments`) → `OverFrequency`
+10. Allowance left this period → `OverAllowance`
+11. Registry resolves the service → `UnknownService`, `ServiceSuspended` or `RegistryUnavailable`
+12. Balance covers the amount → `InsufficientFunds`
+13. Transfer, then the `pay` receipt event
+
+Rules 6, 8, 9 and 10 are **exception-eligible**: a person whose payment fails one of them can call `request_approval`. Agents get `AgentCannotRequest`.
+
+### Dry run
+
+`check(spender, service, amount) -> Verdict` runs the same rules without auth or state changes and returns `{ rule, over_by, allowance_left, period_spent, period_count }`. `rule` is `0` when the payment would go through, otherwise the error code that would refuse it. The app uses this to show the arithmetic before anything is signed.
+
+### Views
+
+`version()`, `owner()`, `asset()`, `registry()`, `paused()`, `balance()`, `spenders()`, `policy(spender) -> Option<Policy>`, `usage(spender) -> Usage`, `request(id) -> Option<ApprovalRequest>`, `requests(from, limit)`, `is_key_used(spender, key)`.
+
+### Types
+
+```rust
+pub enum SpenderKind { Person = 0, Agent = 1 }
+
+pub struct PolicyInput {
+    pub kind: SpenderKind,
+    pub label: String,
+    pub allowance: i128,     // per period
+    pub period: u64,         // seconds, e.g. 2_592_000 for 30 days
+    pub max_payment: i128,   // per payment
+    pub max_payments: u32,   // per period
+    pub expires_at: u64,
+    pub services: Vec<Symbol>,
+}
+
+// Stored policy: PolicyInput fields plus
+//   paused: bool,
+//   anchor: u64,   // periods are fixed windows counted from here
+
+pub struct Usage { pub period_start: u64, pub spent: i128, pub count: u32 }
+
+pub struct ApprovalRequest {
+    pub id: u64,
+    pub spender: Address,
+    pub service: Symbol,
+    pub payee: Address,      // payee when the request was filed
+    pub amount: i128,
+    pub memo: String,
+    pub rule: u32,           // error code of the rule that held it
+    pub over_by: i128,
+    pub status: RequestStatus, // Pending | Approved | Declined | Settled
+    pub created_at: u64,
+    pub expires_at: u64,
+}
+```
+
+### Events
+
+| Topics | Emitted by |
+| --- | --- |
+| `pay`, spender, service | `pay` (the receipt: payee, amount, memo, key, period_spent) |
+| `request`, `filed`, id | `request_approval` |
+| `request`, `decided`, id | `approve`, `decline` |
+| `request`, `settled`, id | `settle` |
+| `policy`, `set` / `paused` / `removed`, spender | owner spender changes |
+| `account`, `paused` / `withdraw` | `set_paused`, `withdraw` |
+
+### Errors
+
+`AccountPaused` (1), `UnknownSpender` (2), `SpenderPaused` (3), `PolicyExpired` (4), `InvalidAmount` (5), `ServiceNotAllowed` (6), `DuplicatePayment` (7), `OverPaymentCap` (8), `OverFrequency` (9), `OverAllowance` (10), `UnknownService` (11), `ServiceSuspended` (12), `InsufficientFunds` (13), `InvalidPolicy` (14), `UnknownRequest` (15), `RequestNotPending` (16), `RequestNotApproved` (17), `RequestExpired` (18), `PayeeChanged` (19), `NotAuthorized` (20), `NoExceptionNeeded` (21), `NotEligibleForException` (22), `AgentCannotRequest` (23), `RegistryUnavailable` (24), `NoPendingOwner` (25).
+
+## service-registry
+
+| Function | Auth | Effect |
+| --- | --- | --- |
+| `__constructor(owner)` | | Sets the registry owner. |
+| `register(id, name, payee)` | registry owner | Adds a service. Ids are never reused (`AlreadyRegistered`). |
+| `set_payee(id, new_payee)` | current payee | Rotates the payout address for the service. |
+| `set_suspended(id, suspended)` | registry owner | Suspends or resumes a service. A suspended service resolves to nothing. |
+| `resolve(id) -> Address` | none | Returns the payee. Fails with `UnknownService` or `ServiceSuspended`; there is no fallback address. |
+| `get(id) -> Option<Service>` | none | Returns `{ id, name, payee, suspended }`. |
+| `list() -> Vec<Service>` | none | All registered services. |
+| `propose_owner(new_owner)` / `accept_owner()` | owner / new owner | Two-step ownership transfer. |
+| `owner()`, `version()` | none | Views. |
+
+Events: `service registered`, `service payee` (old and new payee), `service suspended`.
+
+Errors: `NotInitialized` (1), `AlreadyRegistered` (2), `UnknownService` (3), `ServiceSuspended` (4), `NoPendingOwner` (5).
+
+## Building
+
+Both are standard Soroban crates. Build and deploy with the Stellar CLI (`stellar contract build`, `stellar contract deploy`) against testnet. Deploy the registry first, then the team account with the registry's address.

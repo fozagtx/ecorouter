@@ -1,0 +1,5 @@
+{
+  "title": "Concepts",
+  "defaultOpen": true,
+  "pages": ["team-account", "spenders", "services", "approvals", "receipts", "agents", "assistant"]
+}

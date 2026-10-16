@@ -2,19 +2,19 @@
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const items = [
   { name: "Stellar network", type: "Settlement", logo: true },
-  { name: "Soroban smart accounts", type: "Custody" },
-  { name: "__check_auth mandates", type: "Policy" },
+  { name: "Soroban team account", type: "Custody" },
+  { name: "Per-spender policies", type: "Rules" },
   { name: "USDC on Stellar", type: "Asset", logo: true },
-  { name: "Stellar Asset Contract", type: "Token" },
-  { name: "x402 V2 exact", type: "Payments" },
-  { name: "ed25519 session keys", type: "Signing" },
+  { name: "On-chain service registry", type: "Payees" },
+  { name: "Approval requests", type: "Control" },
+  { name: "Receipts as contract events", type: "Audit" },
   { name: "stellar:testnet", type: "Network", logo: true },
 ];
 ---
 
 <section class="border-y border-line bg-surface-soft overflow-hidden relative">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-    <span class="eyebrow">The Stellar stack it runs on</span>
+    <span class="eyebrow">What every payment runs through</span>
   </div>
   <div class="relative w-full overflow-hidden flex items-center pb-6 pt-2">
     <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-surface-soft to-transparent z-10 pointer-events-none"></div>
