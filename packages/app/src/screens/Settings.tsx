@@ -75,7 +75,7 @@ export function Settings() {
 
         <Card eyebrow="Session" title="Disconnect">
           <p className="text-[13px] text-ink-secondary mb-4">
-            Your wallet stays connected in Freighter; this only closes the app session.
+            Disconnect to stop automatic reconnect and switch the account in Freighter.
           </p>
           <Button onClick={leave}>Disconnect</Button>
           <p className="mt-5 text-[12px] text-ink-muted">Testnet only. The contracts have not been independently audited.</p>

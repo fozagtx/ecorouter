@@ -22,16 +22,28 @@ export async function collectEventPages<T>(
 ): Promise<T[]> {
   const events: T[] = [];
   let request: EventPageRequest = firstRequest;
+  let fetchedPages = 0;
+  let retriedRange = false;
 
-  for (let page = 0; page < 40; page++) {
+  while (fetchedPages < 40) {
     let response: EventPage<T>;
     try {
       response = await getEvents(request);
     } catch (error) {
+      if (fetchedPages === 0 && !retriedRange && "startLedger" in request) {
+        const message = error instanceof Error ? error.message : String(error);
+        const range = /ledger range:\s*(\d+)\s*-\s*(\d+)/i.exec(message);
+        if (range) {
+          request = { startLedger: Number(range[1]), filters: request.filters, limit: request.limit };
+          retriedRange = true;
+          continue;
+        }
+      }
       warn(error);
       break;
     }
 
+    fetchedPages++;
     events.push(...response.events);
     const requestedCursor = "cursor" in request ? request.cursor : undefined;
     const cursorStalled = requestedCursor !== undefined && response.cursor === requestedCursor;

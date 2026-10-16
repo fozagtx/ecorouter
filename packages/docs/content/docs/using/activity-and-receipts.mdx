@@ -22,4 +22,4 @@ On Stellar testnet, a settled payment emits a `pay` event from the `team-account
 
 A payment that fails a check never reaches the chain as a transfer, so held, declined and refused receipts are kept by the app; requests and decisions are also recorded as contract events.
 
-The app reads recent contract events from Soroban RPC. A refusal detected before submission is kept only in the current browser and has no transaction link.
+The app reads recent contract events from Soroban RPC as far back as the node keeps them—up to about seven days; the public testnet node has kept as little as about a day. A refusal detected before submission is kept only in the current browser and has no transaction link.

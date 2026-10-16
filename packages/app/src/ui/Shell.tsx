@@ -100,11 +100,11 @@ export function Shell({ children }: { children: ReactNode }) {
         "hidden lg:flex flex-col gap-5 sticky top-0 h-screen border-r border-line bg-surface-soft transition-[width,padding] duration-200 motion-reduce:transition-none",
         collapsed ? "items-center p-2" : "p-4",
       )}>
-        <div className={cx("flex items-center w-full", collapsed ? "justify-between gap-0" : "justify-between gap-2")}>
+        <div className={cx("flex w-full", collapsed ? "flex-col items-center gap-1" : "items-center justify-between gap-2")}>
           <Brand collapsed={collapsed} />
           <button
             type="button"
-            className={cx("inline-flex shrink-0 items-center justify-center rounded-lg text-ink-muted hover:bg-white hover:text-ink", collapsed ? "w-6 h-6" : "w-8 h-8")}
+            className="inline-flex w-8 h-8 shrink-0 items-center justify-center rounded-lg text-ink-muted hover:bg-white hover:text-ink"
             onClick={() => setCollapsed((value) => !value)}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-expanded={!collapsed}
@@ -174,7 +174,7 @@ export function Shell({ children }: { children: ReactNode }) {
 function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <a href="#/overview" aria-label="EcoRouter" className={cx("flex items-center gap-2.5", collapsed && "gap-0")}>
-      <span className={cx("rounded-full bg-ink flex items-center justify-center text-white shrink-0", collapsed ? "w-6 h-6" : "w-8 h-8")}>
+      <span className="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white shrink-0">
         <Logo className="w-4 h-4" />
       </span>
       {!collapsed && <span className="font-semibold text-[15px] tracking-tight">EcoRouter</span>}

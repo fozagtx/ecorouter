@@ -157,12 +157,16 @@ export class TestnetBackend implements Backend {
     if (res.error || !res.address) {
       throw new Error(res.error?.message || "Freighter did not share an address. Is the extension installed and unlocked?");
     }
+    return TestnetBackend.connectAddress(cfg, res.address);
+  }
+
+  static async connectAddress(cfg: TestnetConfig, address: string): Promise<TestnetBackend> {
     const { network, networkPassphrase, error } = await getNetwork();
     if (error) throw new Error(error.message);
     if (networkPassphrase !== cfg.networkPassphrase) {
       throw new Error(`Freighter is on ${network}. Switch it to Testnet and try again.`);
     }
-    return new TestnetBackend(cfg, res.address);
+    return new TestnetBackend(cfg, address);
   }
 
   // ------------------------------------------------------------- reading
@@ -216,9 +220,10 @@ export class TestnetBackend implements Backend {
     };
   }
 
-  /** Recent contract events (RPC keeps about a week of them). */
+  /** Recent contract events retained by the RPC node. */
   private async events(latestLedger: number): Promise<Activity[]> {
-    const startLedger = Math.max(1, latestLedger - 17_280 * 6);
+    const { oldestLedger } = await this.server.getHealth();
+    const startLedger = Math.max(oldestLedger + 1, latestLedger - 103_680);
     const events = await collectEventPages(
       (request) => this.server.getEvents(request),
       { startLedger, filters: [{ type: "contract", contractIds: [this.cfg.accountId] }], limit: 200 },

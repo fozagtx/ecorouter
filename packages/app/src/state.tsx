@@ -3,22 +3,19 @@ import { ContractError, ruleDetail, ruleTitle } from "./engine/rules";
 import type { Backend, Snapshot, Spender } from "./engine/types";
 import { configFromEnv } from "./chain/config";
 
-type SessionMode = "testnet" | null;
-const SESSION_KEY = "ecorouter.session";
+const AUTOCONNECT_KEY = "ecorouter.autoconnect";
 
-function readSession(): SessionMode {
+function readAutoConnect(): boolean {
   try {
-    const v = localStorage.getItem(SESSION_KEY);
-    return v === "testnet" ? v : null;
+    return localStorage.getItem(AUTOCONNECT_KEY) !== "off";
   } catch {
-    return null;
+    return true;
   }
 }
 
-function writeSession(v: SessionMode) {
+function writeAutoConnect(enabled: boolean) {
   try {
-    if (v) localStorage.setItem(SESSION_KEY, v);
-    else localStorage.removeItem(SESSION_KEY);
+    localStorage.setItem(AUTOCONNECT_KEY, enabled ? "on" : "off");
   } catch {
     /* ignore */
   }
@@ -72,6 +69,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [route, setRoute] = useState(currentRoute);
   const seq = useRef(0);
+  const autoConnectAttempted = useRef(false);
+  const manualConnectStarted = useRef(false);
 
   useEffect(() => {
     const on = () => setRoute(currentRoute());
@@ -135,27 +134,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [backend, refresh, toast],
   );
 
+  useEffect(() => {
+    if (backend || autoConnectAttempted.current || !readAutoConnect()) return;
+    autoConnectAttempted.current = true;
+    void (async () => {
+      try {
+        const { getAddress, isAllowed, isConnected } = await import("@stellar/freighter-api");
+        const [connection, permission] = await Promise.all([isConnected(), isAllowed()]);
+        if (manualConnectStarted.current || !connection.isConnected || connection.error || !permission.isAllowed || permission.error) return;
+        const wallet = await getAddress();
+        if (manualConnectStarted.current || wallet.error || !wallet.address) return;
+        const { TestnetBackend } = await import("./chain/testnet");
+        const b = await TestnetBackend.connectAddress(configFromEnv(), wallet.address);
+        if (manualConnectStarted.current) return;
+        setBackend(b);
+        go("/overview");
+      } catch {
+        return;
+      }
+    })();
+  }, [backend, go]);
+
   const connectTestnet = useCallback(async () => {
+    manualConnectStarted.current = true;
     const cfg = configFromEnv();
     // The Stellar SDK and wallet code load only when someone connects.
     const { TestnetBackend } = await import("./chain/testnet");
     const b = await TestnetBackend.connect(cfg);
-    writeSession("testnet");
+    writeAutoConnect(true);
     setBackend(b);
     go("/overview");
   }, [go]);
 
   const leave = useCallback(() => {
-    writeSession(null);
+    writeAutoConnect(false);
     setBackend(null);
     setSnap(null);
     go("/");
   }, [go]);
-
-  // A testnet session needs the wallet again after a reload.
-  useEffect(() => {
-    if (readSession() === "testnet" && !backend) writeSession(null);
-  }, [backend]);
 
   const value = useMemo<AppState>(() => {
     const isOwner = !!snap && snap.me === snap.account.owner;

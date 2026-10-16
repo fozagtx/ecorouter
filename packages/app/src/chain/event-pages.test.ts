@@ -51,4 +51,30 @@ describe("collectEventPages", () => {
     expect(calls).toHaveLength(1);
     expect(calls[0]).toMatchObject({ startLedger: 1 });
   });
+
+  it("retries the first request at the RPC's oldest available ledger", async () => {
+    const calls: EventPageRequest[] = [];
+    const warn = vi.fn();
+    const getEvents = vi.fn(async (request: EventPageRequest) => {
+      calls.push(request);
+      if (calls.length === 1) throw new Error("startLedger must be within the ledger range: 500 - 800");
+      return { events: [], cursor: toid(800), latestLedger: 800 };
+    });
+
+    const events = await collectEventPages(
+      getEvents,
+      {
+        startLedger: 1,
+        filters: [{ type: "contract", contractIds: ["contract"] }],
+        limit: 200,
+      },
+      warn,
+    );
+
+    expect(events).toEqual([]);
+    expect(calls).toHaveLength(2);
+    expect(calls[0]).toMatchObject({ startLedger: 1 });
+    expect(calls[1]).toMatchObject({ startLedger: 500 });
+    expect(warn).not.toHaveBeenCalled();
+  });
 });
