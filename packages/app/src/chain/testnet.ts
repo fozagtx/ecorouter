@@ -23,7 +23,6 @@ import { Buffer } from "buffer";
 import { ContractError } from "../engine/rules";
 import type {
   Activity,
-  AgentRule,
   ApprovalRequest,
   Backend,
   PayArgs,
@@ -45,7 +44,6 @@ const LOCAL_KEY = "ecorouter.testnet.local.v1";
 interface LocalState {
   names: Record<string, string>;
   refused: Activity[];
-  agentRules: AgentRule[];
 }
 
 function readLocal(): LocalState {
@@ -55,7 +53,7 @@ function readLocal(): LocalState {
   } catch {
     /* fall through */
   }
-  return { names: {}, refused: [], agentRules: [] };
+  return { names: {}, refused: [] };
 }
 
 function writeLocal(s: LocalState): void {
@@ -213,7 +211,6 @@ export class TestnetBackend implements Backend {
       ),
       requests: requests.map(toRequest).sort((a, b) => b.id - a.id),
       activity,
-      agentRules: this.local.agentRules,
       names,
     };
   }
@@ -362,20 +359,4 @@ export class TestnetBackend implements Backend {
     await this.invoke(new Contract(this.cfg.usdcId), "transfer", addr(this.me), addr(this.cfg.accountId), i128(amount));
   }
 
-  async saveAgentRule(rule: AgentRule): Promise<void> {
-    const i = this.local.agentRules.findIndex((r) => r.id === rule.id);
-    if (i >= 0) this.local.agentRules[i] = rule;
-    else this.local.agentRules.push(rule);
-    writeLocal(this.local);
-  }
-
-  async deleteAgentRule(id: string): Promise<void> {
-    this.local.agentRules = this.local.agentRules.filter((r) => r.id !== id);
-    writeLocal(this.local);
-  }
-
-  /** On testnet an agent signs with its own key, held by the agent worker, never by this page. */
-  async runAgents(): Promise<number> {
-    return 0;
-  }
 }

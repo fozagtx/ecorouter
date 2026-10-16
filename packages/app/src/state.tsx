@@ -107,22 +107,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSnap(null);
     if (!backend) return;
     let alive = true;
-    (async () => {
-      // Agent schedules run in the separate worker process.
-      await backend.runAgents();
-      if (alive) await refresh();
-    })();
-    const t = setInterval(async () => {
-      if ((await backend.runAgents()) > 0 && alive) {
-        toast({ tone: "neutral", title: "An agent ran its schedule", detail: "See Activity for the receipt." });
-      }
-      if (alive) await refresh();
+    void refresh();
+    const t = setInterval(() => {
+      if (alive) void refresh();
     }, 30_000);
     return () => {
       alive = false;
       clearInterval(t);
     };
-  }, [backend, refresh, toast]);
+  }, [backend, refresh]);
 
   const run = useCallback(
     async <T,>(fn: (b: Backend) => Promise<T>, success?: string): Promise<T | undefined> => {
