@@ -47,10 +47,10 @@ export function Overview() {
         </button>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        <Stat label="Account balance" value={fmt(snap.account.balance)} sub="USDC held by the contract" />
-        <Stat label="Spent this period" value={fmt(spentAll)} sub={`of ${fmt(allowAll)} in allowances`} />
-        <Stat label="Payments" value={paidCount} sub={`${held} held by the rules in 30 days`} />
+      <div className="panel grid grid-cols-2 lg:grid-cols-4 mb-6">
+        <Stat className="border-r border-b border-line lg:border-b-0" label="Account balance" value={fmt(snap.account.balance)} sub="USDC held by the contract" />
+        <Stat className="border-b border-line lg:border-b-0 lg:border-r" label="Spent this period" value={fmt(spentAll)} sub={`of ${fmt(allowAll)} in allowances`} />
+        <Stat className="border-r border-line" label="Payments" value={paidCount} sub={`${held} held by the rules in 30 days`} />
         <Stat label="Waiting on owner" value={pending.length + approved.length} sub={`${pending.length} to decide · ${approved.length} to settle`} />
       </div>
 

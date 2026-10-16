@@ -28,33 +28,36 @@ export function Shell({ children }: { children: ReactNode }) {
   if (!people.includes(snap.account.owner)) people.unshift(snap.account.owner);
 
   const NavList = (
-    <nav className="flex flex-col gap-0.5" aria-label="Main">
-      {nav
-        .filter((n) => n.show)
-        .map((n) => {
-          const active = route.startsWith(n.path);
-          return (
-            <a
-              key={n.path}
-              href={`#${n.path}`}
-              onClick={() => setOpen(false)}
-              aria-current={active ? "page" : undefined}
-              className={cx(
-                "flex items-center gap-2.5 h-9 px-2.5 rounded text-[13.5px] transition-colors",
-                active ? "bg-white text-ink font-medium shadow-subtle border border-line" : "text-ink-secondary hover:text-ink hover:bg-white/60 border border-transparent",
-              )}
-            >
-              <Icon name={n.icon} className="w-[17px] h-[17px] shrink-0" />
-              <span className="flex-1">{n.label}</span>
-              {!!n.badge && <span className="min-w-5 h-5 px-1.5 rounded-full bg-held text-white text-[11px] font-mono inline-flex items-center justify-center">{n.badge}</span>}
-            </a>
-          );
-        })}
-    </nav>
+    <div>
+      <div className="group-label px-2.5 mb-2">Workspace</div>
+      <nav className="flex flex-col gap-0.5" aria-label="Main">
+        {nav
+          .filter((n) => n.show)
+          .map((n) => {
+            const active = route.startsWith(n.path);
+            return (
+              <a
+                key={n.path}
+                href={`#${n.path}`}
+                onClick={() => setOpen(false)}
+                aria-current={active ? "page" : undefined}
+                className={cx(
+                  "flex items-center gap-2.5 h-9 px-2.5 rounded-lg text-[14px] transition-colors",
+                  active ? "bg-white text-ink font-medium shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-line" : "text-ink-secondary hover:bg-white/70 hover:text-ink",
+                )}
+              >
+                <Icon name={n.icon} className="w-[17px] h-[17px] shrink-0" />
+                <span className="flex-1">{n.label}</span>
+                {!!n.badge && <span className="min-w-5 h-5 px-1.5 rounded-full bg-held text-white text-[11px] font-mono inline-flex items-center justify-center">{n.badge}</span>}
+              </a>
+            );
+          })}
+      </nav>
+    </div>
   );
 
   const Identity = (
-    <div className="panel p-3">
+    <div className="px-1 py-2">
       <div className="eyebrow mb-2">Signed in as</div>
       {backend instanceof SandboxBackend ? (
         <select
@@ -76,7 +79,7 @@ export function Shell({ children }: { children: ReactNode }) {
       ) : (
         <div className="text-[13px] font-mono">{short(snap.me, 6)}</div>
       )}
-      <div className="mt-2 text-[11.5px] text-ink-muted leading-snug">
+      <div className="mt-2 text-[12px] text-ink-muted leading-snug">
         {isOwner ? "You own this account: you set the rules and decide exceptions." : mine ? "You spend inside your own policy." : "You have no policy on this account."}
       </div>
     </div>
@@ -91,7 +94,7 @@ export function Shell({ children }: { children: ReactNode }) {
         {NavList}
         <div className="mt-auto flex flex-col gap-3">
           {Identity}
-          <a href={SITE} className="text-[12px] font-mono text-ink-muted hover:text-ink px-1">← ecorouter.xyz</a>
+          <a href={SITE} className="text-[13px] text-ink-muted hover:text-ink px-1">← ecorouter.xyz</a>
         </div>
       </aside>
 
@@ -101,13 +104,13 @@ export function Shell({ children }: { children: ReactNode }) {
           <Brand />
           <div className="flex items-center gap-2">
             {snap.mode === "sandbox" ? <Badge tone="accent">Sandbox</Badge> : <Badge tone="ok">Testnet</Badge>}
-            <button className="w-9 h-9 inline-flex items-center justify-center rounded border border-line-strong" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+            <button className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-line" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
               <Icon name={open ? "x" : "menu"} />
             </button>
           </div>
         </div>
         {open && (
-          <div className="border-t border-line bg-surface-soft p-4 flex flex-col gap-4 max-h-[calc(100vh-56px)] overflow-y-auto">
+          <div className="border-t border-line bg-white p-4 flex flex-col gap-4 max-h-[calc(100vh-56px)] overflow-y-auto">
             {NavList}
             {Identity}
           </div>
@@ -120,7 +123,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <Icon name="pause" /> The account is paused. No payment or settlement can go through until the owner resumes it.
           </div>
         )}
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8">{children}</div>
+        <div className="max-w-[1120px] mx-auto px-5 sm:px-10 py-8 sm:py-12">{children}</div>
       </main>
 
       <div className="fixed bottom-4 right-4 left-4 sm:left-auto z-[60] flex flex-col gap-2 sm:w-[360px]" aria-live="polite">
@@ -146,7 +149,7 @@ export function Shell({ children }: { children: ReactNode }) {
 function Brand() {
   return (
     <a href="#/overview" className="flex items-center gap-2.5">
-      <span className="w-7 h-7 rounded-[3px] bg-ink flex items-center justify-center text-white">
+      <span className="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white">
         <Logo className="w-4 h-4" />
       </span>
       <span className="font-semibold text-[15px] tracking-tight">EcoRouter</span>
@@ -158,7 +161,7 @@ function AccountChip() {
   const { snap } = useApp();
   if (!snap) return null;
   return (
-    <div className="panel p-3">
+    <div className="px-1 py-2">
       <div className="flex items-center justify-between gap-2">
         <div className="text-[13px] font-semibold truncate">{snap.account.name}</div>
         {snap.mode === "sandbox" ? <Badge tone="accent">Sandbox</Badge> : <Badge tone="ok">Testnet</Badge>}
@@ -170,11 +173,11 @@ function AccountChip() {
 
 export function PageHead({ title, sub, action, eyebrow }: { title: string; sub?: ReactNode; action?: ReactNode; eyebrow?: string }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
       <div className="min-w-0">
         {eyebrow && <div className="eyebrow mb-2">{eyebrow}</div>}
-        <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-tight leading-tight">{title}</h1>
-        {sub && <p className="mt-1.5 text-[14px] text-ink-secondary max-w-2xl">{sub}</p>}
+        <h1 className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.035em] leading-tight">{title}</h1>
+        {sub && <p className="mt-2 text-[15.5px] text-ink-secondary max-w-2xl">{sub}</p>}
       </div>
       {action && <div className="flex gap-2 shrink-0">{action}</div>}
     </div>

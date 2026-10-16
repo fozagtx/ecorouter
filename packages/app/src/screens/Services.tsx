@@ -17,9 +17,9 @@ export function Services() {
         <div className="-m-4 sm:-m-5 overflow-x-auto">
           <table className="w-full text-[13px] min-w-[640px]">
             <thead>
-              <tr className="border-b border-line bg-surface-soft text-left">
+              <tr className="border-b border-line bg-transparent text-left">
                 {["Service", "Id", "Pays", "Who may use it", "Status"].map((h) => (
-                  <th key={h} className="eyebrow font-medium px-5 py-3">{h}</th>
+                  <th key={h} className="text-[12.5px] text-ink-muted font-normal px-5 py-3">{h}</th>
                 ))}
               </tr>
             </thead>
