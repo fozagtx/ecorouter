@@ -47,7 +47,7 @@ const SERVICES = [
 
 const server = new rpc.Server(RPC_URL);
 const log = (...a) => console.log(...a);
-const record = { network: "testnet", rpcUrl: RPC_URL, deployedAt: new Date().toISOString(), txs: {} };
+const record = { network: "testnet", networkPassphrase: PASSPHRASE, rpcUrl: RPC_URL, deployedAt: new Date().toISOString(), txs: {} };
 
 /**
  * Makes sure `kp` exists on chain. Uses Friendbot when it is reachable;

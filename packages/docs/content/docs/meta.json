@@ -2,10 +2,12 @@
   "title": "EcoRouter Docs",
   "pages": [
     "index",
-    "quickstart",
-    "concepts",
+    "getting-started",
+    "using",
+    "agents",
+    "how-it-works",
     "security",
-    "contracts",
-    "legacy"
+    "reference",
+    "resources"
   ]
 }

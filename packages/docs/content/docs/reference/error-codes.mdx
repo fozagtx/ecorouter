@@ -1,0 +1,36 @@
+---
+title: Error codes
+description: The team-account contract errors and the short titles shown in the app and SDK.
+---
+
+The numeric values are `AccountError` discriminants in `contracts/team-account/src/lib.rs`. Titles match `packages/app/src/engine/rules.ts`; `packages/sdk/src/index.ts` exports the same mapping through `Rule` and `ruleReason`.
+
+| Code | Name | Title |
+| ---: | --- | --- |
+| 1 | `AccountPaused` | Account paused |
+| 2 | `UnknownSpender` | Not a spender |
+| 3 | `SpenderPaused` | Spender paused |
+| 4 | `PolicyExpired` | Policy expired |
+| 5 | `InvalidAmount` | Invalid amount |
+| 6 | `ServiceNotAllowed` | Service not on the list |
+| 7 | `DuplicatePayment` | Already submitted |
+| 8 | `OverPaymentCap` | Over the per-payment cap |
+| 9 | `OverFrequency` | Too many payments this period |
+| 10 | `OverAllowance` | Over the allowance |
+| 11 | `UnknownService` | Unknown service |
+| 12 | `ServiceSuspended` | Service suspended |
+| 13 | `InsufficientFunds` | Not enough in the account |
+| 14 | `InvalidPolicy` | Invalid policy |
+| 15 | `UnknownRequest` | Unknown request |
+| 16 | `RequestNotPending` | Already decided |
+| 17 | `RequestNotApproved` | Not approved |
+| 18 | `RequestExpired` | Request expired |
+| 19 | `PayeeChanged` | Payee changed |
+| 20 | `NotAuthorized` | Not allowed |
+| 21 | `NoExceptionNeeded` | Within the rules |
+| 22 | `NotEligibleForException` | Not eligible |
+| 23 | `AgentCannotRequest` | Agents cannot ask |
+| 24 | `RegistryUnavailable` | Registry unavailable |
+| 25 | `NoPendingOwner` | No pending owner |
+
+`check` returns the code for the first failed payment rule. A `pay` call with a failing rule is refused by the contract.

@@ -1,0 +1,29 @@
+---
+title: Evidence
+description: Testnet deployment transactions and explorer links.
+---
+
+These transaction hashes are recorded in `deployments/testnet.json`.
+
+| Deployment step | Transaction |
+| --- | --- |
+| Upload service registry | [1bcb8b1e37413caaffbdbd64d72ba2300e5ea9283b3887ad60c95484a557868a](https://stellar.expert/explorer/testnet/tx/1bcb8b1e37413caaffbdbd64d72ba2300e5ea9283b3887ad60c95484a557868a) |
+| Deploy service registry | [b5030a721acb49e629e3b6e050efed3f28069d22bb2c66358bcd6f8ea09cc4be](https://stellar.expert/explorer/testnet/tx/b5030a721acb49e629e3b6e050efed3f28069d22bb2c66358bcd6f8ea09cc4be) |
+| Upload team account | [9b01f1468fa41f27bc8afc6adf9a46130bdb13d66ed66174998931d8ea8fa3b4](https://stellar.expert/explorer/testnet/tx/9b01f1468fa41f27bc8afc6adf9a46130bdb13d66ed66174998931d8ea8fa3b4) |
+| Deploy team account | [638322ab55104b9f5dd816c87515ffb704aaeadc376c9b6b50d377127474dd69](https://stellar.expert/explorer/testnet/tx/638322ab55104b9f5dd816c87515ffb704aaeadc376c9b6b50d377127474dd69) |
+| Register inference | [50af1d1c1305e3da3effc6f326f83a9470859b5736d78ceb312f0fdfa8841b27](https://stellar.expert/explorer/testnet/tx/50af1d1c1305e3da3effc6f326f83a9470859b5736d78ceb312f0fdfa8841b27) |
+| Register search | [5db8c927f469dd7684952078c611561222c62a7fd0dc711075acad4a139cff63](https://stellar.expert/explorer/testnet/tx/5db8c927f469dd7684952078c611561222c62a7fd0dc711075acad4a139cff63) |
+| Register data | [0b3116462deda7070707524ec63c6d4ae934fe4a575569cb3aadec2472e69be2](https://stellar.expert/explorer/testnet/tx/0b3116462deda7070707524ec63c6d4ae934fe4a575569cb3aadec2472e69be2) |
+| Register gpu | [d45e8ef645678b77e209c1a6a4190fd583b3e34c733c710da36658bcbf83c639](https://stellar.expert/explorer/testnet/tx/d45e8ef645678b77e209c1a6a4190fd583b3e34c733c710da36658bcbf83c639) |
+| Register storage | [89e40117243ac95862fadb40700a0d61d4117a884e5aa92ed284c73dbaca3e02](https://stellar.expert/explorer/testnet/tx/89e40117243ac95862fadb40700a0d61d4117a884e5aa92ed284c73dbaca3e02) |
+
+## Payments on testnet
+
+| Payment step | Transaction |
+| --- | --- |
+| Owner deposits 100 USDC | [86f244194053442ebafa138c8bc1944c6d760ed6617e5111708e98bcc925c484](https://stellar.expert/explorer/testnet/tx/86f244194053442ebafa138c8bc1944c6d760ed6617e5111708e98bcc925c484) |
+| Owner sets a person policy (allowance 50, cap 10, inference + search) | [cb406cd008132e81e0259569b1971a8d07232a0735e457178354589bbddfa8f0](https://stellar.expert/explorer/testnet/tx/cb406cd008132e81e0259569b1971a8d07232a0735e457178354589bbddfa8f0) |
+| Spender pays 5 USDC to inference | [f7bb333f253169ad147dedf7e9992a89b58c793b755cba7042bf664f310bd394](https://stellar.expert/explorer/testnet/tx/f7bb333f253169ad147dedf7e9992a89b58c793b755cba7042bf664f310bd394) |
+| Spender requests approval #1 for 25 USDC (over the 10 USDC cap) | [31eb1f7882033687adbc60499fc3f3325b1a44ea6b2a9098db0d568f512067af](https://stellar.expert/explorer/testnet/tx/31eb1f7882033687adbc60499fc3f3325b1a44ea6b2a9098db0d568f512067af) |
+| Owner approves #1 | [5d7be1eb8465ff9faf2caa092160c58efd59e5f9161fe14be30f31e5df051ac6](https://stellar.expert/explorer/testnet/tx/5d7be1eb8465ff9faf2caa092160c58efd59e5f9161fe14be30f31e5df051ac6) |
+| Owner settles #1; 25 USDC moves and the balance is 70 USDC | [857f228d9f6ac7936eb08fa2172540b93b063e2daafa028c9535efb89865f3d6](https://stellar.expert/explorer/testnet/tx/857f228d9f6ac7936eb08fa2172540b93b063e2daafa028c9535efb89865f3d6) |

@@ -1,8 +1,11 @@
 {
   "name": "ecorouter",
-  "version": "0.1.0",
-  "description": "Local capability routing and Stellar x402 orchestration for autonomous agents",
+  "version": "0.2.0",
+  "description": "Pay from an EcoRouter team account on Stellar as an AI agent",
   "type": "module",
+  "bin": {
+    "ecorouter-agent": "./dist/worker.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -20,11 +23,15 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test test/*.test.js",
-    "prepublishOnly": "npm run build && npm run test"
+    "test": "pnpm build && node --test test/*.test.js",
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^17.2.1"
   },
   "engines": {
     "node": ">=20"

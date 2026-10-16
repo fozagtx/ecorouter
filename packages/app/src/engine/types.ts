@@ -94,23 +94,6 @@ export interface Activity {
   note?: string;
 }
 
-export type Cadence = "hour" | "day" | "week";
-
-export const DAY = 86_400;
-export const MONTH = 30 * DAY;
-export const CADENCE_SECS: Record<Cadence, number> = { hour: 3_600, day: DAY, week: 7 * DAY };
-
-export interface AgentRule {
-  id: string;
-  agent: string;
-  service: string;
-  amount: bigint;
-  every: Cadence;
-  memo: string;
-  enabled: boolean;
-  lastRun?: number;
-}
-
 export interface Snapshot {
   now: number;
   account: {
@@ -126,7 +109,6 @@ export interface Snapshot {
   services: Service[];
   requests: ApprovalRequest[];
   activity: Activity[];
-  agentRules: AgentRule[];
   /** Display names for addresses (owner, people, agents). */
   names: Record<string, string>;
 }
@@ -160,8 +142,4 @@ export interface Backend {
   setAccountPaused(paused: boolean): Promise<void>;
   withdraw(to: string, amount: bigint): Promise<void>;
   deposit(amount: bigint): Promise<void>;
-  saveAgentRule(rule: AgentRule): Promise<void>;
-  deleteAgentRule(id: string): Promise<void>;
-  /** Runs agent schedules that are due. Returns how many payments were attempted. */
-  runAgents(force?: string): Promise<number>;
 }

@@ -9,7 +9,7 @@ export interface TestnetConfig {
   usdcId: string;
 }
 
-export const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
+export const TESTNET_PASSPHRASE = deployment.networkPassphrase;
 
 export function configFromEnv(): TestnetConfig {
   const env = import.meta.env;

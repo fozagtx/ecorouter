@@ -1,5 +1,0 @@
-{
-  "title": "Legacy SDK",
-  "defaultOpen": false,
-  "pages": ["index", "quickstart", "how-it-works", "contract", "playground", "api"]
-}

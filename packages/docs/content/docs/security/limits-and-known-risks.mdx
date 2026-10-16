@@ -1,0 +1,16 @@
+---
+title: Limits and known risks
+description: Deployment scope, data retention and known product limitations.
+---
+
+- **Not audited.** No independent audit has been completed.
+- **Testnet only.** The deployed contracts and token are for Stellar testnet.
+- **Agents cannot request approvals.** A refused agent payment cannot be escalated from the app.
+- **Pre-submission refusals are local.** The app keeps a refusal that never reached the chain only in this browser.
+- **Activity history is limited.** The app reads RPC events as far back as the node keeps them—up to about seven days; the public testnet node has kept as little as about a day. There is no indexer.
+- **One worker runs one agent and one service.** Configure another Render worker for another agent/service pair.
+- **No outside merchants are registered.** The five testnet service payees are demo addresses controlled by the deployer.
+- **First write after a deploy is expensive.** The first policy write extended the contract's storage lifetime and charged 368.39 test XLM in fees ([transaction cb406cd0…](https://stellar.expert/explorer/testnet/tx/cb406cd008132e81e0259569b1971a8d07232a0735e457178354589bbddfa8f0)); a simulated policy write now costs about 1 XLM.
+- **Agent keys are hot keys.** A leaked key can use the spending authority its policy permits until the policy is paused, removed or expires.
+
+Sources: `packages/app/src/chain/testnet.ts` (`events`); `packages/sdk/src/worker.ts`; `contracts/team-account/src/lib.rs`; `deployments/testnet.json`.

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack && rm -rf ../../docs/docs && cp -r out ../../docs/docs"
+    "build": "rm -rf out && next build --webpack && rm -rf ../../docs/docs && cp -r out ../../docs/docs"
   },
   "dependencies": {
     "ecorouter": "workspace:*",

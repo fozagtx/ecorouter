@@ -46,14 +46,19 @@ function toForm(s: Spender | null, name: string, now: number): FormState {
 export function PolicyForm({ editing, onDone }: { editing: Spender | null; onDone: () => void }) {
   const { snap, run, name } = useApp();
   const [f, setF] = useState<FormState>(() => toForm(editing, editing ? name(editing.address) : "", snap?.now ?? 0));
+  const [openedAt, setOpenedAt] = useState(() => snap?.now ?? 0);
   const [busy, setBusy] = useState(false);
-  useEffect(() => setF(toForm(editing, editing ? name(editing.address) : "", snap?.now ?? 0)), [editing, name, snap?.now]);
+  useEffect(() => {
+    const now = snap?.now ?? 0;
+    setOpenedAt(now);
+    setF(toForm(editing, editing ? name(editing.address) : "", now));
+  }, [editing]);
   if (!snap) return null;
 
   const allowance = parseAmount(f.allowance);
   const maxPayment = parseAmount(f.maxPayment);
   const maxPayments = Number(f.maxPayments);
-  const expiresAt = snap.now + Math.round(Number(f.days) * 86_400);
+  const expiresAt = openedAt + Math.round(Number(f.days) * 86_400);
   const services = [...f.services, ...f.extra.split(/[\s,]+/).map((x) => x.trim().toLowerCase()).filter(Boolean)].filter((v, i, a) => a.indexOf(v) === i);
   const address = editing?.address ?? f.address.trim();
   const addressOk = !!editing || isValidStrKey("account", address) || isValidStrKey("contract", address);

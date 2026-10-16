@@ -1,5 +1,6 @@
 {
   "network": "testnet",
+  "networkPassphrase": "Test SDF Network ; September 2015",
   "rpcUrl": "https://soroban-testnet.stellar.org",
   "deployedAt": "2026-10-16T20:16:56.516Z",
   "txs": {
