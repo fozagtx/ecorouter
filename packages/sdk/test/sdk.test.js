@@ -1,107 +1,143 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { Arbiter, EcoRouter, formatUsdc, parseUsdc, selectProvider, validateChallenge } from "../dist/index.js";
+import deployment from "../../../deployments/testnet.json" with { type: "json" };
+import {
+  Rule,
+  TESTNET,
+  contractErrorCode,
+  formatUsdc,
+  parseUsdc,
+  ruleReason,
+  scheduleKey,
+} from "../dist/index.js";
+import { decodePolicy, decodeReceipt, decodeUsage, decodeVerdict } from "../dist/codec.js";
+import { CliUsageError, parsePayArguments, payExitCode, serializePayOutcome } from "../dist/cli.js";
 
-test("EcoRouter and Arbiter export identity", () => {
-  assert.equal(EcoRouter, Arbiter);
+test("scheduleKey is stable for the same team, agent, service, and slot", () => {
+  const first = scheduleKey("team", "agent", "search", 42);
+  assert.equal(first, scheduleKey("team", "agent", "search", 42));
+  assert.match(first, /^[0-9a-f]{64}$/);
+  assert.notEqual(first, scheduleKey("team", "agent", "search", 43));
 });
 
-test("money uses exact USDC atomic units", () => {
-  assert.equal(parseUsdc("0.05"), 500000n);
-  assert.equal(formatUsdc(500000n), "0.05");
+test("USDC amounts use seven decimal places", () => {
+  assert.equal(parseUsdc("4.50"), 45_000_000n);
+  assert.equal(parseUsdc("0.0000001"), 1n);
+  assert.equal(formatUsdc(45_000_000n), "4.50");
   assert.throws(() => parseUsdc("0.00000001"));
 });
 
-test("execute challenges every provider, routes, normalizes, and is idempotent", async () => {
-  let challengeCalls = 0;
-  let settlements = 0;
-  const challenge = amount => Buffer.from(JSON.stringify({ x402Version: 2, scheme: "exact", network: "stellar:testnet", asset: "CUSDC", amount, payTo: "CDEST" })).toString("base64");
-  const fakeFetch = async (url, init) => {
-    if (!init.headers["payment-signature"]) {
-      challengeCalls++;
-      return new Response(null, { status: 402, headers: { "payment-required": challenge(url.includes("a.example") ? "20000" : "90000") } });
-    }
-    return Response.json({ results: [{ title: "Result", url: "https://result.example", snippet: "Normalized" }] });
-  };
-  const arbiter = new Arbiter({
-    account: "CACCOUNT", sessionSecret: "local-only", fetch: fakeFetch,
-    providers: [
-      { id: "a", capability: "web.search", endpoint: "https://a.example/search", qualityScore: 0.82 },
-      { id: "b", capability: "web.search", endpoint: "https://b.example/search", qualityScore: 0.94 }
-    ],
-    paymentClient: {
-      async loadMandate() { return { asset: "CUSDC", maxPaymentAtomic: 500000n, remainingAtomic: 1000000n, expiresAt: 4102444800, revoked: false }; },
-      async authorizeAndSettle() { settlements++; return { payment: { payload: "proof" }, receipt: { transactionHash: "abc" }, remainingAtomic: 980000n }; }
-    }
+test("TESTNET matches the committed deployment", () => {
+  assert.equal(deployment.network, "testnet");
+  assert.equal(TESTNET.rpcUrl, deployment.rpcUrl);
+  assert.equal(TESTNET.networkPassphrase, deployment.networkPassphrase);
+  assert.equal(TESTNET.teamAccount, deployment.teamAccount.contractId);
+  assert.equal(TESTNET.registry, deployment.registry.contractId);
+  assert.equal(TESTNET.usdc, deployment.usdc);
+  assert.equal(TESTNET.explorer, "https://stellar.expert/explorer/testnet");
+});
+
+test("one-shot CLI parses required and optional payment arguments", () => {
+  assert.deepEqual(parsePayArguments(["--service", "search", "--amount", "0.25", "--memo", "daily query", "--key", "a".repeat(64)]), {
+    service: "search",
+    amount: "0.25",
+    memo: "daily query",
+    key: "a".repeat(64),
   });
-  const request = { executionId: "same", capability: "web.search", input: { query: "q" }, policy: { maxSpendUsdc: "0.05", minimumQuality: 0.8 } };
-  const first = await arbiter.execute(request);
-  const second = await arbiter.execute(request);
-  assert.equal(challengeCalls, 2);
-  assert.equal(settlements, 1);
-  assert.deepEqual(second, first);
-  assert.equal(first.decision.providerId, "a");
-  assert.equal(first.output.results[0].snippet, "Normalized");
+  assert.deepEqual(parsePayArguments(["--service", "search", "--amount", "0.25"]), {
+    service: "search",
+    amount: "0.25",
+  });
+  assert.throws(() => parsePayArguments(["--service", "search"]), CliUsageError);
+  assert.throws(() => parsePayArguments(["--service", "search", "--amount", "0.25", "--unknown", "x"]), CliUsageError);
+  assert.throws(() => parsePayArguments(["--service", "search", "--amount", "0.25", "--key", "bad"]), CliUsageError);
 });
 
-test("router selects lowest economic cost and resolves ties deterministically", () => {
-  const winner = selectProvider([
-    { providerId: "b", priceAtomic: 100000n, qualityScore: 1, successRate: 1 },
-    { providerId: "a", priceAtomic: 20000n, qualityScore: 0.82, successRate: 0.95 }
-  ]);
-  assert.equal(winner.providerId, "a");
-  const tie = selectProvider([
-    { providerId: "z", priceAtomic: 1n, qualityScore: 1, successRate: 1 },
-    { providerId: "a", priceAtomic: 1n, qualityScore: 1, successRate: 1 }
-  ]);
-  assert.equal(tie.providerId, "a");
+test("one-shot CLI serializes bigint fields as strings and maps outcome exit codes", () => {
+  const outcome = {
+    status: "refused",
+    key: "a".repeat(64),
+    rule: Rule.OverPaymentCap,
+    reason: "Over the per-payment cap",
+    overBy: 2_500_000n,
+  };
+  assert.equal(serializePayOutcome(outcome), JSON.stringify({ ...outcome, overBy: "2500000" }));
+  assert.equal(payExitCode({ ...outcome, status: "paid", txHash: "hash", explorerUrl: "url", receipt: {
+    spender: "GSPENDER", service: "search", payee: "GPAYEE", amount: 1n, memo: "",
+    periodSpent: 1n, allowanceLeft: 2n, at: 3,
+  } }), 0);
+  assert.equal(payExitCode(outcome), 3);
+  assert.equal(payExitCode({ status: "pending", key: outcome.key, txHash: "hash" }), 4);
 });
 
-test("challenge validation enforces network, asset, policy, and mandate", () => {
-  const mandate = { asset: "CUSDC", maxPaymentAtomic: 500000n, remainingAtomic: 1000000n, expiresAt: 4102444800, revoked: false };
-  const challenge = { x402Version: 2, scheme: "exact", network: "stellar:testnet", asset: "CUSDC", amount: "20000", payTo: "CDEST" };
-  assert.equal(validateChallenge(challenge, mandate, "0.05"), 20000n);
-  assert.throws(() => validateChallenge({ ...challenge, network: "base" }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, asset: "WRONG" }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, amount: "500001" }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, payTo: "" }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, payTo: "   " }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, amount: "20.5" }, mandate, "0.05"));
-  assert.throws(() => validateChallenge({ ...challenge, amount: "-20000" }, mandate, "0.05"));
+test("contract errors map to contract codes and rule titles", () => {
+  assert.equal(contractErrorCode("HostError: Error(Contract, #8)"), 8);
+  assert.equal(contractErrorCode("not a contract error"), null);
+  assert.equal(ruleReason(Rule.OverPaymentCap), "Over the per-payment cap");
+  assert.equal(ruleReason(999), "Contract error #999");
 });
 
-test("error classes have explicit names", async () => {
-  const { NoEligibleProviderError, InvalidPaymentChallengeError } = await import("../dist/index.js");
-  assert.equal(new NoEligibleProviderError().name, "NoEligibleProviderError");
-  assert.equal(new InvalidPaymentChallengeError().name, "InvalidPaymentChallengeError");
-});
+test("native policy, usage, verdict, and receipt values decode to camelCase", () => {
+  const policy = decodePolicy({
+    kind: 1,
+    label: "agent",
+    allowance: 20_000_000n,
+    period: 2_592_000,
+    max_payment: 5_000_000n,
+    max_payments: 5,
+    expires_at: 1_900_000_000,
+    services: ["search"],
+    paused: false,
+    anchor: 1_700_000_000,
+  });
+  assert.deepEqual(policy, {
+    kind: "agent",
+    label: "agent",
+    allowance: 20_000_000n,
+    period: 2_592_000,
+    maxPayment: 5_000_000n,
+    maxPayments: 5,
+    expiresAt: 1_900_000_000,
+    services: ["search"],
+    paused: false,
+    anchor: 1_700_000_000,
+  });
 
-test("arbiter constructor rejects duplicate provider IDs and local IP endpoints", () => {
-  assert.throws(
-    () =>
-      new Arbiter({
-        account: "CACCOUNT",
-        sessionSecret: "sec",
-        providers: [
-          { id: "p1", capability: "web.search", endpoint: "https://a.example/search", qualityScore: 0.9 },
-          { id: "p1", capability: "web.search", endpoint: "https://b.example/search", qualityScore: 0.9 }
-        ],
-        paymentClient: {}
-      }),
-    /Duplicate provider id/
-  );
-
-  assert.throws(
-    () =>
-      new Arbiter({
-        account: "CACCOUNT",
-        sessionSecret: "sec",
-        providers: [
-          { id: "p1", capability: "web.search", endpoint: "https://[::ffff:127.0.0.1]/search", qualityScore: 0.9 },
-          { id: "p2", capability: "web.search", endpoint: "https://b.example/search", qualityScore: 0.9 }
-        ],
-        paymentClient: {}
-      }),
-    /Provider endpoints must use a public hostname/
-  );
+  assert.deepEqual(decodeUsage({ period_start: 1_700_000_000, spent: 1_250_000n, count: 2 }), {
+    periodStart: 1_700_000_000,
+    spent: 1_250_000n,
+    count: 2,
+  });
+  assert.deepEqual(decodeVerdict({
+    rule: 0,
+    over_by: 0n,
+    allowance_left: 18_750_000n,
+    period_spent: 1_250_000n,
+    period_count: 2,
+  }), {
+    rule: 0,
+    overBy: 0n,
+    allowanceLeft: 18_750_000n,
+    periodSpent: 1_250_000n,
+    periodCount: 2,
+  });
+  assert.deepEqual(decodeReceipt({
+    spender: "GSPENDER",
+    service: "search",
+    payee: "GPAYEE",
+    amount: 2_500_000n,
+    memo: "query",
+    period_spent: 3_750_000n,
+    allowance_left: 16_250_000n,
+    at: 1_700_000_001,
+  }), {
+    spender: "GSPENDER",
+    service: "search",
+    payee: "GPAYEE",
+    amount: 2_500_000n,
+    memo: "query",
+    periodSpent: 3_750_000n,
+    allowanceLeft: 16_250_000n,
+    at: 1_700_000_001,
+  });
 });

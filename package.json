@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm --filter ecorouter build && pnpm build:site",
     "build:site": "pnpm --filter @ecorouter/site build && pnpm --filter @ecorouter/docs build && pnpm --filter @ecorouter/app build",
+    "agent": "pnpm --filter ecorouter build && node packages/sdk/dist/worker.js",
     "dev:app": "pnpm --filter @ecorouter/app dev",
     "dev:docs": "pnpm --filter @ecorouter/docs dev",
     "dev:site": "pnpm --filter @ecorouter/site dev",
