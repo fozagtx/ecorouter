@@ -12,8 +12,7 @@ export type EventPage<T> = {
 function cursorLedger(cursor: string): number | null {
   const match = /^(\d+)(?:[-:]|$)/.exec(cursor);
   if (!match) return null;
-  const ledger = Number(match[1]);
-  return Number.isSafeInteger(ledger) ? ledger : null;
+  return Number(BigInt(match[1]) >> 32n);
 }
 
 export async function collectEventPages<T>(
