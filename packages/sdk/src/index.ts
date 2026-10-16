@@ -295,6 +295,9 @@ export class TeamAgent {
           receipt: decodeReceipt(result.returnValue ? scValToNative(result.returnValue) : undefined),
         };
       }
+      if (result.status === rpc.Api.GetTransactionStatus.FAILED) {
+        throw new Error(`Transaction ${sent.hash} failed on chain`);
+      }
       await wait(1_000);
     }
 

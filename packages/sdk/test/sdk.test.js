@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import deployment from "../../../deployments/testnet.json" with { type: "json" };
+import { Account, Keypair, rpc } from "@stellar/stellar-sdk";
 import {
   Rule,
+  TeamAgent,
   TESTNET,
   contractErrorCode,
   formatUsdc,
@@ -140,4 +142,28 @@ test("native policy, usage, verdict, and receipt values decode to camelCase", ()
     allowanceLeft: 16_250_000n,
     at: 1_700_000_001,
   });
+});
+
+test("pay throws immediately when the submitted transaction fails on chain", async () => {
+  const keypair = Keypair.random();
+  const agent = new TeamAgent({ secret: keypair.secret() });
+  const hash = "failed-transaction";
+  agent.check = async () => ({
+    rule: Rule.Ok,
+    overBy: 0n,
+    allowanceLeft: 1_000_000n,
+    periodSpent: 0n,
+    periodCount: 0,
+  });
+  agent.server = {
+    getAccount: async () => new Account(agent.address, "1"),
+    prepareTransaction: async () => ({ sign() {} }),
+    sendTransaction: async () => ({ status: "PENDING", hash }),
+    getTransaction: async () => ({ status: rpc.Api.GetTransactionStatus.FAILED }),
+  };
+
+  await assert.rejects(
+    agent.pay({ service: "search", amount: "0.25" }),
+    { message: `Transaction ${hash} failed on chain` },
+  );
 });
