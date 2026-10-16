@@ -39,9 +39,9 @@ function Stage({ n, title, state, children, last }: { n: number; title: string; 
       <div className={cx("pb-6", state === "skip" && "opacity-50")}>
         <div className="flex items-center gap-2 min-h-8">
           <span className="text-[13.5px] font-semibold">{title}</span>
-          {state === "refuse" && <span className="font-mono text-[10.5px] uppercase tracking-wider text-destructive">refused here · no money moved</span>}
-          {state === "held" && <span className="font-mono text-[10.5px] uppercase tracking-wider text-held">held here · no money moved</span>}
-          {state === "skip" && <span className="font-mono text-[10.5px] uppercase tracking-wider text-ink-muted">not reached</span>}
+          {state === "refuse" && <span className="text-[12px] text-destructive">Refused here · no money moved</span>}
+          {state === "held" && <span className="text-[12px] text-held">Held here · no money moved</span>}
+          {state === "skip" && <span className="text-[12px] text-ink-muted">Not reached</span>}
         </div>
         <div className="text-[13px] text-ink-secondary mt-1">{children}</div>
       </div>
@@ -109,7 +109,7 @@ export function Assistant() {
             </form>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {EXAMPLES.map((ex) => (
-                <button key={ex} onClick={() => ask(ex)} className="h-7 px-2.5 rounded-full border border-line bg-surface-soft text-[12px] text-ink-secondary hover:border-ink hover:text-ink">
+                <button key={ex} onClick={() => ask(ex)} className="h-7 px-2.5 rounded-full border border-line bg-surface-soft text-[12px] text-ink-secondary hover:bg-white/70 hover:text-ink">
                   {ex}
                 </button>
               ))}

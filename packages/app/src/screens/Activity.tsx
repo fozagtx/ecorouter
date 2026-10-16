@@ -37,7 +37,7 @@ export function Activity() {
           <button
             key={x.key}
             onClick={() => setF(x.key)}
-            className={cx("h-8 px-3 rounded-full border text-[12.5px] whitespace-nowrap", f === x.key ? "bg-ink text-white border-ink" : "bg-white border-line text-ink-secondary hover:border-ink")}
+            className={cx("h-8 px-3.5 rounded-full text-[13px] whitespace-nowrap", f === x.key ? "bg-ink text-white" : "bg-surface-muted text-ink-secondary hover:text-ink")}
           >
             {x.label}
           </button>

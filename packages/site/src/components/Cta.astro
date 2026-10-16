@@ -1,30 +1,29 @@
 ---
-import AsciiGrid from "./AsciiGrid.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section class="bg-white border-t border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-0 sm:px-4 py-16 md:py-24">
-      <div class="relative overflow-hidden card rounded-[6px] bg-surface-soft">
-        <AsciiGrid rows={40} class="text-accent/40 [mask-image:linear-gradient(to_left,black_30%,transparent_85%)]" />
-        <div class="relative px-6 py-14 sm:px-12 sm:py-20 max-w-[720px] space-y-6">
-          <h2 class="text-[34px] sm:text-[48px] leading-[1.05] font-medium tracking-[-0.03em] text-ink">
+<section class="bg-white">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32">
+      <div class="relative overflow-hidden rounded-[32px] min-h-[960px] sm:min-h-[820px] lg:min-h-0 lg:aspect-[3/2] bg-[#FAF9F2] px-6 sm:px-12">
+        <img src={`${basePath}/assets/hero-hill.jpg`} alt="" class="absolute inset-x-0 bottom-0 h-[55%] w-full object-cover object-bottom lg:inset-0 lg:h-full" loading="lazy" />
+        <div class="absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-[#FAF9F2] via-[#FAF9F2]/90 to-transparent"></div>
+        <div class="relative z-10 mx-auto max-w-[720px] pt-10 sm:pt-12 lg:pt-12 space-y-6 text-center">
+          <h2 class="text-[40px] sm:text-[52px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
             Give your team and its agents a budget they cannot break
           </h2>
-          <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed max-w-[540px]">
+          <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[540px] mx-auto">
             Open the sandbox and run a team with test dollars in your browser, no wallet needed. When you are ready, connect Freighter and do the same on Stellar testnet.
           </p>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a href={`${basePath}/app/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-ink hover:bg-[#26272B] text-white border-[1.5px] border-ink">
-              Open the app <span aria-hidden="true">→</span>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href={`${basePath}/app/`} class="pill-cta h-12 text-[15px]">
+              Open the app
+              <span class="pill-cta-dot w-9 h-9" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </a>
-            <a href={`${basePath}/docs/quickstart/`} class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[3px] text-[13px] font-mono font-medium bg-white hover:bg-surface-muted text-ink border-[1.5px] border-ink">
+            <a href={`${basePath}/docs/quickstart/`} class="secondary-cta">
               Read the quickstart <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </section>

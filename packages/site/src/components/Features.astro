@@ -1,12 +1,11 @@
 ---
-import TechnicalViewport from "./TechnicalViewport.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const capabilities = [
-  { k: "PEOPLE", title: "People pay from the same account", body: "Teammates pay approved services from the app with an amount and a memo. The app pre-checks the policy and shows the arithmetic before anything is signed." },
-  { k: "CONTROL", title: "The owner keeps the last word", body: "Raise a cap, pause a spender, remove a service from a list, or approve one exception. Requests over a limit land on the owner's Approvals screen." },
-  { k: "RECEIPTS", title: "Every payment leaves a receipt", body: "Settled, held, declined or refused, each attempt is recorded with its spender, service, amount, memo and rule, and settled ones link to the Stellar transaction." },
-  { k: "STELLAR", title: "Settled in USDC on Stellar", body: "The money sits in a Soroban contract, not in anyone's wallet. Payments settle in seconds for a fraction of a cent, so small daily payments make sense." },
+  { k: "People", title: "People pay from the same account", body: "Teammates pay approved services from the app with an amount and a memo. The app pre-checks the policy and shows the arithmetic before anything is signed." },
+  { k: "Control", title: "The owner keeps the last word", body: "Raise a cap, pause a spender, remove a service from a list, or approve one exception. Requests over a limit land on the owner's Approvals screen." },
+  { k: "Receipts", title: "Every payment leaves a receipt", body: "Settled, held, declined or refused, each attempt is recorded with its spender, service, amount, memo and rule, and settled ones link to the Stellar transaction." },
+  { k: "Stellar", title: "Settled in USDC on Stellar", body: "The money sits in a Soroban contract, not in anyone's wallet. Payments settle in seconds for a fraction of a cent, so small daily payments make sense." },
 ];
 
 const runs = [
@@ -18,70 +17,68 @@ const runs = [
 ---
 
 <section id="agents" class="bg-surface-soft border-y border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-12">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
       <div class="max-w-3xl space-y-3">
         <div class="eyebrow">02 · Agents and people</div>
-        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
           Your agents spend like teammates, under tighter rules
         </h2>
-        <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
+        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[620px]">
           An AI agent is just another spender on the account. It gets its own Stellar key and its own policy, and it can never sign for more than that policy allows.
         </p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-8 items-start">
         <div class="space-y-5">
-          <div class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-muted">
-            <span class="text-white px-1.5 py-0.5 bg-accent">AGENTS</span>
+          <div class="flex items-center gap-2 text-[13px] text-ink-muted">
+            <span class="text-accent px-3 py-1 rounded-full bg-accent-soft">Agents</span>
             <span>Its own key, its own policy</span>
           </div>
-          <h3 class="text-[22px] font-semibold text-ink tracking-tight leading-snug">Pay on a schedule, top up a service, stop at the line</h3>
+          <h3 class="text-[22px] font-semibold text-ink tracking-[-0.03em] leading-snug">Pay on a schedule, top up a service, stop at the line</h3>
           <ul class="space-y-3 text-sm text-ink-secondary leading-relaxed">
-            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 bg-accent shrink-0"></span><span><span class="text-ink font-medium">Scheduled payments.</span> Pay $5 every day to a data API, or top up inference credits when they run low.</span></li>
-            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 bg-accent shrink-0"></span><span><span class="text-ink font-medium">Separate keys.</span> Each agent signs with its own Stellar key. Removing the agent removes its ability to pay.</span></li>
-            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 bg-accent shrink-0"></span><span><span class="text-ink font-medium">Refused means refused.</span> An agent's payment that breaks a rule stops there. It does not turn into an approval request.</span></li>
-            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 bg-accent shrink-0"></span><span><span class="text-ink font-medium">An assistant that cannot invent a payee.</span> Its output has no address field, so it can only choose from services already on the spender's list.</span></li>
+            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span><span><span class="text-ink font-medium">Scheduled payments.</span> Pay $5 every day to a data API, or top up inference credits when they run low.</span></li>
+            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span><span><span class="text-ink font-medium">Separate keys.</span> Each agent signs with its own Stellar key. Removing the agent removes its ability to pay.</span></li>
+            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span><span><span class="text-ink font-medium">Refused means refused.</span> An agent's payment that breaks a rule stops there. It does not turn into an approval request.</span></li>
+            <li class="flex gap-3"><span class="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span><span><span class="text-ink font-medium">An assistant that cannot invent a payee.</span> Its output has no address field, so it can only choose from services already on the spender's list.</span></li>
           </ul>
         </div>
 
-        <TechnicalViewport topLeft="SPENDER · DATA FEED AGENT" topRight="AI AGENT" bottomLeft="CAP · $5 PER PAYMENT" bottomRight="ALLOWANCE · $150 / MONTH">
-          <div class="font-mono text-xs">
-            <div class="h-9 px-4 border-b border-line flex items-center justify-between gap-2 bg-surface-soft">
-              <span class="text-ink font-medium truncate">every day 09:00 → market-data · $5</span>
-              <span class="text-[10px] uppercase tracking-wider text-ok shrink-0">running</span>
+        <div class="outer-technical-frame p-3 sm:p-5">
+          <div class="card overflow-hidden shadow-subtle">
+            <div class="px-4 py-3 border-b border-line flex items-center justify-between gap-2 bg-white text-[13px]">
+              <span class="text-ink font-medium truncate">Every day 09:00 → market-data · <span class="tabular-nums">$5</span></span>
+              <span class="text-[12px] text-ok shrink-0">Running</span>
             </div>
-            <ul class="divide-y divide-line">
+            <ul class="divide-y divide-line text-[13px]">
               {runs.map((r) => (
-                <li class="px-4 py-2.5 flex items-center justify-between gap-3">
+                <li class="px-4 py-3 flex items-center justify-between gap-3">
                   <span class="text-ink-muted shrink-0">{r.t}</span>
                   <span class="flex items-center gap-3 min-w-0">
-                    <span class="text-ink">{r.amt}</span>
-                    <span class={`w-[62px] text-right text-[10px] uppercase tracking-wider font-semibold ${r.state === "Refused" ? "text-destructive" : "text-ok"}`}>{r.state}</span>
+                    <span class="font-sans tabular-nums text-ink">{r.amt}</span>
+                    <span class={`w-[62px] text-right text-[12px] font-medium ${r.state === "Refused" ? "text-destructive" : "text-ok"}`}>{r.state}</span>
                   </span>
                 </li>
               ))}
             </ul>
-            <div class="px-4 py-3 border-t border-line bg-surface-soft text-[11px] text-ink-secondary leading-relaxed">
-              <span class="text-destructive font-semibold">$40.00</span> &gt; cap <span class="text-ink">$5.00</span> · refused by the contract, nothing moved, no request filed.
+            <div class="px-4 py-3 border-t border-line bg-surface-soft text-[13px] text-ink-secondary leading-relaxed">
+              <span class="font-sans tabular-nums text-destructive font-semibold">$40.00</span> &gt; cap <span class="font-sans tabular-nums text-ink">$5.00</span> · refused by the contract, nothing moved, no request filed.
             </div>
           </div>
-        </TechnicalViewport>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {capabilities.map((p) => (
-          <div class="bg-white card p-5 space-y-3 shadow-subtle min-w-0">
-            <div class="font-mono text-[10px] uppercase tracking-[0.16em]">
-              <span class="text-ink px-1.5 py-0.5 bg-surface-soft border border-line">{p.k}</span>
+          <div class="card p-5 space-y-3 min-w-0">
+            <div>
+              <span class="text-[12px] text-ink-secondary px-3 py-1 rounded-full bg-surface-muted">{p.k}</span>
             </div>
-            <h3 class="text-[16px] font-semibold text-ink tracking-tight leading-snug">{p.title}</h3>
+            <h3 class="text-[16px] font-semibold text-ink tracking-[-0.02em] leading-snug">{p.title}</h3>
             <p class="text-sm text-ink-secondary leading-relaxed">{p.body}</p>
           </div>
         ))}
       </div>
 
-      <a href={`${basePath}/docs/concepts/agents/`} class="inline-flex items-center gap-2 text-[13px] font-mono font-medium text-ink border-b-[1.5px] border-ink pb-0.5 hover:text-accent hover:border-accent">How agents work <span aria-hidden="true">→</span></a>
-    </div>
+      <a href={`${basePath}/docs/concepts/agents/`} class="inline-flex items-center gap-2 text-[14px] font-medium text-ink hover:text-accent">How agents work <span aria-hidden="true">→</span></a>
   </div>
 </section>

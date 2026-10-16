@@ -9,19 +9,19 @@ const faqs = [
 ];
 ---
 
-<section id="faq" class="bg-surface-soft border-t border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-5 sm:px-10 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10">
+<section id="faq" class="bg-[#FCFCF9]">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32">
+    <div class="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10">
       <div class="space-y-3">
         <div class="eyebrow">06 · FAQ</div>
-        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">Questions</h2>
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">Questions</h2>
       </div>
-      <div class="bg-white card divide-y divide-line-strong">
+      <div class="bg-white card divide-y divide-line overflow-hidden">
         {faqs.map((item) => (
           <details class="group px-5 sm:px-6">
             <summary class="flex items-center justify-between cursor-pointer list-none select-none py-5 text-[15px] font-medium text-ink gap-4">
               <span class="leading-snug">{item.q}</span>
-              <span class="shrink-0 w-6 h-6 flex items-center justify-center border border-ink text-ink transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
+              <span class="shrink-0 w-8 h-8 rounded-full bg-surface-muted text-ink flex items-center justify-center transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
               </span>
             </summary>

@@ -5,10 +5,12 @@
 @layer base {
   html {
     color-scheme: light;
-    background: #f7f8fb;
+    background: #ffffff;
   }
   body {
-    @apply bg-surface-soft text-ink font-sans antialiased;
+    @apply bg-white text-ink font-sans antialiased text-[14px];
+    letter-spacing: -0.01em;
+    font-feature-settings: "cv11", "ss01";
     overflow-x: hidden;
   }
   button:focus-visible,
@@ -16,34 +18,42 @@
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    outline: 2px solid #3b5bdb;
+    outline: 2px solid #1c1c1c;
     outline-offset: 2px;
   }
 }
 
 @layer components {
   .eyebrow {
-    @apply font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted;
+    @apply text-[12.5px] font-normal text-ink-muted tracking-normal;
   }
   .panel {
-    @apply bg-white border border-line rounded-lg shadow-subtle;
+    @apply bg-white border border-line rounded-xl;
   }
   .input {
-    @apply w-full h-10 px-3 rounded border border-line-strong bg-white text-[14px] text-ink placeholder:text-ink-muted;
-    @apply focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15;
+    @apply w-full h-10 px-3 rounded-md border border-line bg-surface-soft text-[14px] text-ink placeholder:text-ink-muted transition-colors;
+    @apply hover:border-line-strong focus:bg-white focus:border-line-strong focus:outline-none focus:ring-4 focus:ring-ink/5;
   }
   .label {
-    @apply block text-[12px] font-medium text-ink-secondary mb-1.5;
+    @apply block text-[13px] font-medium text-ink mb-1.5;
+  }
+  .group-label {
+    @apply text-[13px] font-medium text-ink-muted;
+  }
+  .rule {
+    border-color: #ebebeb;
+    border-style: dashed;
   }
   .tnum {
     font-variant-numeric: tabular-nums;
   }
 }
 
-.grid-bg {
-  background-image: linear-gradient(#e3e5ea 1px, transparent 1px), linear-gradient(90deg, #e3e5ea 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: -1px -1px;
+.pill-cta {
+  @apply inline-flex w-fit items-center gap-3 rounded-full bg-ink pr-1.5 text-white font-medium transition-colors hover:bg-black;
+}
+.pill-cta-dot {
+  @apply inline-flex items-center justify-center w-9 h-9 rounded-full bg-white text-ink shrink-0;
 }
 
 @keyframes rise {

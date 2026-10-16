@@ -15,18 +15,18 @@ export function Button({
   ...rest
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: "sm" | "md" }) {
   const v: Record<Variant, string> = {
-    primary: "bg-ink text-white border-ink hover:bg-ink/85",
-    secondary: "bg-white text-ink border-line-strong hover:border-ink",
+    primary: "bg-ink text-white border-transparent hover:bg-ink/85",
+    secondary: "bg-surface-muted text-ink border-transparent hover:bg-[#EBEBEB]",
     ghost: "bg-transparent text-ink-secondary border-transparent hover:bg-surface-muted hover:text-ink",
-    danger: "bg-white text-destructive border-destructive/40 hover:bg-destructive-soft",
+    danger: "bg-transparent text-destructive border-transparent hover:bg-destructive-soft",
     held: "bg-held text-white border-held hover:bg-held/90",
   };
   return (
     <button
       {...rest}
       className={cx(
-        "inline-flex items-center justify-center gap-1.5 rounded border font-medium transition-colors disabled:opacity-45 disabled:pointer-events-none whitespace-nowrap",
-        size === "sm" ? "h-8 px-2.5 text-[12px]" : "h-10 px-4 text-[13px]",
+        "inline-flex items-center justify-center gap-1.5 rounded-full border font-medium transition-colors disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap",
+        size === "sm" ? "h-8 px-3 text-[13px]" : "h-9 px-3.5 text-[14px]",
         v[variant],
         className,
       )}
@@ -40,10 +40,10 @@ export function Card({ children, className, title, action, eyebrow }: { children
   return (
     <section className={cx("panel", className)}>
       {(title || action || eyebrow) && (
-        <header className="flex items-start justify-between gap-3 px-4 sm:px-5 pt-4">
-          <div className="min-w-0">
-            {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
-            {title && <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>}
+        <header className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4">
+          <div className="min-w-0 flex items-baseline gap-2 flex-wrap">
+            {title && <h2 className="text-[15px] font-medium tracking-[-0.02em]">{title}</h2>}
+            {eyebrow && <span className="text-[13px] text-ink-muted">{eyebrow}</span>}
           </div>
           {action}
         </header>
@@ -57,15 +57,15 @@ type Tone = "neutral" | "ok" | "held" | "bad" | "accent" | "agent";
 
 export function Badge({ children, tone = "neutral", className }: { children: ReactNode; tone?: Tone; className?: string }) {
   const t: Record<Tone, string> = {
-    neutral: "bg-surface-muted text-ink-secondary border-line",
-    ok: "bg-ok-soft text-ok border-ok/20",
-    held: "bg-held-soft text-held border-held-line",
-    bad: "bg-destructive-soft text-destructive border-destructive/20",
-    accent: "bg-accent-soft text-accent border-accent/20",
-    agent: "bg-[#F1EEFD] text-[#5B45C9] border-[#5B45C9]/20",
+    neutral: "bg-surface-muted text-ink-secondary",
+    ok: "bg-ok-soft text-ok",
+    held: "bg-held-soft text-held",
+    bad: "bg-destructive-soft text-destructive",
+    accent: "bg-accent-soft text-accent",
+    agent: "bg-[#F3F0FF] text-[#6246D6]",
   };
   return (
-    <span className={cx("inline-flex items-center gap-1 h-[22px] px-2 rounded-sm border font-mono text-[10.5px] font-medium uppercase tracking-wider whitespace-nowrap", t[tone], className)}>
+    <span className={cx("inline-flex items-center gap-1 h-[22px] px-2 rounded-full text-[12px] font-medium whitespace-nowrap", t[tone], className)}>
       {children}
     </span>
   );
@@ -75,7 +75,7 @@ export function Meter({ value, max, tone = "ink", className }: { value: bigint; 
   const p = pct(value, max);
   const color = tone === "held" || p >= 90 ? "bg-held" : tone === "ok" ? "bg-ok" : "bg-ink";
   return (
-    <div className={cx("h-1.5 w-full rounded-full bg-surface-muted overflow-hidden", className)} role="meter" aria-valuenow={p} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cx("h-1 w-full rounded-full bg-surface-muted overflow-hidden", className)} role="meter" aria-valuenow={p} aria-valuemin={0} aria-valuemax={100}>
       <div className={cx("h-full rounded-full transition-[width] duration-500", color)} style={{ width: `${p}%` }} />
     </div>
   );
@@ -110,10 +110,10 @@ export function Addr({ value, className }: { value: string; className?: string }
 
 export function Stat({ label, value, sub, className }: { label: string; value: ReactNode; sub?: ReactNode; className?: string }) {
   return (
-    <div className={cx("panel p-4 sm:p-5", className)}>
-      <div className="eyebrow">{label}</div>
-      <div className="mt-2 text-[24px] sm:text-[28px] font-semibold tracking-tight tnum leading-none">{value}</div>
-      {sub && <div className="mt-2 text-[12px] text-ink-muted">{sub}</div>}
+    <div className={cx("p-4 sm:p-5", className)}>
+      <div className="text-[13px] text-ink-secondary">{label}</div>
+      <div className="mt-2 text-[26px] sm:text-[30px] font-medium tracking-[-0.04em] tnum leading-none">{value}</div>
+      {sub && <div className="mt-2 text-[12.5px] text-ink-muted">{sub}</div>}
     </div>
   );
 }
@@ -121,7 +121,7 @@ export function Stat({ label, value, sub, className }: { label: string; value: R
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="text-center py-10 px-4">
-      <div className="mx-auto w-10 h-10 rounded border border-dashed border-line-strong grid-bg mb-3" />
+      <div className="mx-auto w-9 h-9 rounded-full bg-surface-muted mb-3" />
       <div className="text-[14px] font-medium">{title}</div>
       {children && <div className="text-[13px] text-ink-muted mt-1 max-w-sm mx-auto">{children}</div>}
     </div>
@@ -139,9 +139,9 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6">
       <div className="absolute inset-0 bg-ink/30 backdrop-blur-[2px]" onClick={onClose} />
-      <div role="dialog" aria-modal="true" aria-label={title} className={cx("relative w-full bg-white rounded-t-xl sm:rounded-xl shadow-float max-h-[92vh] overflow-y-auto rise", wide ? "sm:max-w-2xl" : "sm:max-w-lg")}>
+      <div role="dialog" aria-modal="true" aria-label={title} className={cx("relative w-full bg-white rounded-t-xl sm:rounded-xl border border-line shadow-float max-h-[92vh] overflow-y-auto rise", wide ? "sm:max-w-2xl" : "sm:max-w-lg")}>
         <div className="sticky top-0 z-10 bg-white flex items-center justify-between px-5 h-14 border-b border-line">
-          <h2 className="text-[15px] font-semibold">{title}</h2>
+          <h2 className="text-[15px] font-medium tracking-[-0.02em]">{title}</h2>
           <button onClick={onClose} className="w-8 h-8 inline-flex items-center justify-center rounded hover:bg-surface-muted" aria-label="Close">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
@@ -157,7 +157,7 @@ export function Field({ label, hint, children }: { label: string; hint?: ReactNo
     <label className="block">
       <span className="label">{label}</span>
       {children}
-      {hint && <span className="block mt-1 text-[11.5px] text-ink-muted">{hint}</span>}
+      {hint && <span className="block mt-1.5 text-[12.5px] text-ink-muted">{hint}</span>}
     </label>
   );
 }
@@ -205,7 +205,7 @@ export function Icon({ name, className = "w-4 h-4" }: { name: string; className?
     lock: <path d="M6 11h12v9H6zM9 11V8a3 3 0 016 0v3" />,
   };
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {paths[name]}
     </svg>
   );
