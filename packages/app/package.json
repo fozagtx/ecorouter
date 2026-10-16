@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "agent": "node worker/agent-worker.mjs"
+    "agent": "node worker/agent-worker.mjs",
+    "deploy:testnet": "node scripts/deploy-testnet.mjs"
   },
   "dependencies": {
     "@stellar/freighter-api": "^6.0.1",

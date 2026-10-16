@@ -77,11 +77,12 @@ The sandbox is a team account in your browser with $5,000 in test dollars, two p
 ### On Stellar testnet
 
 ```bash
-# needs the stellar CLI and the wasm32v1-none Rust target
-./scripts/deploy-testnet.sh     # deploys registry + team account, registers demo services,
-                                # writes packages/app/.env.local
-pnpm dev:app                    # choose "Connect Freighter"
+cargo build --target wasm32v1-none --release -p service-registry -p team-account
+pnpm --filter @ecorouter/app deploy:testnet   # JS SDK only, no Stellar CLI needed
+pnpm dev:app                                  # choose "Connect Freighter"
 ```
+
+`deploy:testnet` funds an owner with Friendbot, wraps testnet USDC, uploads and deploys both contracts, registers five demo services (each payee gets a USDC trustline), then reads the deployment back: owner, registry link, service list, and that an unregistered id reverts with `UnknownService`. It writes `packages/app/.env.local` and `deployments/testnet.json` (ids, wasm hashes, transaction hashes); generated secrets go to `.deploy/` (gitignored). `./scripts/deploy-testnet.sh` does the same with the Stellar CLI.
 
 Fund the team-account contract by sending it testnet USDC. Add spenders from the app (their own `G…` addresses). Agents run outside the browser with their own key:
 
