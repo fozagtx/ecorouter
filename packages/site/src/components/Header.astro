@@ -10,49 +10,33 @@ const links = [
 ];
 ---
 
-<header class="sticky top-0 z-50 w-full bg-white/85 backdrop-blur-md border-b border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-    <a href={`${basePath}/`} class="flex items-center gap-2.5 shrink-0">
-      <span class="w-7 h-7 rounded-[3px] bg-ink flex items-center justify-center text-white">
-        <Logo class="w-4 h-4 text-white" />
+<header class="sticky top-0 z-50 w-full px-3 sm:px-5 pt-3 sm:pt-4 pointer-events-none">
+  <div class="pointer-events-auto max-w-[1180px] mx-auto h-14 pl-4 pr-1.5 flex items-center justify-between gap-4 rounded-full bg-white/80 backdrop-blur-xl border border-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_30px_rgba(0,0,0,0.05)]">
+    <a href={`${basePath}/`} class="flex items-center gap-2 shrink-0">
+      <span class="w-7 h-7 rounded-full bg-ink flex items-center justify-center text-white">
+        <Logo class="w-3.5 h-3.5 text-white" />
       </span>
-      <span class="font-semibold text-[15px] tracking-tight text-ink">EcoRouter</span>
-      <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[10px] font-mono font-medium bg-surface-muted text-ink-secondary border border-line uppercase tracking-wider">Testnet</span>
+      <span class="font-semibold text-[15px] tracking-[-0.02em] text-ink">EcoRouter</span>
     </a>
 
-    <nav class="hidden lg:flex items-center gap-7 text-[13px] font-mono text-ink-secondary">
-      {links.map((l) => <a href={l.href} class="hover:text-ink">{l.label}</a>)}
+    <nav class="hidden lg:flex items-center gap-8 text-[14px] text-ink-secondary">
+      {links.map((l) => <a href={l.href} class="hover:text-ink transition-colors">{l.label}</a>)}
     </nav>
 
-    <div class="flex items-center gap-2">
-      <a
-        href="https://github.com/fozagtx/ecorouter"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono bg-white hover:bg-surface-soft text-ink border border-ink"
-        aria-label="EcoRouter on GitHub"
-      >
-        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-        </svg>
-        <span class="hidden sm:inline">GitHub</span>
+    <div class="flex items-center gap-1.5">
+      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center h-11 px-4 rounded-full text-[14px] text-ink-secondary hover:text-ink" aria-label="EcoRouter on GitHub">GitHub</a>
+      <a href={`${basePath}/app/`} class="pill-cta h-11 text-[14px]">
+        Open the app
+        <span class="pill-cta-dot" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </a>
-      <a
-        href={`${basePath}/app/`}
-        class="inline-flex items-center gap-1.5 px-3 h-8 rounded-[3px] text-xs font-mono font-medium bg-ink hover:bg-[#26272B] text-white border border-ink whitespace-nowrap"
-      >
-        Open the app <span aria-hidden="true">→</span>
-      </a>
-
       <details class="lg:hidden relative group">
-        <summary class="list-none cursor-pointer w-8 h-8 inline-flex items-center justify-center rounded-[3px] border border-ink text-ink" aria-label="Open menu">
-          <svg class="w-4 h-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        <summary class="list-none cursor-pointer w-11 h-11 inline-flex items-center justify-center rounded-full bg-surface-muted text-ink" aria-label="Open menu">
+          <svg class="w-4 h-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg>
           <svg class="w-4 h-4 hidden group-open:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </summary>
-        <div class="absolute right-0 top-10 w-56 bg-white card rounded-[4px] shadow-card p-2 font-mono text-[13px]">
-          {links.map((l) => <a href={l.href} class="block px-3 py-2 rounded-[3px] text-ink-secondary hover:bg-surface-soft hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
-          <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="block px-3 py-2 rounded-[3px] text-ink-secondary hover:bg-surface-soft hover:text-ink">GitHub <span aria-hidden="true">↗</span></a>
-          <a href={`${basePath}/app/`} class="mt-1 block w-full text-left px-3 py-2 rounded-[3px] bg-ink text-white text-xs">Open the app →</a>
+        <div class="absolute right-0 top-14 w-60 bg-white rounded-2xl border border-line shadow-float p-2 text-[14px]">
+          {links.map((l) => <a href={l.href} class="block px-3 py-2.5 rounded-xl text-ink-secondary hover:bg-surface-muted hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
+          <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="block px-3 py-2.5 rounded-xl text-ink-secondary hover:bg-surface-muted hover:text-ink">GitHub ↗</a>
         </div>
       </details>
     </div>

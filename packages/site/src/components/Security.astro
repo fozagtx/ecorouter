@@ -1,5 +1,4 @@
 ---
-import TechnicalViewport from "./TechnicalViewport.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const pipeline = [
@@ -29,28 +28,27 @@ const checks = [
 ---
 
 <section id="security" class="bg-surface-soft border-y border-line">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="rails px-5 sm:px-10 py-16 md:py-24 space-y-12">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
       <div class="max-w-3xl space-y-3">
         <div class="eyebrow">04 · Security</div>
-        <h2 class="text-3xl sm:text-[40px] leading-[1.1] font-medium tracking-[-0.03em] text-ink">
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
           The agent proposes. Only the contract authorizes.
         </h2>
-        <p class="text-base sm:text-[17px] text-ink-secondary leading-relaxed">
+        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[620px]">
           You can ask the assistant to pay in plain words. What it produces is a proposal that has to survive five stages, and any one of them can refuse. The last one is the contract, and it does not trust anything before it.
         </p>
       </div>
 
-      <ol class="grid grid-cols-1 lg:grid-cols-5 gap-[1.5px] bg-ink card">
+      <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {pipeline.map((p) => (
-          <li class="bg-white p-4 flex flex-col gap-3 min-w-0">
-            <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-ink-muted">
+          <li class="card p-4 flex flex-col gap-3 min-w-0">
+            <div class="flex items-center justify-between text-[12px] text-ink-muted">
               <span>{p.n}</span>
               <span class="text-ink">{p.stage}</span>
             </div>
-            <div class="font-mono text-[11px] text-ink bg-surface-soft border border-line-strong px-2 py-1.5 break-words">{p.out}</div>
+            <div class={`${p.out.includes("$") ? "font-sans tabular-nums" : "font-mono"} text-[12px] text-ink bg-surface-muted rounded-lg px-2.5 py-2 break-words`}>{p.out}</div>
             <p class="text-[13px] text-ink-secondary leading-relaxed">{p.body}</p>
-            <div class="mt-auto font-mono text-[10px] uppercase tracking-wider text-destructive">refuses: {p.refuses}</div>
+            <div class="mt-auto text-[12px] text-destructive">Refuses: {p.refuses}</div>
           </li>
         ))}
       </ol>
@@ -58,34 +56,33 @@ const checks = [
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-8 items-start">
         <div class="space-y-5">
           <div class="eyebrow">Inside the contract</div>
-          <h3 class="text-[22px] font-semibold text-ink tracking-tight leading-snug">Every call to pay() runs the same checks, in the same order</h3>
+          <h3 class="text-[22px] font-semibold text-ink tracking-[-0.03em] leading-snug">Every call to pay() runs the same checks, in the same order</h3>
           <p class="text-sm text-ink-secondary leading-relaxed">
             The app and the assistant pre-check so you see problems early, but they are a convenience. The rules that matter are in the team account contract, and a failing check means no transfer happens.
           </p>
           <div class="bg-white card p-4 space-y-2 text-sm text-ink-secondary leading-relaxed">
-            <div class="eyebrow !text-[10px]">Honest status</div>
+            <div class="eyebrow">Honest status</div>
             <p><span class="text-ink font-medium">Stellar testnet only. Not audited.</span> Use test funds. The sandbox runs a TypeScript mirror of the same rules in your browser for demos.</p>
           </div>
-          <a href={`${basePath}/docs/security/`} class="inline-flex items-center gap-2 text-[13px] font-mono font-medium text-ink border-b-[1.5px] border-ink pb-0.5 hover:text-accent hover:border-accent">Read the security model <span aria-hidden="true">→</span></a>
+          <a href={`${basePath}/docs/security/`} class="inline-flex items-center gap-2 text-[14px] font-medium text-ink hover:text-accent">Read the security model <span aria-hidden="true">→</span></a>
         </div>
 
-        <TechnicalViewport topLeft="CONTRACT · TEAM-ACCOUNT" topRight="SOROBAN · RUST" bottomLeft="ENTRY · pay()" bottomRight="FIRST FAILURE STOPS IT">
-          <div class="font-mono text-xs">
-            <div class="px-4 py-2.5 border-b border-line bg-surface-soft text-ink font-medium break-words">pay(spender, service, amount, memo, key)</div>
+        <div class="outer-technical-frame p-3 sm:p-5">
+          <div class="card overflow-hidden shadow-subtle">
+            <div class="px-4 py-3 border-b border-line bg-white text-ink font-mono text-[12px] font-medium break-words">pay(spender, service, amount, memo, key)</div>
             <ol class="divide-y divide-line">
               {checks.map(([k, v], i) => (
-                <li class="px-4 py-2 flex items-baseline gap-3">
+                <li class="px-4 py-2.5 flex items-baseline gap-3 text-[13px]">
                   <span class="text-ink-muted w-5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                   <span class="flex-1 min-w-0 sm:flex sm:items-baseline sm:justify-between sm:gap-4">
                     <span class="block text-ink">{k}</span>
-                    <span class="block text-[11px] text-ink-muted font-sans sm:text-right">{v}</span>
+                    <span class="block text-[12px] text-ink-muted sm:text-right">{v}</span>
                   </span>
                 </li>
               ))}
             </ol>
           </div>
-        </TechnicalViewport>
+        </div>
       </div>
-    </div>
   </div>
 </section>
