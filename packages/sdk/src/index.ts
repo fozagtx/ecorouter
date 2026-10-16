@@ -18,8 +18,8 @@ import { formatUsdc, parseUsdc } from "./money.js";
 export const TESTNET = {
   rpcUrl: "https://soroban-testnet.stellar.org",
   networkPassphrase: Networks.TESTNET,
-  teamAccount: "CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB",
-  registry: "CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET",
+  teamAccount: "CCV7EPWBRR7Q23NIKO5H32P45PFDFGY6JNDE6SQIZYNFP7CJGNS43MZ2",
+  registry: "CBCUCDIRCIV4V76WDM7AS7EEPGDXSHWHFVACZVECRMQYXXR4HF7OMF4Z",
   usdc: "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
   explorer: "https://stellar.expert/explorer/testnet",
 } as const;
@@ -33,6 +33,7 @@ export interface AgentConfig {
 
 export interface Policy {
   kind: "person" | "agent";
+  signer: string;
   label: string;
   allowance: bigint;
   period: number;

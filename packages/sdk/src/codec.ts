@@ -17,11 +17,13 @@ function record(value: unknown): asserts value is NativeRecord {
 
 const integer = (value: unknown) => Number(value);
 const bigInteger = (value: unknown) => BigInt(value as bigint | number | string);
+const hexBytes = (value: unknown) => Buffer.from(value as Uint8Array).toString("hex");
 
 export function decodePolicy(value: unknown): Policy {
   record(value);
   return {
     kind: integer(field(value, "kind")) === 1 ? "agent" : "person",
+    signer: hexBytes(field(value, "signer")),
     label: String(field(value, "label")),
     allowance: bigInteger(field(value, "allowance")),
     period: integer(field(value, "period")),

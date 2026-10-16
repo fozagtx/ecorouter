@@ -12,6 +12,7 @@ import {
   BASE_FEE,
   Contract,
   Keypair,
+  StrKey,
   TransactionBuilder,
   nativeToScVal,
   rpc,
@@ -79,7 +80,7 @@ const u32 = (v: number) => nativeToScVal(v, { type: "u32" });
 const str = (s: string) => nativeToScVal(s, { type: "string" });
 
 /** PolicyInput as the contract's struct: a map with keys in sorted order. */
-export function policyInputScVal(p: PolicyInput): xdr.ScVal {
+export function policyInputScVal(p: PolicyInput, spender: string): xdr.ScVal {
   const entries: Array<[string, xdr.ScVal]> = [
     ["allowance", i128(p.allowance)],
     ["expires_at", u64(p.expiresAt)],
@@ -89,6 +90,7 @@ export function policyInputScVal(p: PolicyInput): xdr.ScVal {
     ["max_payments", u32(p.maxPayments)],
     ["period", u64(p.period)],
     ["services", xdr.ScVal.scvVec(p.services.map(sym))],
+    ["signer", xdr.ScVal.scvBytes(Buffer.from(StrKey.decodeEd25519PublicKey(spender)))],
   ];
   return xdr.ScVal.scvMap(entries.map(([k, v]) => new xdr.ScMapEntry({ key: sym(k), val: v })));
 }
@@ -103,6 +105,7 @@ function toPolicy(raw: any): Policy {
     maxPayments: Number(raw.max_payments),
     expiresAt: Number(raw.expires_at),
     services: (raw.services as string[]).map(String),
+    signer: Buffer.from(raw.signer).toString("hex"),
     paused: Boolean(raw.paused),
     anchor: Number(raw.anchor),
   };
@@ -336,7 +339,7 @@ export class TestnetBackend implements Backend {
   }
 
   async setPolicy(spender: string, input: PolicyInput, name?: string): Promise<void> {
-    await this.invoke(this.account, "set_policy", addr(spender), policyInputScVal(input));
+    await this.invoke(this.account, "set_policy", addr(spender), policyInputScVal(input, spender));
     if (name) {
       this.local.names[spender] = name;
       writeLocal(this.local);

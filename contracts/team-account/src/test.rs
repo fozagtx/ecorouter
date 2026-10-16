@@ -10,6 +10,7 @@ use soroban_sdk::{
     token::{StellarAssetClient, TokenClient},
     vec, Env, IntoVal, String,
 };
+use ed25519_dalek::{Signer, SigningKey};
 
 const USDC: i128 = 10_000_000; // 7 decimals
 const MONTH: u64 = 30 * 24 * 60 * 60;
@@ -20,6 +21,7 @@ struct T {
     account: TeamAccountClient<'static>,
     registry: ServiceRegistryClient<'static>,
     token: TokenClient<'static>,
+    seller: Address,
     owner: Address,
     ada: Address,
     infer_payee: Address,
@@ -43,15 +45,26 @@ fn setup() -> T {
     StellarAssetClient::new(&env, &sac.address()).mint(&account_id, &(5_000 * USDC));
 
     let infer_payee = Address::generate(&env);
+    let seller = Address::generate(&env);
     registry.register(
+        &seller,
         &symbol_short!("infer"),
         &String::from_str(&env, "Inference credits"),
+        &String::from_str(&env, "LLM inference"),
+        &symbol_short!("api"),
         &infer_payee,
+        &String::from_str(&env, ""),
+        &1_000_000,
     );
     registry.register(
+        &seller,
         &symbol_short!("data"),
         &String::from_str(&env, "Market data API"),
+        &String::from_str(&env, "Market data"),
+        &symbol_short!("api"),
         &Address::generate(&env),
+        &String::from_str(&env, ""),
+        &1_000_000,
     );
 
     let ada = Address::generate(&env);
@@ -61,6 +74,7 @@ fn setup() -> T {
         account,
         registry,
         token,
+        seller,
         owner,
         ada,
         infer_payee,
@@ -74,6 +88,7 @@ fn setup() -> T {
 fn person(env: &Env) -> PolicyInput {
     PolicyInput {
         kind: SpenderKind::Person,
+        signer: signer(env, 7),
         label: String::from_str(env, "Ada"),
         allowance: 1_000 * USDC,
         period: MONTH,
@@ -81,6 +96,70 @@ fn person(env: &Env) -> PolicyInput {
         max_payments: 5,
         expires_at: START + 365 * 24 * 60 * 60,
         services: vec![env, symbol_short!("infer"), symbol_short!("data")],
+    }
+}
+
+fn signing_key(seed: u8) -> SigningKey {
+    SigningKey::from_bytes(&[seed; 32])
+}
+
+fn signer(env: &Env, seed: u8) -> BytesN<32> {
+    BytesN::from_array(env, signing_key(seed).verifying_key().as_bytes())
+}
+
+fn transfer_context(t: &T, from: &Address, payee: &Address, amount: i128) -> Context {
+    Context::Contract(soroban_sdk::auth::ContractContext {
+        contract: t.token.address.clone(),
+        fn_name: symbol_short!("transfer"),
+        args: vec![
+            &t.env,
+            from.clone().into_val(&t.env),
+            payee.clone().into_val(&t.env),
+            amount.into_val(&t.env),
+        ],
+    })
+}
+
+fn auth_context(
+    t: &T,
+    seed: u8,
+    payload: &BytesN<32>,
+    contexts: soroban_sdk::Vec<Context>,
+) -> Result<(), Result<AccountError, soroban_sdk::InvokeError>> {
+    let signing = signing_key(seed);
+    let signature = signing.sign(&payload.to_array()).to_bytes();
+    let signature = SpenderSignature {
+        public_key: BytesN::from_array(&t.env, signing.verifying_key().as_bytes()),
+        signature: BytesN::from_array(&t.env, &signature),
+    };
+    invoke_auth(t, payload, signature, contexts)
+}
+
+fn invoke_auth(
+    t: &T,
+    payload: &BytesN<32>,
+    signature: SpenderSignature,
+    contexts: soroban_sdk::Vec<Context>,
+) -> Result<(), Result<AccountError, soroban_sdk::InvokeError>> {
+    t.env.set_auths(&[]);
+    let result = t.env.try_invoke_contract_check_auth::<AccountError>(
+        &t.account.address,
+        payload,
+        signature.into_val(&t.env),
+        &contexts,
+    );
+    t.env.mock_all_auths();
+    result
+}
+
+fn signed_signature(t: &T, seed: u8, payload: &BytesN<32>) -> SpenderSignature {
+    let signing = signing_key(seed);
+    SpenderSignature {
+        public_key: BytesN::from_array(&t.env, signing.verifying_key().as_bytes()),
+        signature: BytesN::from_array(
+            &t.env,
+            &signing.sign(&payload.to_array()).to_bytes(),
+        ),
     }
 }
 
@@ -203,9 +282,14 @@ fn zero_and_negative_amounts_are_refused() {
 fn service_off_the_spenders_list_is_refused_even_if_registered() {
     let t = setup();
     t.registry.register(
+        &t.seller,
         &symbol_short!("gpu"),
         &String::from_str(&t.env, "GPU hours"),
+        &String::from_str(&t.env, "GPU compute"),
+        &symbol_short!("mcp"),
         &Address::generate(&t.env),
+        &String::from_str(&t.env, ""),
+        &1_000_000,
     );
     assert_eq!(
         pay(&t, &t.ada, symbol_short!("gpu"), USDC, 1),
@@ -304,12 +388,12 @@ fn service_on_the_list_but_never_registered_is_refused_by_the_registry() {
 #[test]
 fn suspended_service_is_refused() {
     let t = setup();
-    t.registry.set_suspended(&symbol_short!("infer"), &true);
+    t.registry.set_suspended(&symbol_short!("infer"), &true, &t.seller);
     assert_eq!(
         pay(&t, &t.ada, symbol_short!("infer"), USDC, 1),
         Err(AccountError::ServiceSuspended)
     );
-    t.registry.set_suspended(&symbol_short!("infer"), &false);
+    t.registry.set_suspended(&symbol_short!("infer"), &false, &t.seller);
     assert!(pay(&t, &t.ada, symbol_short!("infer"), USDC, 1).is_ok());
 }
 
@@ -355,7 +439,9 @@ fn policy_with_any_zero_or_inconsistent_limit_is_refused() {
             Err(Ok(AccountError::InvalidPolicy))
         );
     }
-    assert!(t.account.try_set_policy(&bob, &person(&t.env)).is_ok());
+    let mut valid = person(&t.env);
+    valid.signer = signer(&t.env, 8);
+    assert!(t.account.try_set_policy(&bob, &valid).is_ok());
     assert_eq!(t.account.spenders().len(), 2);
 }
 
@@ -477,6 +563,7 @@ fn an_agents_refused_payment_stops_there() {
     let bot = Address::generate(&t.env);
     let mut p = person(&t.env);
     p.kind = SpenderKind::Agent;
+    p.signer = signer(&t.env, 8);
     t.account.set_policy(&bot, &p);
     assert_eq!(
         t.account.try_request_approval(
@@ -646,4 +733,196 @@ fn ownership_transfer_is_two_step() {
     assert_eq!(t.account.owner(), t.owner);
     t.account.accept_owner();
     assert_eq!(t.account.owner(), next);
+}
+
+#[test]
+fn custom_auth_accepts_policy_transfer_and_records_usage() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[11; 32]);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    assert!(invoke_auth(
+        &t,
+        &payload,
+        signed_signature(&t, 7, &payload),
+        vec![&t.env, context],
+    )
+    .is_ok());
+    let usage = t.account.usage(&t.ada);
+    assert_eq!(usage.spent, USDC);
+    assert_eq!(usage.count, 1);
+}
+
+#[test]
+fn custom_auth_rejects_bad_signatures_and_unknown_signers() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[12; 32]);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    let mut signature = signed_signature(&t, 7, &payload);
+    let mut bytes = signature.signature.to_array();
+    bytes[0] ^= 1;
+    signature.signature = BytesN::from_array(&t.env, &bytes);
+    assert!(invoke_auth(&t, &payload, signature, vec![&t.env, context.clone()]).is_err());
+
+    assert!(matches!(
+        auth_context(&t, 8, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+}
+
+#[test]
+fn custom_auth_rejects_non_transfer_multiple_contexts_and_wrong_from() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[13; 32]);
+    let mut context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    if let Context::Contract(ref mut contract) = context {
+        contract.fn_name = symbol_short!("approve");
+    }
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    let second = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context, second]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+
+    let stranger = Address::generate(&t.env);
+    let context = transfer_context(&t, &stranger, &t.infer_payee, USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+}
+
+#[test]
+fn custom_auth_rejects_unlisted_and_suspended_payees() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[14; 32]);
+    let unlisted = Address::generate(&t.env);
+    let context = transfer_context(&t, &t.account.address, &unlisted, USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::UnknownService))
+    ));
+
+    t.registry.set_suspended(&symbol_short!("infer"), &true, &t.seller);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::ServiceSuspended))
+    ));
+}
+
+#[test]
+fn custom_auth_enforces_cap_allowance_and_frequency() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[15; 32]);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, 251 * USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::OverPaymentCap))
+    ));
+
+    let mut policy = person(&t.env);
+    policy.allowance = 300 * USDC;
+    t.account.set_policy(&t.ada, &policy);
+    for amount in [200 * USDC, 150 * USDC] {
+        let context = transfer_context(&t, &t.account.address, &t.infer_payee, amount);
+        let result = auth_context(&t, 7, &payload, vec![&t.env, context]);
+        if amount == 200 * USDC {
+            assert!(result.is_ok());
+        } else {
+            assert!(matches!(result, Err(Ok(AccountError::OverAllowance))));
+        }
+    }
+
+    policy.allowance = 1_000 * USDC;
+    policy.max_payments = 1;
+    t.account.set_policy(&t.ada, &policy);
+    t.env.ledger().set_timestamp(START + MONTH);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    assert!(auth_context(&t, 7, &payload, vec![&t.env, context.clone()]).is_ok());
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::OverFrequency))
+    ));
+}
+
+#[test]
+fn custom_auth_observes_account_and_spender_pauses() {
+    let t = setup();
+    let payload = BytesN::from_array(&t.env, &[16; 32]);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    t.account.set_paused(&true);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context.clone()]),
+        Err(Ok(AccountError::AccountPaused))
+    ));
+    t.account.set_paused(&false);
+    t.account.set_spender_paused(&t.ada, &true);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::SpenderPaused))
+    ));
+}
+
+#[test]
+fn signer_mapping_moves_and_is_removed_with_spender() {
+    let t = setup();
+    let new_signer = signer(&t.env, 8);
+    let mut policy = person(&t.env);
+    policy.signer = new_signer.clone();
+    t.account.set_policy(&t.ada, &policy);
+    let payload = BytesN::from_array(&t.env, &[17; 32]);
+    let context = transfer_context(&t, &t.account.address, &t.infer_payee, USDC);
+    assert!(matches!(
+        auth_context(&t, 7, &payload, vec![&t.env, context.clone()]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+    assert!(auth_context(&t, 8, &payload, vec![&t.env, context.clone()]).is_ok());
+
+    let bob = Address::generate(&t.env);
+    let mut conflict = person(&t.env);
+    conflict.signer = signer(&t.env, 8);
+    assert!(matches!(
+        t.account.try_set_policy(&bob, &conflict),
+        Err(Ok(AccountError::InvalidPolicy))
+    ));
+    t.account.remove_spender(&t.ada);
+    assert!(matches!(
+        auth_context(&t, 8, &payload, vec![&t.env, context]),
+        Err(Ok(AccountError::NotAuthorized))
+    ));
+}
+
+#[test]
+fn join_requests_can_be_dismissed_and_are_cleared_by_policy() {
+    let t = setup();
+    let member = Address::generate(&t.env);
+    let label = String::from_str(&t.env, "new member");
+    t.account.request_join(&member, &label);
+    assert_eq!(t.account.join_requests().len(), 1);
+    assert!(matches!(
+        t.account.try_request_join(&member, &label),
+        Err(Ok(AccountError::DuplicateJoinRequest))
+    ));
+    t.account.dismiss_join(&member);
+    assert!(t.account.join_requests().is_empty());
+    assert!(matches!(
+        t.account.try_dismiss_join(&member),
+        Err(Ok(AccountError::NoJoinRequest))
+    ));
+
+    t.account.request_join(&member, &label);
+    let mut policy = person(&t.env);
+    policy.signer = signer(&t.env, 8);
+    t.account.set_policy(&member, &policy);
+    assert!(t.account.join_requests().is_empty());
+    assert!(matches!(
+        t.account.try_request_join(&member, &label),
+        Err(Ok(AccountError::AlreadyConfigured))
+    ));
 }

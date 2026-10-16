@@ -12,11 +12,12 @@
 //! payee changed after the request was filed.
 
 use soroban_sdk::{
-    contract, contractclient, contracterror, contractevent, contractimpl, contracttype, token,
-    Address, BytesN, Env, String, Symbol, Vec,
+    auth::{Context, CustomAccountInterface},
+    contract, contractclient, contracterror, contractevent, contractimpl, contracttype, crypto::Hash,
+    symbol_short, token, Address, Bytes, BytesN, Env, String, Symbol, TryFromVal, Vec,
 };
 
-pub const VERSION: u32 = 1;
+pub const VERSION: u32 = 2;
 
 /// Approval requests stay open for seven days.
 pub const REQUEST_TTL_SECS: u64 = 7 * 24 * 60 * 60;
@@ -24,16 +25,154 @@ pub const REQUEST_TTL_SECS: u64 = 7 * 24 * 60 * 60;
 pub const MAX_SERVICES: u32 = 32;
 
 const DAY_IN_LEDGERS: u32 = 17_280;
-const BUMP_THRESHOLD: u32 = 30 * DAY_IN_LEDGERS;
-const BUMP_TO: u32 = 120 * DAY_IN_LEDGERS;
+// Expired persistent entries are archived and can be restored.
+const BUMP_THRESHOLD: u32 = 7 * DAY_IN_LEDGERS;
+const BUMP_TO: u32 = 30 * DAY_IN_LEDGERS;
 
 #[contract]
 pub struct TeamAccount;
+
+#[contractimpl]
+impl CustomAccountInterface for TeamAccount {
+    type Signature = SpenderSignature;
+    type Error = AccountError;
+
+    fn __check_auth(
+        env: Env,
+        signature_payload: Hash<32>,
+        signatures: Self::Signature,
+        auth_contexts: Vec<Context>,
+    ) -> Result<(), Self::Error> {
+        env.crypto().ed25519_verify(
+            &signatures.public_key,
+            &Bytes::from(signature_payload.to_bytes()),
+            &signatures.signature,
+        );
+
+        let spender: Address = env
+            .storage()
+            .persistent()
+            .get(&DataKey::Signer(signatures.public_key))
+            .ok_or(AccountError::NotAuthorized)?;
+
+        if is_paused(&env) {
+            return Err(AccountError::AccountPaused);
+        }
+        let policy: Policy = env
+            .storage()
+            .persistent()
+            .get(&DataKey::Policy(spender.clone()))
+            .ok_or(AccountError::UnknownSpender)?;
+        if policy.paused {
+            return Err(AccountError::SpenderPaused);
+        }
+        if env.ledger().timestamp() >= policy.expires_at {
+            return Err(AccountError::PolicyExpired);
+        }
+
+        if auth_contexts.len() != 1 {
+            return Err(AccountError::NotAuthorized);
+        }
+        let context = match auth_contexts.get(0) {
+            Some(Context::Contract(context)) => context,
+            _ => return Err(AccountError::NotAuthorized),
+        };
+        let asset: Address = env
+            .storage()
+            .instance()
+            .get(&DataKey::Asset)
+            .ok_or(AccountError::NotAuthorized)?;
+        if context.contract != asset
+            || context.fn_name != symbol_short!("transfer")
+            || context.args.len() != 3
+        {
+            return Err(AccountError::NotAuthorized);
+        }
+        let from_val = context.args.get(0).ok_or(AccountError::NotAuthorized)?;
+        let to_val = context.args.get(1).ok_or(AccountError::NotAuthorized)?;
+        let amount_val = context.args.get(2).ok_or(AccountError::NotAuthorized)?;
+        let from = Address::try_from_val(&env, &from_val).map_err(|_| AccountError::NotAuthorized)?;
+        let payee = Address::try_from_val(&env, &to_val).map_err(|_| AccountError::NotAuthorized)?;
+        let amount =
+            i128::try_from_val(&env, &amount_val).map_err(|_| AccountError::NotAuthorized)?;
+        // This prevents a spender key from authorizing anything except a USDC transfer.
+        if from != env.current_contract_address() || amount <= 0 {
+            return Err(AccountError::NotAuthorized);
+        }
+
+        let registry_address: Address = env
+            .storage()
+            .instance()
+            .get(&DataKey::Registry)
+            .ok_or(AccountError::NotAuthorized)?;
+        let registry = RegistryClient::new(&env, &registry_address);
+        let service = registry
+            .by_payee(&payee)
+            .ok_or(AccountError::UnknownService)?;
+        let listing = registry
+            .get(&service)
+            .ok_or(AccountError::UnknownService)?;
+        if listing.suspended {
+            return Err(AccountError::ServiceSuspended);
+        }
+
+        let evaluation = evaluate(&env, &spender, &service, amount, None)
+            .map_err(|(error, _)| error)?;
+        if balance(&env) < amount {
+            return Err(AccountError::InsufficientFunds);
+        }
+        let mut usage = evaluation.usage;
+        usage.spent += amount;
+        usage.count += 1;
+        write_persistent(&env, &DataKey::Usage(spender.clone()), &usage);
+        bump_instance(&env);
+        X402Paid {
+            spender,
+            service,
+            payee,
+            amount,
+            period_spent: usage.spent,
+        }
+        .publish(&env);
+        Ok(())
+    }
+}
 
 /// The one registry call this account makes.
 #[contractclient(name = "RegistryClient")]
 pub trait RegistryInterface {
     fn resolve(env: Env, id: Symbol) -> Address;
+    fn by_payee(env: Env, payee: Address) -> Option<Symbol>;
+    fn get(env: Env, id: Symbol) -> Option<RegistryService>;
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RegistryService {
+    pub id: Symbol,
+    pub name: String,
+    pub task: String,
+    pub seller: Address,
+    pub kind: Symbol,
+    pub payee: Address,
+    pub url: String,
+    pub price: i128,
+    pub suspended: bool,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SpenderSignature {
+    pub public_key: BytesN<32>,
+    pub signature: BytesN<64>,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct JoinRequest {
+    pub who: Address,
+    pub label: String,
+    pub at: u64,
 }
 
 #[contracttype]
@@ -50,6 +189,7 @@ pub enum SpenderKind {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PolicyInput {
     pub kind: SpenderKind,
+    pub signer: BytesN<32>,
     pub label: String,
     /// Atomic units allowed per period.
     pub allowance: i128,
@@ -69,6 +209,7 @@ pub struct PolicyInput {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Policy {
     pub kind: SpenderKind,
+    pub signer: BytesN<32>,
     pub label: String,
     pub allowance: i128,
     pub period: u64,
@@ -156,6 +297,9 @@ enum DataKey {
     Usage(Address),
     Replay(Address, BytesN<32>),
     Request(u64),
+    Signer(BytesN<32>),
+    JoinRequest(Address),
+    JoinRequests,
 }
 
 #[contracterror]
@@ -187,6 +331,36 @@ pub enum AccountError {
     AgentCannotRequest = 23,
     RegistryUnavailable = 24,
     NoPendingOwner = 25,
+    DuplicateJoinRequest = 26,
+    NoJoinRequest = 27,
+    AlreadyConfigured = 28,
+}
+
+#[contractevent(topics = ["x402", "paid"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct X402Paid {
+    pub spender: Address,
+    pub service: Symbol,
+    pub payee: Address,
+    pub amount: i128,
+    pub period_spent: i128,
+}
+
+#[contractevent(topics = ["join", "requested"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct JoinRequested {
+    #[topic]
+    pub who: Address,
+    pub label: String,
+    pub at: u64,
+}
+
+#[contractevent(topics = ["join", "dismissed"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct JoinDismissed {
+    #[topic]
+    pub who: Address,
+    pub label: String,
 }
 
 // Registry error codes, as defined by the service-registry contract.
@@ -316,12 +490,19 @@ impl TeamAccount {
         }
         let key = DataKey::Policy(spender.clone());
         let existing: Option<Policy> = env.storage().persistent().get(&key);
+        let signer_key = DataKey::Signer(input.signer.clone());
+        if let Some(mapped) = env.storage().persistent().get::<_, Address>(&signer_key) {
+            if mapped != spender {
+                return Err(AccountError::InvalidPolicy);
+            }
+        }
         let (anchor, paused) = match &existing {
             Some(p) => (p.anchor, p.paused),
             None => (now, false),
         };
         let policy = Policy {
             kind: input.kind,
+            signer: input.signer.clone(),
             label: input.label,
             allowance: input.allowance,
             period: input.period,
@@ -332,7 +513,13 @@ impl TeamAccount {
             paused,
             anchor,
         };
+        if let Some(old) = existing.as_ref().map(|p| p.signer.clone()) {
+            if old != policy.signer {
+                env.storage().persistent().remove(&DataKey::Signer(old));
+            }
+        }
         write_persistent(&env, &key, &policy);
+        write_persistent(&env, &signer_key, &spender);
         if existing.is_none() {
             let mut list = spenders(&env);
             list.push_back(spender.clone());
@@ -347,6 +534,7 @@ impl TeamAccount {
                 },
             );
         }
+        clear_join_request(&env, &spender);
         bump_instance(&env);
         PolicySet {
             spender,
@@ -378,6 +566,10 @@ impl TeamAccount {
         if !env.storage().persistent().has(&key) {
             return Err(AccountError::UnknownSpender);
         }
+        let policy: Policy = env.storage().persistent().get(&key).unwrap();
+        env.storage()
+            .persistent()
+            .remove(&DataKey::Signer(policy.signer));
         env.storage().persistent().remove(&key);
         env.storage()
             .persistent()
@@ -706,6 +898,71 @@ impl TeamAccount {
         }
     }
 
+    pub fn request_join(env: Env, who: Address, label: String) -> Result<(), AccountError> {
+        who.require_auth();
+        if env.storage().persistent().has(&DataKey::Policy(who.clone())) {
+            return Err(AccountError::AlreadyConfigured);
+        }
+        let key = DataKey::JoinRequest(who.clone());
+        if env.storage().persistent().has(&key) {
+            return Err(AccountError::DuplicateJoinRequest);
+        }
+        let request = JoinRequest {
+            who: who.clone(),
+            label,
+            at: env.ledger().timestamp(),
+        };
+        write_persistent(&env, &key, &request);
+        let mut addresses: Vec<Address> = env
+            .storage()
+            .instance()
+            .get(&DataKey::JoinRequests)
+            .unwrap_or(Vec::new(&env));
+        addresses.push_back(who.clone());
+        env.storage()
+            .instance()
+            .set(&DataKey::JoinRequests, &addresses);
+        bump_instance(&env);
+        JoinRequested { who, label: request.label, at: request.at }.publish(&env);
+        Ok(())
+    }
+
+    pub fn join_requests(env: Env) -> Vec<JoinRequest> {
+        let addresses: Vec<Address> = env
+            .storage()
+            .instance()
+            .get(&DataKey::JoinRequests)
+            .unwrap_or(Vec::new(&env));
+        let mut requests = Vec::new(&env);
+        for who in addresses.iter() {
+            if let Some(request) = env
+                .storage()
+                .persistent()
+                .get(&DataKey::JoinRequest(who))
+            {
+                requests.push_back(request);
+            }
+        }
+        requests
+    }
+
+    pub fn dismiss_join(env: Env, who: Address) -> Result<(), AccountError> {
+        owner(&env).require_auth();
+        let request: JoinRequest = env
+            .storage()
+            .persistent()
+            .get(&DataKey::JoinRequest(who.clone()))
+            .ok_or(AccountError::NoJoinRequest)?;
+        clear_join_request(&env, &who);
+        bump_instance(&env);
+        JoinDismissed {
+            who,
+            label: request.label,
+        }
+        .publish(&env);
+        Ok(())
+    }
+
     pub fn request(env: Env, id: u64) -> Option<ApprovalRequest> {
         env.storage().persistent().get(&DataKey::Request(id))
     }
@@ -872,6 +1129,26 @@ where
 
 fn bump_instance(env: &Env) {
     env.storage().instance().extend_ttl(BUMP_THRESHOLD, BUMP_TO);
+}
+
+fn clear_join_request(env: &Env, who: &Address) {
+    env.storage()
+        .persistent()
+        .remove(&DataKey::JoinRequest(who.clone()));
+    let addresses: Vec<Address> = env
+        .storage()
+        .instance()
+        .get(&DataKey::JoinRequests)
+        .unwrap_or(Vec::new(env));
+    let mut remaining = Vec::new(env);
+    for address in addresses.iter() {
+        if address != *who {
+            remaining.push_back(address);
+        }
+    }
+    env.storage()
+        .instance()
+        .set(&DataKey::JoinRequests, &remaining);
 }
 
 #[cfg(test)]

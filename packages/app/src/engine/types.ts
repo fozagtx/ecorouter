@@ -16,6 +16,7 @@ export interface PolicyInput {
 }
 
 export interface Policy extends PolicyInput {
+  signer: string;
   paused: boolean;
   /** Periods are fixed windows counted from this timestamp. */
   anchor: number;

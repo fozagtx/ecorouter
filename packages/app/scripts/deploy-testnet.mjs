@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /**
- * Deploys the service registry and a team account to Stellar testnet with
- * the JS SDK alone (no Stellar CLI), registers demo services, reads the
- * deployment back, and writes:
- *   - packages/app/.env.local        contract ids for the app's Testnet mode
- *   - deployments/testnet.json       ids, wasm hashes and transaction hashes
- *   - .deploy/testnet-keys.json      generated secrets (gitignored)
+ * Deploys v2 contracts, registers the Nebius listing, migrates the previous
+ * team-account balance and writes deployment metadata and local testnet keys.
  *
  *   cargo build --target wasm32v1-none --release -p service-registry -p team-account
  *   pnpm --filter @ecorouter/app deploy:testnet
@@ -13,7 +9,8 @@
  * OWNER_SECRET=S... reuses an existing funded owner instead of generating one.
  */
 import { createHash, randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -37,17 +34,9 @@ const PASSPHRASE = "Test SDF Network ; September 2015";
 const FRIENDBOT = process.env.FRIENDBOT_URL || "https://friendbot.stellar.org";
 // Circle's testnet USDC issuer.
 const USDC = new Asset("USDC", process.env.USDC_ISSUER || "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5");
-const SERVICES = [
-  ["inference", "Inference credits"],
-  ["search", "Web search API"],
-  ["data", "Market data feed"],
-  ["gpu", "GPU hours"],
-  ["storage", "Object storage"],
-];
-
 const server = new rpc.Server(RPC_URL);
 const log = (...a) => console.log(...a);
-const record = { network: "testnet", networkPassphrase: PASSPHRASE, rpcUrl: RPC_URL, deployedAt: new Date().toISOString(), txs: {} };
+const record = { network: "testnet", networkPassphrase: PASSPHRASE, rpcUrl: RPC_URL, deployedAt: new Date().toISOString(), txs: {}, fees: {} };
 
 /**
  * Makes sure `kp` exists on chain. Uses Friendbot when it is reachable;
@@ -81,7 +70,8 @@ async function submit(source, op, label, signers = [source]) {
   const done = await server.pollTransaction(sent.hash, { attempts: 40 });
   if (done.status !== rpc.Api.GetTransactionStatus.SUCCESS) throw new Error(`${label}: ${done.status} (${sent.hash})`);
   record.txs[label] = sent.hash;
-  log(`  ✓ ${label}  ${sent.hash}`);
+  record.fees[label] = String(done.feeCharged ?? prepared.fee ?? BASE_FEE);
+  log(`  ✓ ${label}  ${sent.hash}  fee=${record.fees[label]} stroops`);
   return done.returnValue ? scValToNative(done.returnValue) : undefined;
 }
 
@@ -94,7 +84,9 @@ async function classic(kp, op, label) {
   if (sent.status === "ERROR") throw new Error(`${label}: rejected`);
   const done = await server.pollTransaction(sent.hash, { attempts: 40 });
   if (done.status !== rpc.Api.GetTransactionStatus.SUCCESS) throw new Error(`${label}: ${done.status}`);
-  log(`  ✓ ${label}`);
+  record.txs[label] = sent.hash;
+  record.fees[label] = String(done.feeCharged ?? BASE_FEE);
+  log(`  ✓ ${label}  ${sent.hash}  fee=${record.fees[label]} stroops`);
 }
 
 async function read(contractId, method, ...args) {
@@ -108,10 +100,29 @@ async function read(contractId, method, ...args) {
   return { value: scValToNative(sim.result.retval) };
 }
 
+function optimizeWasm(path) {
+  const version = spawnSync("wasm-opt", ["--version"], { encoding: "utf8" });
+  if (version.error?.code === "ENOENT") {
+    log("  · wasm-opt unavailable; using Cargo release WASM");
+    return path;
+  }
+  const output = path.replace(/\.wasm$/, ".optimized.wasm");
+  const result = spawnSync("wasm-opt", ["-Oz", path, "-o", output], { encoding: "utf8" });
+  if (result.error || result.status !== 0 || !existsSync(output)) {
+    throw new Error(`wasm-opt -Oz failed: ${result.stderr ?? result.error?.message ?? result.status}`);
+  }
+  if (statSync(output).size >= statSync(path).size) {
+    log(`  · wasm-opt -Oz did not reduce ${path}`);
+    return path;
+  }
+  log(`  · wasm-opt -Oz reduced ${path}: ${statSync(path).size} -> ${statSync(output).size} bytes`);
+  return output;
+}
+
 async function deployWasm(owner, file, label, constructorArgs) {
   const path = resolve(ROOT, "target/wasm32v1-none/release", file);
   if (!existsSync(path)) throw new Error(`${path} not found. Build it first:\n  cargo build --target wasm32v1-none --release -p service-registry -p team-account`);
-  const wasm = readFileSync(path);
+  const wasm = readFileSync(optimizeWasm(path));
   const hash = createHash("sha256").update(wasm).digest();
   try {
     await submit(owner, Operation.uploadContractWasm({ wasm }), `upload ${label}`);
@@ -133,9 +144,20 @@ async function main() {
   const keysPath = resolve(ROOT, ".deploy/testnet-keys.json");
   mkdirSync(dirname(keysPath), { recursive: true });
   const keys = existsSync(keysPath) ? JSON.parse(readFileSync(keysPath, "utf8")) : {};
+  const oldDeployment = JSON.parse(readFileSync(resolve(ROOT, "deployments/testnet.json"), "utf8"));
+  const { previous: earlierDeployments, ...currentDeployment } = oldDeployment;
+  record.previous = [
+    currentDeployment,
+    ...(Array.isArray(earlierDeployments)
+      ? earlierDeployments
+      : earlierDeployments
+        ? [earlierDeployments]
+        : []),
+  ];
   const owner = process.env.OWNER_SECRET ? Keypair.fromSecret(process.env.OWNER_SECRET) : keys.owner ? Keypair.fromSecret(keys.owner) : Keypair.random();
   keys.owner = owner.secret();
-  writeFileSync(keysPath, JSON.stringify(keys, null, 2));
+  writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
+  chmodSync(keysPath, 0o600);
 
   log(`network   ${RPC_URL}`);
   log(`owner     ${owner.publicKey()}`);
@@ -165,24 +187,72 @@ async function main() {
   ]);
   log(`  ${accountId}`);
 
-  log("services");
-  keys.payees ??= {};
-  record.services = {};
-  for (const [id, name] of SERVICES) {
-    const payee = keys.payees[id] ? Keypair.fromSecret(keys.payees[id]) : Keypair.random();
-    keys.payees[id] = payee.secret();
-    writeFileSync(keysPath, JSON.stringify(keys, null, 2));
-    await fund(payee, owner);
-    // A classic USDC balance needs a trustline before it can receive.
-    await classic(payee, Operation.changeTrust({ asset: USDC }), `trustline ${id}`);
-    await submit(
-      owner,
-      new Contract(registryId).call("register", xdr.ScVal.scvSymbol(id), nativeToScVal(name, { type: "string" }), new Address(payee.publicKey()).toScVal()),
-      `register ${id}`,
-    );
-    record.services[id] = { name, payee: payee.publicKey() };
-  }
+  log("Nebius listing");
+  const seller = keys.seller ? Keypair.fromSecret(keys.seller) : Keypair.random();
+  const payee = keys.payee ? Keypair.fromSecret(keys.payee) : Keypair.random();
+  keys.seller = seller.secret();
+  keys.payee = payee.secret();
+  const facilitator = keys.facilitator ? Keypair.fromSecret(keys.facilitator) : Keypair.random();
+  keys.facilitator = facilitator.secret();
+  writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
+  chmodSync(keysPath, 0o600);
+  await fund(seller, owner);
+  await fund(payee, owner);
+  await fund(facilitator, owner);
+  await classic(seller, Operation.changeTrust({ asset: USDC }), "trustline seller");
+  await classic(payee, Operation.changeTrust({ asset: USDC }), "trustline payee");
+  await submit(
+    seller,
+    new Contract(registryId).call(
+      "register",
+      new Address(seller.publicKey()).toScVal(),
+      xdr.ScVal.scvSymbol("nebius_llm"),
+      nativeToScVal("Nebius inference", { type: "string" }),
+      nativeToScVal("LLM inference with gpt-oss-120b: send a prompt, get a completion", { type: "string" }),
+      xdr.ScVal.scvSymbol("api"),
+      new Address(payee.publicKey()).toScVal(),
+      nativeToScVal("", { type: "string" }),
+      nativeToScVal(100_000n, { type: "i128" }),
+    ),
+    "register nebius_llm",
+  );
+  record.services = {
+    nebius_llm: {
+      name: "Nebius inference",
+      task: "LLM inference with gpt-oss-120b: send a prompt, get a completion",
+      kind: "api",
+      seller: seller.publicKey(),
+      payee: payee.publicKey(),
+      url: "",
+      price: "100000",
+    },
+  };
   await classic(owner, Operation.changeTrust({ asset: USDC }), "trustline owner");
+
+  const migrationAmount = 700_000_000n;
+  const oldBalance = await read(oldDeployment.teamAccount.contractId, "balance");
+  if (oldBalance.error || BigInt(oldBalance.value) < migrationAmount) {
+    throw new Error(`Previous team account does not have the expected 70 USDC balance: ${oldBalance.error ?? oldBalance.value}`);
+  }
+  await submit(
+    owner,
+    new Contract(oldDeployment.teamAccount.contractId).call(
+      "withdraw",
+      new Address(owner.publicKey()).toScVal(),
+      nativeToScVal(migrationAmount, { type: "i128" }),
+    ),
+    "withdraw 70 USDC from previous team account",
+  );
+  await submit(
+    owner,
+    new Contract(usdcId).call(
+      "transfer",
+      new Address(owner.publicKey()).toScVal(),
+      new Address(accountId).toScVal(),
+      nativeToScVal(migrationAmount, { type: "i128" }),
+    ),
+    "deposit 70 USDC into new team account",
+  );
 
   log("read back");
   const checks = {
@@ -200,11 +270,9 @@ async function main() {
 
   mkdirSync(resolve(ROOT, "deployments"), { recursive: true });
   writeFileSync(resolve(ROOT, "deployments/testnet.json"), JSON.stringify(record, null, 2) + "\n");
-  writeFileSync(
-    resolve(ROOT, "packages/app/.env.local"),
-    `VITE_STELLAR_NETWORK=testnet\nVITE_RPC_URL=${RPC_URL}\nVITE_TEAM_ACCOUNT_ID=${accountId}\nVITE_REGISTRY_ID=${registryId}\nVITE_USDC_ID=${usdcId}\n`,
-  );
-  log("\nwrote deployments/testnet.json and packages/app/.env.local");
+  writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
+  chmodSync(keysPath, 0o600);
+  log("\nwrote deployments/testnet.json and local .deploy/testnet-keys.json");
   log(`explorer  https://stellar.expert/explorer/testnet/contract/${accountId}`);
   log("next      send testnet USDC to the team account, then add spenders in the app");
 }
