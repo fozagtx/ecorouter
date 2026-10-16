@@ -49,15 +49,25 @@ const server = new rpc.Server(RPC_URL);
 const log = (...a) => console.log(...a);
 const record = { network: "testnet", rpcUrl: RPC_URL, deployedAt: new Date().toISOString(), txs: {} };
 
-async function fund(kp) {
+/**
+ * Makes sure `kp` exists on chain. Uses Friendbot when it is reachable;
+ * otherwise `funder` (the owner) creates the account with a small balance.
+ */
+async function fund(kp, funder) {
   try {
     await server.getAccount(kp.publicKey());
     return;
   } catch {
     /* not on chain yet */
   }
-  const res = await fetch(`${FRIENDBOT}?addr=${kp.publicKey()}`);
-  if (!res.ok) throw new Error(`friendbot ${res.status}: ${await res.text()}`);
+  try {
+    const res = await fetch(`${FRIENDBOT}?addr=${kp.publicKey()}`);
+    if (res.ok) return;
+    if (!funder) throw new Error(`friendbot ${res.status}`);
+  } catch (e) {
+    if (!funder) throw new Error(`${kp.publicKey()} is not funded and Friendbot is unreachable (${e?.message ?? e}). Send it testnet XLM and run again.`);
+  }
+  await classic(funder, Operation.createAccount({ destination: kp.publicKey(), startingBalance: "5" }), `create ${kp.publicKey().slice(0, 6)}`);
 }
 
 /** Builds, simulates, signs and submits one operation; returns the decoded return value. */
@@ -162,7 +172,7 @@ async function main() {
     const payee = keys.payees[id] ? Keypair.fromSecret(keys.payees[id]) : Keypair.random();
     keys.payees[id] = payee.secret();
     writeFileSync(keysPath, JSON.stringify(keys, null, 2));
-    await fund(payee);
+    await fund(payee, owner);
     // A classic USDC balance needs a trustline before it can receive.
     await classic(payee, Operation.changeTrust({ asset: USDC }), `trustline ${id}`);
     await submit(
