@@ -5,11 +5,11 @@ description: Source paths, testnet deployment addresses and items not implemente
 
 ## Written for this build
 
-- Team-account contract: `contracts/team-account/src/lib.rs` — `{{LINES:contracts/team-account/src/lib.rs}}` lines; `{{TESTS:team-account}}` tests.
-- Service registry: `contracts/service-registry/src/lib.rs` — `{{LINES:contracts/service-registry/src/lib.rs}}` lines; `{{TESTS:service-registry}}` tests.
-- App: `packages/app/src/chain/testnet.ts` — `{{LINES:packages/app/src/chain/testnet.ts}}` lines; `{{TESTS:app}}` tests.
-- SDK: `packages/sdk/src/index.ts` — `{{LINES:packages/sdk/src/index.ts}}` lines; `{{TESTS:sdk}}` tests.
-- Scheduled worker: `packages/sdk/src/worker.ts` — `{{LINES:packages/sdk/src/worker.ts}}` lines.
+- Team-account contract: `contracts/team-account/src/lib.rs` — 878 lines; 37 tests.
+- Service registry: `contracts/service-registry/src/lib.rs` — 218 lines; 7 tests.
+- App: `packages/app/src/chain/testnet.ts` — 361 lines; 7 tests.
+- SDK: `packages/sdk/src/index.ts` — 306 lines; 8 tests.
+- Scheduled worker: `packages/sdk/src/worker.ts` — 106 lines.
 
 ## Verified on chain
 
@@ -17,6 +17,7 @@ description: Source paths, testnet deployment addresses and items not implemente
 - Service-registry contract: [`CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET`](https://stellar.expert/explorer/testnet/contract/CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET).
 - Testnet USDC SAC: [`CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA).
 - Deployment transaction hashes are on [Evidence](./evidence) and in `deployments/testnet.json`.
+- The [real-wallet payment test](./evidence#payments-on-testnet) covers deposit, policy setup, payment, approval request, approval and settlement.
 
 ## Not done
 
@@ -27,5 +28,6 @@ description: Source paths, testnet deployment addresses and items not implemente
 - Activity reads RPC events that go back about seven days; there is no indexer.
 - One worker runs one agent and one service.
 - The five registered services pay demo addresses controlled by the deployer; there are no outside merchants.
+- **First write after a deploy is expensive.** The first policy write extended the contract's storage lifetime and charged 368.39 test XLM in fees ([transaction cb406cd0…](https://stellar.expert/explorer/testnet/tx/cb406cd008132e81e0259569b1971a8d07232a0735e457178354589bbddfa8f0)); a simulated policy write now costs about 1 XLM.
 
 Sources: `deployments/testnet.json`; `contracts/team-account/src/lib.rs`; `contracts/service-registry/src/lib.rs`; `packages/app/src/chain/testnet.ts`; `packages/sdk/src/index.ts`; `packages/sdk/src/worker.ts`.
