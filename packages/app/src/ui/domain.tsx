@@ -5,8 +5,8 @@ import type { Activity, ApprovalRequest, Service, Snapshot, Spender, Verdict } f
 import { useApp } from "../state";
 import { Addr, Badge, Icon, Meter, ago, cx, dateLabel, short } from "./kit";
 
-export function explorer(snap: Snapshot, hash?: string): string | null {
-  if (!hash || snap.mode !== "testnet") return null;
+export function explorer(hash?: string): string | null {
+  if (!hash) return null;
   return `https://stellar.expert/explorer/testnet/tx/${hash}`;
 }
 
@@ -191,7 +191,7 @@ export function ActivityRow({ a }: { a: Activity }) {
     default:
       text = <>{a.note}{a.spender ? <> · <b className="font-semibold">{who}</b></> : null}</>;
   }
-  const link = explorer(snap, a.txHash);
+  const link = explorer(a.txHash);
   return (
     <li className="flex items-start gap-3 py-3">
       <Badge tone={refusedHard ? "bad" : k.tone} className="mt-0.5 w-[84px] justify-center shrink-0">{refusedHard ? "Refused" : k.label}</Badge>

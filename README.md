@@ -11,7 +11,7 @@ EcoRouter is one shared USDC account for a team's people and AI agents. Every sp
 
 **The agent proposes. Only the contract authorizes.**
 
-- **Open the app:** [ecorouter.xyz/app](https://ecorouter.xyz/app/). The sandbox needs no wallet.
+- **Open the app:** [ecorouter.xyz/app](https://ecorouter.xyz/app/). Install Freighter, switch it to Testnet, and connect.
 - **Docs:** [ecorouter.xyz/docs](https://ecorouter.xyz/docs/)
 
 ---
@@ -54,7 +54,7 @@ The first failed check refuses the call and nothing moves. Checks 5, 7, 8 and 9 
 │   └── ecorouter-account/   # Legacy single-mandate smart account (SDK era)
 ├── packages/
 │   ├── app/                 # The product: React app served at /app
-│   │   ├── src/engine/      #   policy mirror of the contract + in-browser sandbox
+│   │   ├── src/engine/      #   app types, validation and contract error handling
 │   │   ├── src/chain/       #   Stellar testnet backend (Soroban RPC + Freighter)
 │   │   ├── src/assistant/   #   sentence -> constrained payment draft
 │   │   └── worker/          #   agent worker: pays on a schedule with the agent's own key
@@ -69,23 +69,23 @@ The first failed check refuses the call and nothing moves. Checks 5, 7, 8 and 9 
 
 ```bash
 pnpm install
-pnpm dev:app          # http://localhost:5173/app/ — choose "Open the sandbox"
+pnpm dev:app          # http://localhost:5173/app/ — connect Freighter on Testnet
 ```
 
-The sandbox is a team account in your browser with $5,000 in test dollars, two people (Ada the owner, Marcus) and two agents (Scout, Atlas). It runs a TypeScript mirror of the contract's checks (`packages/app/src/engine/policy.ts`), tested case for case against the Rust tests. Switch between Ada and Marcus in the sidebar to see both sides of an approval.
+Install Freighter, switch its network to Testnet, then open the app and connect your wallet. In Settings, use Add funds to move testnet USDC from Freighter into the team account.
 
 ### On Stellar testnet
 
 ```bash
 cargo build --target wasm32v1-none --release -p service-registry -p team-account
 pnpm --filter @ecorouter/app deploy:testnet   # JS SDK only, no Stellar CLI needed
-pnpm dev:app                                  # choose "Connect Freighter"
+pnpm dev:app                                  # install Freighter, switch to Testnet, then connect
 ```
 
 `deploy:testnet` funds an owner with Friendbot, wraps testnet USDC, uploads and deploys both contracts, registers five demo services (each payee gets a USDC trustline), then reads the deployment back: owner, registry link, service list, and that an unregistered id reverts with `UnknownService`. It writes `packages/app/.env.local` and `deployments/testnet.json` (ids, wasm hashes, transaction hashes); generated secrets go to `.deploy/` (gitignored). `./scripts/deploy-testnet.sh` does the same with the Stellar CLI.
 The app reads contract ids from the committed `deployments/testnet.json`, so commit that file after a redeploy; `packages/app/.env.local` is only an optional override.
 
-Fund the team-account contract by sending it testnet USDC. Add spenders from the app (their own `G…` addresses). Agents run outside the browser with their own key:
+Use Add funds on the app's Settings page to transfer testnet USDC from your connected Freighter wallet into the team account. Add spenders from the app (their own `G…` addresses). Agents run outside the browser with their own key:
 
 ```bash
 AGENT_SECRET=S... TEAM_ACCOUNT_ID=C... \

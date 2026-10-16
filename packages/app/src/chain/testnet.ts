@@ -18,7 +18,7 @@ import {
   scValToNative,
   xdr,
 } from "@stellar/stellar-sdk";
-import { requestAccess, signTransaction } from "@stellar/freighter-api";
+import { getNetwork, isConnected, requestAccess, signTransaction } from "@stellar/freighter-api";
 import { Buffer } from "buffer";
 import { ContractError } from "../engine/rules";
 import type {
@@ -136,7 +136,6 @@ function randomKey(): Uint8Array {
 }
 
 export class TestnetBackend implements Backend {
-  readonly mode = "testnet" as const;
   private server: rpc.Server;
   private account: Contract;
   private registry: Contract;
@@ -151,9 +150,18 @@ export class TestnetBackend implements Backend {
   }
 
   static async connect(cfg: TestnetConfig): Promise<TestnetBackend> {
+    const connection = await isConnected();
+    if (!connection.isConnected) {
+      throw new Error("Freighter isn't installed in this browser. Install it from freighter.app, then reload this page.");
+    }
     const res = await requestAccess();
     if (res.error || !res.address) {
       throw new Error(res.error?.message || "Freighter did not share an address. Is the extension installed and unlocked?");
+    }
+    const { network, networkPassphrase, error } = await getNetwork();
+    if (error) throw new Error(error.message);
+    if (networkPassphrase !== cfg.networkPassphrase) {
+      throw new Error(`Freighter is on ${network}. Switch it to Testnet and try again.`);
     }
     return new TestnetBackend(cfg, res.address);
   }
@@ -196,7 +204,6 @@ export class TestnetBackend implements Backend {
     names[owner] ??= "Owner";
     const activity = [...(await this.events(latest.sequence)), ...this.local.refused].sort((a, b) => b.at - a.at);
     return {
-      mode: "testnet",
       now: Math.floor(Date.now() / 1000),
       account: { id: this.cfg.accountId, name: "Team account", owner, balance: BigInt(balance), paused: Boolean(paused) },
       me: this.me,
@@ -349,6 +356,10 @@ export class TestnetBackend implements Backend {
 
   async withdraw(to: string, amount: bigint): Promise<void> {
     await this.invoke(this.account, "withdraw", addr(to), i128(amount));
+  }
+
+  async deposit(amount: bigint): Promise<void> {
+    await this.invoke(new Contract(this.cfg.usdcId), "transfer", addr(this.me), addr(this.cfg.accountId), i128(amount));
   }
 
   async saveAgentRule(rule: AgentRule): Promise<void> {

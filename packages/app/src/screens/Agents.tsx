@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { fmt, parseAmount, toDecimal } from "../lib/money";
-import { CADENCE_SECS } from "../engine/sandbox";
-import type { AgentRule, Cadence } from "../engine/types";
+import { CADENCE_SECS, type AgentRule, type Cadence } from "../engine/types";
 import { useApp } from "../state";
 import { PageHead } from "../ui/Shell";
 import { AllowanceLine, Avatar, SpenderStatus, serviceName } from "../ui/domain";
-import { Badge, Button, Card, Empty, Field, Icon, Modal, ago, until } from "../ui/kit";
+import { Badge, Button, Card, Empty, Field, Icon, Modal, ago } from "../ui/kit";
 
-const CADENCES: Cadence[] = ["hour", "day", "week"];
+const CADENCES = Object.keys(CADENCE_SECS) as Cadence[];
 
 function RuleForm({ initial, onDone }: { initial: AgentRule; onDone: () => void }) {
   const { snap, run } = useApp();
@@ -82,12 +81,10 @@ export function Agents() {
         action={isOwner ? <Button variant="primary" onClick={() => setEditing({ id: `r-${Date.now()}`, agent: agents[0]?.address ?? "", service: "", amount: 0n, every: "day", memo: "", enabled: true })}><Icon name="plus" /> New schedule</Button> : undefined}
       />
 
-      {snap.mode === "testnet" && (
-        <div className="mb-5 rounded-lg border border-line bg-white p-4 text-[13px] text-ink-secondary">
-          <b className="text-ink">On testnet an agent signs with its own key, which never touches this page.</b> Run the worker where the agent lives:
-          <pre className="mt-2 rounded bg-surface-soft border border-line p-3 font-mono text-[12px] overflow-x-auto">AGENT_SECRET=S… TEAM_ACCOUNT_ID={snap.account.id} \{"\n"}  node packages/app/worker/agent-worker.mjs --service search --amount 4 --every day</pre>
-        </div>
-      )}
+      <div className="mb-5 rounded-lg border border-line bg-white p-4 text-[13px] text-ink-secondary">
+        <b className="text-ink">On testnet an agent signs with its own key, which never touches this page.</b> Run the worker where the agent lives:
+        <pre className="mt-2 rounded bg-surface-soft border border-line p-3 font-mono text-[12px] overflow-x-auto">AGENT_SECRET=S… TEAM_ACCOUNT_ID={snap.account.id} \{"\n"}  node packages/app/worker/agent-worker.mjs --service search --amount 4 --every day</pre>
+      </div>
 
       <div className="flex flex-col gap-4">
         {agents.map((a) => {
@@ -121,7 +118,6 @@ export function Agents() {
                   <div className="eyebrow mb-2">Schedules</div>
                   <ul className="flex flex-col gap-2">
                     {rules.map((r) => {
-                      const next = (r.lastRun ?? snap.now) + CADENCE_SECS[r.every];
                       return (
                         <li key={r.id} className="rounded-lg border border-line p-3">
                           <div className="flex items-center gap-2">
@@ -133,13 +129,9 @@ export function Agents() {
                           </div>
                           <div className="mt-1 text-[12px] text-ink-muted pl-6">
                             {r.memo || "—"} · {r.lastRun ? `last ran ${ago(r.lastRun, snap.now)}` : "never ran"}
-                            {r.enabled && snap.mode === "sandbox" ? ` · next ${until(next, snap.now)}` : ""}
                           </div>
                           {isOwner && (
                             <div className="mt-2.5 pl-6 flex flex-wrap gap-2">
-                              {snap.mode === "sandbox" && (
-                                <Button size="sm" onClick={() => run(async (b) => { await b.runAgents(r.id); }, "Agent ran; see the receipt in Activity")}>Run now</Button>
-                              )}
                               <Button size="sm" onClick={() => run((b) => b.saveAgentRule({ ...r, enabled: !r.enabled }))}>{r.enabled ? "Turn off" : "Turn on"}</Button>
                               <Button size="sm" variant="ghost" onClick={() => setEditing(r)}>Edit</Button>
                               <Button size="sm" variant="ghost" onClick={() => run((b) => b.deleteAgentRule(r.id), "Schedule deleted")}>Delete</Button>

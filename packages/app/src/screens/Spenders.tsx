@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { fmt, parseAmount, toDecimal } from "../lib/money";
 import { isValidStrKey } from "../lib/strkey";
-import { validatePolicy } from "../engine/policy";
-import { SandboxBackend, demoAddress } from "../engine/sandbox";
+import { validatePolicy } from "../engine/validation";
 import type { PolicyInput, Spender, SpenderKind } from "../engine/types";
 import { useApp } from "../state";
 import { PageHead } from "../ui/Shell";
@@ -45,20 +44,18 @@ function toForm(s: Spender | null, name: string, now: number): FormState {
 }
 
 export function PolicyForm({ editing, onDone }: { editing: Spender | null; onDone: () => void }) {
-  const { snap, run, name, backend } = useApp();
+  const { snap, run, name } = useApp();
   const [f, setF] = useState<FormState>(() => toForm(editing, editing ? name(editing.address) : "", snap?.now ?? 0));
   const [busy, setBusy] = useState(false);
-  const [salt] = useState(() => Math.random().toString(36).slice(2));
   useEffect(() => setF(toForm(editing, editing ? name(editing.address) : "", snap?.now ?? 0)), [editing, name, snap?.now]);
   if (!snap) return null;
 
-  const sandbox = backend instanceof SandboxBackend;
   const allowance = parseAmount(f.allowance);
   const maxPayment = parseAmount(f.maxPayment);
   const maxPayments = Number(f.maxPayments);
   const expiresAt = snap.now + Math.round(Number(f.days) * 86_400);
   const services = [...f.services, ...f.extra.split(/[\s,]+/).map((x) => x.trim().toLowerCase()).filter(Boolean)].filter((v, i, a) => a.indexOf(v) === i);
-  const address = editing?.address ?? (sandbox && !f.address ? demoAddress(`${f.name}-${f.kind}-${salt}`) : f.address.trim());
+  const address = editing?.address ?? f.address.trim();
   const addressOk = !!editing || isValidStrKey("account", address) || isValidStrKey("contract", address);
   const valid =
     allowance !== null &&
@@ -99,7 +96,7 @@ export function PolicyForm({ editing, onDone }: { editing: Spender | null; onDon
         </Field>
       </div>
       {!editing && (
-        <Field label="Stellar address" hint={sandbox ? "Leave empty in the sandbox to create one." : "The spender's own account (G…). Only its signature can spend under this policy."}>
+        <Field label="Stellar address" hint="The spender's own account (G…). Only its signature can spend under this policy.">
           <input className="input font-mono text-[12.5px]" value={f.address} onChange={(e) => set("address", e.target.value)} placeholder="G…" />
         </Field>
       )}
@@ -227,4 +224,3 @@ export function Spenders() {
     </>
   );
 }
-

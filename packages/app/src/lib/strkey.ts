@@ -1,6 +1,6 @@
 /**
  * Minimal Stellar StrKey encode/validate for G… (account) and C… (contract)
- * addresses, so the sandbox does not have to load the full Stellar SDK.
+ * addresses without loading the full Stellar SDK.
  */
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const VERSION = { account: 6 << 3, contract: 2 << 3 } as const;
