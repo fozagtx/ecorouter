@@ -1,0 +1,12 @@
+---
+title: Add money
+description: Transfer testnet USDC from Freighter into the team-account contract.
+---
+
+The team account needs USDC before its spenders can pay. In **Settings**, enter an amount greater than zero and select **Add funds**. Review and sign the transfer in Freighter.
+
+The app invokes the USDC token's `transfer` method with the connected wallet as the source and the team-account contract as the destination. The contract balance view reads the token balance. The connected wallet must hold testnet USDC and enough XLM for transaction fees.
+
+This is a real testnet transfer. It is not a simulated balance change.
+
+Source: `packages/app/src/screens/Settings.tsx`; `packages/app/src/chain/testnet.ts` (`deposit`); `contracts/team-account/src/lib.rs` (`balance`).

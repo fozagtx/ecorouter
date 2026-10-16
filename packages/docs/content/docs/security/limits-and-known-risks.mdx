@@ -1,0 +1,15 @@
+---
+title: Limits and known risks
+description: Deployment scope, data retention and known product limitations.
+---
+
+- **Not audited.** No independent audit has been completed.
+- **Testnet only.** The deployed contracts and token are for Stellar testnet.
+- **Agents cannot request approvals.** A refused agent payment cannot be escalated from the app.
+- **Pre-submission refusals are local.** The app keeps a refusal that never reached the chain only in this browser.
+- **Activity history is limited.** The app reads RPC contract events from roughly the last seven days and has no indexer.
+- **One worker runs one agent and one service.** Configure another Render worker for another agent/service pair.
+- **No outside merchants are registered.** The five testnet service payees are demo addresses controlled by the deployer.
+- **Agent keys are hot keys.** A leaked key can use the spending authority its policy permits until the policy is paused, removed or expires.
+
+Sources: `packages/app/src/chain/testnet.ts` (`events`); `packages/sdk/src/worker.ts`; `contracts/team-account/src/lib.rs`; `deployments/testnet.json`.

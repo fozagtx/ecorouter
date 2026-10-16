@@ -1,0 +1,31 @@
+---
+title: What we built
+description: Source paths, testnet deployment addresses and items not implemented.
+---
+
+## Written for this build
+
+- Team-account contract: `contracts/team-account/src/lib.rs` — `{{LINES:contracts/team-account/src/lib.rs}}` lines; `{{TESTS:team-account}}` tests.
+- Service registry: `contracts/service-registry/src/lib.rs` — `{{LINES:contracts/service-registry/src/lib.rs}}` lines; `{{TESTS:service-registry}}` tests.
+- App: `packages/app/src/chain/testnet.ts` — `{{LINES:packages/app/src/chain/testnet.ts}}` lines; `{{TESTS:app}}` tests.
+- SDK: `packages/sdk/src/index.ts` — `{{LINES:packages/sdk/src/index.ts}}` lines; `{{TESTS:sdk}}` tests.
+- Scheduled worker: `packages/sdk/src/worker.ts` — `{{LINES:packages/sdk/src/worker.ts}}` lines.
+
+## Verified on chain
+
+- Team-account contract: [`CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB`](https://stellar.expert/explorer/testnet/contract/CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB).
+- Service-registry contract: [`CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET`](https://stellar.expert/explorer/testnet/contract/CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET).
+- Testnet USDC SAC: [`CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA).
+- Deployment transaction hashes are on [Evidence](./evidence) and in `deployments/testnet.json`.
+
+## Not done
+
+- The contracts have not been audited.
+- The deployment is testnet only.
+- Agents cannot file approval requests.
+- Pre-submission refusals are kept only in the browser where they occurred.
+- Activity reads RPC events that go back about seven days; there is no indexer.
+- One worker runs one agent and one service.
+- The five registered services pay demo addresses controlled by the deployer; there are no outside merchants.
+
+Sources: `deployments/testnet.json`; `contracts/team-account/src/lib.rs`; `contracts/service-registry/src/lib.rs`; `packages/app/src/chain/testnet.ts`; `packages/sdk/src/index.ts`; `packages/sdk/src/worker.ts`.

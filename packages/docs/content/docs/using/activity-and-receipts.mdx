@@ -1,0 +1,25 @@
+---
+title: Receipts
+description: Every payment attempt leaves a receipt in Activity.
+---
+
+The **Activity** screen lists every payment attempt as a receipt. A receipt records who paid (the spender), the service id, the amount, the memo, the time, and the outcome.
+
+## Outcomes
+
+| Outcome | Meaning | Money moved |
+| --- | --- | --- |
+| **Settled** | Every check passed and USDC went to the service's payee. | Yes |
+| **Held** | A limit caught the payment. It may become an approval request. | No |
+| **Declined** | The owner declined an approval request. | No |
+| **Refused** | A check that cannot be approved failed, or an agent hit a limit. | No |
+
+Held, declined and refused receipts carry the rule that stopped the payment and, for limits, how far over it was.
+
+## On chain
+
+On Stellar testnet, a settled payment emits a `pay` event from the `team-account` contract carrying the spender, service, payee, amount, memo and the spender's spend this period. Settled exceptions emit a `request settled` event. The receipt in the app links to the Stellar transaction so anyone can check it. The replay key passed to `pay` means the same payment cannot be settled twice, even if the app retries.
+
+A payment that fails a check never reaches the chain as a transfer, so held, declined and refused receipts are kept by the app; requests and decisions are also recorded as contract events.
+
+The app reads recent contract events from Soroban RPC. A refusal detected before submission is kept only in the current browser and has no transaction link.

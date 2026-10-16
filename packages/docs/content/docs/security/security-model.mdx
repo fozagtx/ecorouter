@@ -1,0 +1,32 @@
+---
+title: Security model
+description: The team-account contract checks each payment and remains the source of authorization.
+---
+
+EcoRouter is **Stellar testnet only** and is **not audited**. Use test funds.
+
+The app and SDK can simulate `check` before submission, but a client-side result is not authorization. The Soroban `team-account` contract holds the funds and enforces policy during `pay(spender, service, amount, memo, key)`.
+
+## Payment check order
+
+1. Account is not paused.
+2. Spender has a policy.
+3. Spender is not paused.
+4. Policy has not expired.
+5. Amount is positive.
+6. Service is on the spender's list.
+7. Replay key has not been used.
+8. Amount does not exceed the per-payment cap.
+9. Payment count is within the period limit.
+10. Amount fits the allowance remaining.
+11. Registry resolves the service and it is active.
+12. Team-account balance covers the transfer.
+13. USDC is transferred and a receipt event is emitted.
+
+The first failed check stops the call. A person can request approval for the service allowlist, payment cap, payment count or allowance rules. An agent cannot request an exception. The code and ordering are in `contracts/team-account/src/lib.rs`; user-facing titles are in `packages/app/src/engine/rules.ts`.
+
+## Transaction authorization
+
+The spender authorizes its own payment. The contract resolves the payee from `service-registry`; callers cannot supply a raw recipient address. A 32-byte key is stored when a payment succeeds, and `is_key_used` reports whether it has already been used.
+
+Sources: `contracts/team-account/src/lib.rs` (`check`, `pay`, `is_key_used`); `contracts/service-registry/src/lib.rs` (`resolve`).

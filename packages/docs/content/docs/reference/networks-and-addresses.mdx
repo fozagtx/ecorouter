@@ -1,0 +1,17 @@
+---
+title: Networks and addresses
+description: The committed EcoRouter testnet contracts, token and Soroban RPC endpoint.
+---
+
+The app and SDK default to Stellar testnet. These public deployment values come from `deployments/testnet.json`; app environment variables can override the RPC URL and contract ids.
+
+| Item | Value |
+| --- | --- |
+| Network | Stellar testnet |
+| Network passphrase | `Test SDF Network ; September 2015` |
+| Soroban RPC | [https://soroban-testnet.stellar.org](https://soroban-testnet.stellar.org) |
+| Team-account contract | [`CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB`](https://stellar.expert/explorer/testnet/contract/CDMTQNLEMISI7H267QL7IVXNB7DSUJ25ECNPAEXXA4LTC2AKAGXQIAVB) |
+| Service-registry contract | [`CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET`](https://stellar.expert/explorer/testnet/contract/CCJTYBUSMGUQUW6DJ7WXV2ZBRG6JCXLBYIEULMOPY2ZXXFW2XQ5B2FET) |
+| USDC SAC | [`CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
+
+Deployment transactions are listed on [Evidence](../resources/evidence). The app config is `packages/app/src/chain/config.ts`; SDK defaults are exported as `TESTNET` from `packages/sdk/src/index.ts`.

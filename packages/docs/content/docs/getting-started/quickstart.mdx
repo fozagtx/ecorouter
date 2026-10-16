@@ -1,0 +1,25 @@
+---
+title: Quickstart
+description: Connect a Freighter wallet to Stellar testnet and make a policy-limited payment.
+---
+
+EcoRouter is deployed on Stellar testnet. The app reads its default contract ids from `deployments/testnet.json` through `packages/app/src/chain/config.ts`.
+
+## Before you start
+
+1. Install Freighter from [freighter.app](https://freighter.app).
+2. In Freighter, select **Testnet**.
+3. Open the app at [ecorouter.xyz/app](https://ecorouter.xyz/app/).
+4. Select **Connect Freighter** and approve the connection.
+
+The app checks that Freighter is installed and on the expected network before enabling a session. See [Connect Freighter](./connect-freighter).
+
+## Add funds
+
+In **Settings**, enter a positive amount and choose **Add funds**. Freighter signs a USDC transfer from your wallet to the team-account contract. See [Add money](./add-money).
+
+## Add a spender and pay
+
+The owner adds a spender under **Spenders** and sets an allowance, period, cap, payment count, expiry and approved service ids. Open **Pay**, select a service from the registry and enter an amount. The app simulates `check` before it submits `pay`; the contract makes the final decision.
+
+Sources: `packages/app/src/chain/testnet.ts` (`connect`, `deposit`, `check`, `pay`); `contracts/team-account/src/lib.rs` (`check`, `pay`, `set_policy`).
