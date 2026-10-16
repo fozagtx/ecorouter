@@ -183,7 +183,7 @@ export function Assistant() {
                 />
               )}
               {!r.schema.ok && r.schema.registeredElsewhere && (
-                <p className="text-[12.5px] text-ink-muted">This service is registered but not on your list. If you need it once, submit it from New payment and ask the owner to approve an exception.</p>
+                <p className="text-[12.5px] text-ink-muted">This service is registered but not on your list. If you need it once, pick it under Needs owner approval in New payment and ask the owner to approve an exception.</p>
               )}
             </Card>
           )}

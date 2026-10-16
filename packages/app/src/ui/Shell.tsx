@@ -1,12 +1,29 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useApp } from "../state";
 import { Badge, Icon, Logo, cx, short } from "./kit";
 
 const SITE = import.meta.env.BASE_URL.replace(/app\/?$/, "");
+const SIDEBAR_COLLAPSED_KEY = "ecorouter.sidebar.collapsed";
+
+function readSidebarCollapsed(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
 
 export function Shell({ children }: { children: ReactNode }) {
   const { snap, route, isOwner, mine, toasts } = useApp();
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(readSidebarCollapsed);
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(collapsed));
+    } catch {
+      /* ignore */
+    }
+  }, [collapsed]);
   if (!snap) return null;
   const pending = snap.requests.filter((r) => r.status === "pending" && (isOwner || r.spender === snap.me)).length;
   const toSettle = snap.requests.filter((r) => r.status === "approved" && (isOwner || r.spender === snap.me)).length;
@@ -23,9 +40,9 @@ export function Shell({ children }: { children: ReactNode }) {
     { path: "/settings", label: "Settings", icon: "settings", show: true },
   ];
 
-  const NavList = (
+  const NavList = (isCollapsed = false) => (
     <div>
-      <div className="group-label px-2.5 mb-2">Workspace</div>
+      <div className={cx("group-label px-2.5 mb-2", isCollapsed && "sr-only")}>Workspace</div>
       <nav className="flex flex-col gap-0.5" aria-label="Main">
         {nav
           .filter((n) => n.show)
@@ -37,14 +54,19 @@ export function Shell({ children }: { children: ReactNode }) {
                 href={`#${n.path}`}
                 onClick={() => setOpen(false)}
                 aria-current={active ? "page" : undefined}
+                aria-label={isCollapsed ? n.label : undefined}
+                title={isCollapsed ? n.label : undefined}
                 className={cx(
-                  "flex items-center gap-2.5 h-9 px-2.5 rounded-lg text-[14px] transition-colors",
+                  "relative flex items-center gap-2.5 h-9 px-2.5 rounded-lg text-[14px] transition-colors",
+                  isCollapsed && "justify-center px-0",
                   active ? "bg-white text-ink font-medium shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-line" : "text-ink-secondary hover:bg-white/70 hover:text-ink",
                 )}
               >
                 <Icon name={n.icon} className="w-[17px] h-[17px] shrink-0" />
-                <span className="flex-1">{n.label}</span>
-                {!!n.badge && <span className="min-w-5 h-5 px-1.5 rounded-full bg-held text-white text-[11px] font-mono inline-flex items-center justify-center">{n.badge}</span>}
+                <span className={isCollapsed ? "sr-only" : "flex-1"}>{n.label}</span>
+                {!!n.badge && (isCollapsed
+                  ? <span aria-hidden="true" className="absolute right-2 top-2 w-1.5 h-1.5 rounded-full bg-held" />
+                  : <span className="min-w-5 h-5 px-1.5 rounded-full bg-held text-white text-[11px] font-mono inline-flex items-center justify-center">{n.badge}</span>)}
               </a>
             );
           })}
@@ -52,26 +74,52 @@ export function Shell({ children }: { children: ReactNode }) {
     </div>
   );
 
-  const Identity = (
+  const Identity = (isCollapsed = false) => (
     <div className="px-1 py-2">
-      <div className="eyebrow mb-2">Signed in as</div>
-      <div className="text-[13px] font-mono">{short(snap.me, 6)}</div>
-      <div className="mt-2 text-[12px] text-ink-muted leading-snug">
-        {isOwner ? "You own this account: you set the rules and decide exceptions." : mine ? "You spend inside your own policy." : "You have no policy on this account."}
-      </div>
+      {isCollapsed ? (
+        <span title={`Signed in as ${short(snap.me, 6)}`} className="flex justify-center text-ink-muted">
+          <Icon name="spenders" />
+          <span className="sr-only">Signed in as {short(snap.me, 6)}</span>
+        </span>
+      ) : (
+        <>
+          <div className="eyebrow mb-2">Signed in as</div>
+          <div className="text-[13px] font-mono">{short(snap.me, 6)}</div>
+          <div className="mt-2 text-[12px] text-ink-muted leading-snug">
+            {isOwner ? "You own this account: you set the rules and decide exceptions." : mine ? "You spend inside your own policy." : "You have no policy on this account."}
+          </div>
+        </>
+      )}
     </div>
   );
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[248px_1fr]">
+    <div className={cx("min-h-screen lg:grid transition-[grid-template-columns] duration-200 motion-reduce:transition-none", collapsed ? "lg:grid-cols-[64px_minmax(0,1fr)]" : "lg:grid-cols-[248px_minmax(0,1fr)]")}>
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col gap-5 sticky top-0 h-screen p-4 border-r border-line bg-surface-soft">
-        <Brand />
-        <AccountChip />
-        {NavList}
+      <aside className={cx(
+        "hidden lg:flex flex-col gap-5 sticky top-0 h-screen border-r border-line bg-surface-soft transition-[width,padding] duration-200 motion-reduce:transition-none",
+        collapsed ? "items-center p-2" : "p-4",
+      )}>
+        <div className={cx("flex items-center w-full", collapsed ? "justify-between gap-0" : "justify-between gap-2")}>
+          <Brand collapsed={collapsed} />
+          <button
+            type="button"
+            className={cx("inline-flex shrink-0 items-center justify-center rounded-lg text-ink-muted hover:bg-white hover:text-ink", collapsed ? "w-6 h-6" : "w-8 h-8")}
+            onClick={() => setCollapsed((value) => !value)}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <Icon name={collapsed ? "expand" : "collapse"} className="w-4 h-4" />
+          </button>
+        </div>
+        <AccountChip collapsed={collapsed} />
+        {NavList(collapsed)}
         <div className="mt-auto flex flex-col gap-3">
-          {Identity}
-          <a href={SITE} className="text-[13px] text-ink-muted hover:text-ink px-1">← ecorouter.xyz</a>
+          {Identity(collapsed)}
+          <a href={SITE} title={collapsed ? "ecorouter.xyz" : undefined} aria-label={collapsed ? "ecorouter.xyz" : undefined} className={cx("text-[13px] text-ink-muted hover:text-ink px-1", collapsed && "flex justify-center")}>
+            {collapsed ? <Icon name="external" /> : "← ecorouter.xyz"}
+          </a>
         </div>
       </aside>
 
@@ -88,8 +136,8 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         {open && (
           <div className="border-t border-line bg-white p-4 flex flex-col gap-4 max-h-[calc(100vh-56px)] overflow-y-auto">
-            {NavList}
-            {Identity}
+            {NavList()}
+            {Identity()}
           </div>
         )}
       </header>
@@ -123,20 +171,28 @@ export function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-function Brand() {
+function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
-    <a href="#/overview" className="flex items-center gap-2.5">
-      <span className="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white">
+    <a href="#/overview" aria-label="EcoRouter" className={cx("flex items-center gap-2.5", collapsed && "gap-0")}>
+      <span className={cx("rounded-full bg-ink flex items-center justify-center text-white shrink-0", collapsed ? "w-6 h-6" : "w-8 h-8")}>
         <Logo className="w-4 h-4" />
       </span>
-      <span className="font-semibold text-[15px] tracking-tight">EcoRouter</span>
+      {!collapsed && <span className="font-semibold text-[15px] tracking-tight">EcoRouter</span>}
     </a>
   );
 }
 
-function AccountChip() {
+function AccountChip({ collapsed = false }: { collapsed?: boolean }) {
   const { snap } = useApp();
   if (!snap) return null;
+  if (collapsed) {
+    return (
+      <div title="Stellar testnet" className="flex justify-center py-1">
+        <span className="w-2 h-2 rounded-full bg-ok" />
+        <span className="sr-only">Stellar testnet</span>
+      </div>
+    );
+  }
   return (
     <div className="px-1 py-2">
       <div className="flex items-center justify-between gap-2">

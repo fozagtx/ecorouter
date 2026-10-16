@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fmt, parseAmount, usd } from "../lib/money";
 import { propose, validate } from "../assistant/intent";
+import { servicesNeedingApproval } from "./payment-services";
 
 describe("money", () => {
   it("parses and formats without floats", () => {
@@ -35,6 +36,18 @@ describe("assistant", () => {
     const v = validate(p, allowed, registry);
     expect(v.ok).toBe(false);
     expect(!v.ok && v.registeredElsewhere).toBe(true);
+  });
+});
+
+describe("payment service choices", () => {
+  it("lists registered, active services outside a person's policy for owner approval", () => {
+    const services = [
+      { id: "inference", name: "Inference", payee: "G1", suspended: false },
+      { id: "search", name: "Search", payee: "G2", suspended: false },
+      { id: "gpu", name: "GPU", payee: "G3", suspended: true },
+    ];
+
+    expect(servicesNeedingApproval(services, ["inference"])).toEqual([services[1]]);
   });
 });
 

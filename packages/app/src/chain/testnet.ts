@@ -21,6 +21,7 @@ import {
 import { getNetwork, isConnected, requestAccess, signTransaction } from "@stellar/freighter-api";
 import { Buffer } from "buffer";
 import { ContractError } from "../engine/rules";
+import { collectEventPages } from "./event-pages";
 import type {
   Activity,
   ApprovalRequest,
@@ -218,14 +219,12 @@ export class TestnetBackend implements Backend {
   /** Recent contract events (RPC keeps about a week of them). */
   private async events(latestLedger: number): Promise<Activity[]> {
     const startLedger = Math.max(1, latestLedger - 17_280 * 6);
-    let res: rpc.Api.GetEventsResponse;
-    try {
-      res = await this.server.getEvents({ startLedger, filters: [{ type: "contract", contractIds: [this.cfg.accountId] }], limit: 200 });
-    } catch {
-      return [];
-    }
+    const events = await collectEventPages(
+      (request) => this.server.getEvents(request),
+      { startLedger, filters: [{ type: "contract", contractIds: [this.cfg.accountId] }], limit: 200 },
+    );
     const out: Activity[] = [];
-    for (const e of res.events) {
+    for (const e of events) {
       const topics = e.topic.map((t) => scValToNative(t));
       const data = scValToNative(e.value) ?? {};
       const at = Math.floor(new Date(e.ledgerClosedAt).getTime() / 1000);
