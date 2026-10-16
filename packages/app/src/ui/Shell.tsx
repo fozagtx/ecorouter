@@ -1,12 +1,11 @@
 import { useState, type ReactNode } from "react";
-import { SandboxBackend } from "../engine/sandbox";
 import { useApp } from "../state";
 import { Badge, Icon, Logo, cx, short } from "./kit";
 
 const SITE = import.meta.env.BASE_URL.replace(/app\/?$/, "");
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { snap, route, go, isOwner, mine, toasts, backend, refresh, name } = useApp();
+  const { snap, route, isOwner, mine, toasts } = useApp();
   const [open, setOpen] = useState(false);
   if (!snap) return null;
   const pending = snap.requests.filter((r) => r.status === "pending" && (isOwner || r.spender === snap.me)).length;
@@ -23,9 +22,6 @@ export function Shell({ children }: { children: ReactNode }) {
     { path: "/activity", label: "Activity", icon: "activity", show: true },
     { path: "/settings", label: "Settings", icon: "settings", show: true },
   ];
-
-  const people = snap.spenders.filter((s) => s.policy.kind === "person").map((s) => s.address);
-  if (!people.includes(snap.account.owner)) people.unshift(snap.account.owner);
 
   const NavList = (
     <div>
@@ -59,26 +55,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const Identity = (
     <div className="px-1 py-2">
       <div className="eyebrow mb-2">Signed in as</div>
-      {backend instanceof SandboxBackend ? (
-        <select
-          aria-label="Act as"
-          className="input h-9 text-[13px]"
-          value={snap.me}
-          onChange={async (e) => {
-            backend.actAs(e.target.value);
-            await refresh();
-            go("/overview");
-          }}
-        >
-          {people.map((a) => (
-            <option key={a} value={a}>
-              {name(a)} {a === snap.account.owner ? "· owner" : "· spender"}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <div className="text-[13px] font-mono">{short(snap.me, 6)}</div>
-      )}
+      <div className="text-[13px] font-mono">{short(snap.me, 6)}</div>
       <div className="mt-2 text-[12px] text-ink-muted leading-snug">
         {isOwner ? "You own this account: you set the rules and decide exceptions." : mine ? "You spend inside your own policy." : "You have no policy on this account."}
       </div>
@@ -103,7 +80,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-between h-14 px-4">
           <Brand />
           <div className="flex items-center gap-2">
-            {snap.mode === "sandbox" ? <Badge tone="accent">Sandbox</Badge> : <Badge tone="ok">Testnet</Badge>}
+            <Badge tone="ok">Testnet</Badge>
             <button className="w-9 h-9 inline-flex items-center justify-center rounded-lg bg-white border border-line" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
               <Icon name={open ? "x" : "menu"} />
             </button>
@@ -164,7 +141,7 @@ function AccountChip() {
     <div className="px-1 py-2">
       <div className="flex items-center justify-between gap-2">
         <div className="text-[13px] font-semibold truncate">{snap.account.name}</div>
-        {snap.mode === "sandbox" ? <Badge tone="accent">Sandbox</Badge> : <Badge tone="ok">Testnet</Badge>}
+        <Badge tone="ok">Testnet</Badge>
       </div>
       <div className="mt-1 font-mono text-[11px] text-ink-muted">{short(snap.account.id, 6)}</div>
     </div>

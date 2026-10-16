@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { fmt, parseAmount, usd } from "../lib/money";
-import { SandboxBackend } from "../engine/sandbox";
+import { fmt, parseAmount } from "../lib/money";
 import { useApp } from "../state";
 import { PageHead } from "../ui/Shell";
 import { Addr, Button, Card, Field } from "../ui/kit";
 
 export function Settings() {
-  const { snap, isOwner, run, backend, refresh, leave, toast, name } = useApp();
+  const { snap, isOwner, run, backend, leave, name } = useApp();
   const [to, setTo] = useState("");
   const [amt, setAmt] = useState("");
+  const [fundAmount, setFundAmount] = useState("");
   if (!snap || !backend) return null;
-  const sandbox = backend instanceof SandboxBackend ? backend : null;
   const amount = parseAmount(amt);
+  const depositAmount = parseAmount(fundAmount);
 
   return (
     <>
@@ -20,7 +20,7 @@ export function Settings() {
         <Card eyebrow="Account" title={snap.account.name}>
           <dl className="grid grid-cols-[120px_1fr] gap-y-3 text-[13px]">
             <dt className="text-ink-muted">Network</dt>
-            <dd>{snap.mode === "sandbox" ? "Sandbox (in this browser)" : "Stellar testnet"}</dd>
+            <dd>Stellar testnet</dd>
             <dt className="text-ink-muted">Team account</dt>
             <dd><Addr value={snap.account.id} /></dd>
             <dt className="text-ink-muted">Owner</dt>
@@ -30,9 +30,19 @@ export function Settings() {
             <dt className="text-ink-muted">You</dt>
             <dd>{isOwner ? "Owner" : "Spender"} · <Addr value={snap.me} /></dd>
           </dl>
-          {snap.mode === "testnet" && (
-            <p className="mt-4 text-[12.5px] text-ink-secondary">To fund the account, send testnet USDC to the team-account contract address. The contract holds it; nobody else can withdraw it.</p>
-          )}
+          <form
+            className="mt-4 grid sm:grid-cols-[1fr_auto] gap-2 items-end"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (depositAmount !== null) run((b) => b.deposit(depositAmount), `Added ${fmt(depositAmount)} USDC`);
+            }}
+          >
+            <Field label="Amount (USDC)">
+              <input className="input tnum" inputMode="decimal" placeholder="0.00" value={fundAmount} onChange={(e) => setFundAmount(e.target.value)} />
+            </Field>
+            <Button type="submit" disabled={depositAmount === null}>Add funds</Button>
+          </form>
+          <p className="mt-2 text-[12.5px] text-ink-muted">Moves USDC from your Freighter wallet into the team account.</p>
         </Card>
 
         <Card eyebrow="Owner controls" title="Pause and withdraw">
@@ -63,34 +73,14 @@ export function Settings() {
           </form>
         </Card>
 
-        {sandbox && (
-          <Card eyebrow="Sandbox" title="Test controls">
-            <div className="flex flex-col gap-3 text-[13px]">
-              <Row label="Add $1,000 in test dollars" action={<Button size="sm" onClick={() => { sandbox.deposit(usd(1_000)); refresh(); toast({ tone: "ok", title: "Added $1,000 test dollars" }); }}>Add funds</Button>} />
-              <Row label="Skip ahead one day (agents run, requests age)" action={<Button size="sm" onClick={async () => { sandbox.advance(86_400); await backend.runAgents(); refresh(); toast({ tone: "neutral", title: "One day later" }); }}>+1 day</Button>} />
-              <Row label="Skip to the next period (allowances reset)" action={<Button size="sm" onClick={async () => { sandbox.advance(30 * 86_400); await backend.runAgents(); refresh(); toast({ tone: "neutral", title: "30 days later", detail: "A new period has started." }); }}>+30 days</Button>} />
-              <Row label="Start over with the demo team" action={<Button size="sm" variant="danger" onClick={() => { if (confirm("Reset the sandbox to the demo team?")) { sandbox.reset(); refresh(); } }}>Reset</Button>} />
-            </div>
-          </Card>
-        )}
-
-        <Card eyebrow="Session" title={sandbox ? "Leave the sandbox" : "Disconnect"}>
+        <Card eyebrow="Session" title="Disconnect">
           <p className="text-[13px] text-ink-secondary mb-4">
-            {sandbox ? "Your sandbox team stays in this browser until you reset it." : "Your wallet stays connected in Freighter; this only closes the app session."}
+            Your wallet stays connected in Freighter; this only closes the app session.
           </p>
-          <Button onClick={leave}>{sandbox ? "Leave sandbox" : "Disconnect"}</Button>
+          <Button onClick={leave}>Disconnect</Button>
           <p className="mt-5 text-[12px] text-ink-muted">Testnet only. The contracts have not been independently audited.</p>
         </Card>
       </div>
     </>
-  );
-}
-
-function Row({ label, action }: { label: string; action: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-1">
-      <span>{label}</span>
-      {action}
-    </div>
   );
 }

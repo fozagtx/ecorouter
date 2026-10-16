@@ -54,6 +54,13 @@ export function Overview() {
         <Stat label="Waiting on owner" value={pending.length + approved.length} sub={`${pending.length} to decide · ${approved.length} to settle`} />
       </div>
 
+      {snap.account.balance === 0n && (
+        <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-line bg-white px-4 py-3">
+          <p className="text-[13px] text-ink-secondary">The team account has no USDC yet.</p>
+          <Button size="sm" onClick={() => go("/settings")}>Add funds</Button>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-[1.35fr_1fr] gap-4 sm:gap-6">
         <div className="flex flex-col gap-4 sm:gap-6 min-w-0">
           {mine && (

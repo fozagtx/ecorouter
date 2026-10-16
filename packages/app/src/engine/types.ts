@@ -1,4 +1,4 @@
-/** Shapes shared by the sandbox and the Stellar backend. They mirror the team-account contract types. */
+/** App shapes that mirror the team-account contract types. */
 
 export type SpenderKind = "person" | "agent";
 
@@ -96,6 +96,10 @@ export interface Activity {
 
 export type Cadence = "hour" | "day" | "week";
 
+export const DAY = 86_400;
+export const MONTH = 30 * DAY;
+export const CADENCE_SECS: Record<Cadence, number> = { hour: 3_600, day: DAY, week: 7 * DAY };
+
 export interface AgentRule {
   id: string;
   agent: string;
@@ -108,7 +112,6 @@ export interface AgentRule {
 }
 
 export interface Snapshot {
-  mode: "sandbox" | "testnet";
   now: number;
   account: {
     id: string;
@@ -144,7 +147,6 @@ export interface PayResult {
 }
 
 export interface Backend {
-  readonly mode: Snapshot["mode"];
   load(): Promise<Snapshot>;
   check(spender: string, service: string, amount: bigint): Promise<Verdict>;
   pay(args: PayArgs): Promise<PayResult>;
@@ -157,6 +159,7 @@ export interface Backend {
   removeSpender(spender: string): Promise<void>;
   setAccountPaused(paused: boolean): Promise<void>;
   withdraw(to: string, amount: bigint): Promise<void>;
+  deposit(amount: bigint): Promise<void>;
   saveAgentRule(rule: AgentRule): Promise<void>;
   deleteAgentRule(id: string): Promise<void>;
   /** Runs agent schedules that are due. Returns how many payments were attempted. */

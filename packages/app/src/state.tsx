@@ -1,16 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ContractError, ruleDetail, ruleTitle } from "./engine/rules";
-import { SandboxBackend } from "./engine/sandbox";
 import type { Backend, Snapshot, Spender } from "./engine/types";
 import { configFromEnv } from "./chain/config";
 
-type SessionMode = "sandbox" | "testnet" | null;
+type SessionMode = "testnet" | null;
 const SESSION_KEY = "ecorouter.session";
 
 function readSession(): SessionMode {
   try {
     const v = localStorage.getItem(SESSION_KEY);
-    return v === "sandbox" || v === "testnet" ? v : null;
+    return v === "testnet" ? v : null;
   } catch {
     return null;
   }
@@ -42,7 +41,6 @@ interface AppState {
   run: <T>(fn: (b: Backend) => Promise<T>, success?: string) => Promise<T | undefined>;
   toast: (t: Omit<Toast, "id">) => void;
   toasts: Toast[];
-  startSandbox: () => void;
   connectTestnet: () => Promise<void>;
   leave: () => void;
   route: string;
@@ -67,7 +65,7 @@ function currentRoute(): string {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [backend, setBackend] = useState<Backend | null>(() => (readSession() === "sandbox" ? new SandboxBackend() : null));
+  const [backend, setBackend] = useState<Backend | null>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +108,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!backend) return;
     let alive = true;
     (async () => {
-      // Agents act on their own schedule; in the sandbox this tab plays the worker.
+      // Agent schedules run in the separate worker process.
       await backend.runAgents();
       if (alive) await refresh();
     })();
@@ -144,15 +142,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [backend, refresh, toast],
   );
 
-  const startSandbox = useCallback(() => {
-    writeSession("sandbox");
-    setBackend(new SandboxBackend());
-    go("/overview");
-  }, [go]);
-
   const connectTestnet = useCallback(async () => {
     const cfg = configFromEnv();
-    if (!cfg) throw new Error("This build has no testnet contracts configured.");
     // The Stellar SDK and wallet code load only when someone connects.
     const { TestnetBackend } = await import("./chain/testnet");
     const b = await TestnetBackend.connect(cfg);
@@ -177,8 +168,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const isOwner = !!snap && snap.me === snap.account.owner;
     const mine = snap?.spenders.find((s) => s.address === snap.me);
     const name = (a: string) => snap?.names[a] ?? `${a.slice(0, 4)}…${a.slice(-4)}`;
-    return { backend, snap, loading, error, refresh, run, toast, toasts, startSandbox, connectTestnet, leave, route, go, isOwner, mine, name };
-  }, [backend, snap, loading, error, refresh, run, toast, toasts, startSandbox, connectTestnet, leave, route, go]);
+    return { backend, snap, loading, error, refresh, run, toast, toasts, connectTestnet, leave, route, go, isOwner, mine, name };
+  }, [backend, snap, loading, error, refresh, run, toast, toasts, connectTestnet, leave, route, go]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

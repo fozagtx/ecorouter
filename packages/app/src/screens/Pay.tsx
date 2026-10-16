@@ -13,7 +13,7 @@ export function Outcome({ result, spender, service, amount, memo, via, onAsked }
   const [asked, setAsked] = useState<number | null>(null);
   if (!snap) return null;
   if (result.ok) {
-    const link = explorer(snap, result.txHash);
+    const link = explorer(result.txHash);
     return (
       <div className="rounded-lg border border-ok/30 bg-ok-soft p-4 rise">
         <div className="flex items-center gap-2 text-ok font-semibold text-[14px]"><Icon name="check" /> Paid {fmt(amount)} to {serviceName(snap, service)}</div>
@@ -163,7 +163,7 @@ export function Pay() {
             </Field>
             <div className="flex items-center gap-3 pt-1">
               <Button type="submit" variant={ok || !verdict ? "primary" : "secondary"} disabled={busy || amount === null || !service} className="flex-1 sm:flex-none">
-                {busy ? (snap.mode === "testnet" ? "Confirm in Freighter…" : "Paying…") : ok ? `Pay ${amount !== null ? fmt(amount) : ""}` : "Submit payment"}
+                {busy ? "Confirm in Freighter…" : ok ? `Pay ${amount !== null ? fmt(amount) : ""}` : "Submit payment"}
               </Button>
               {verdict && !ok && <Badge tone={EXCEPTION_ELIGIBLE.has(verdict.rule) ? "held" : "bad"}>Will be {EXCEPTION_ELIGIBLE.has(verdict.rule) ? "held" : "refused"}</Badge>}
             </div>
