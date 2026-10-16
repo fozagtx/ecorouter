@@ -1,0 +1,39 @@
+---
+title: The worker
+description: Deploy the SDK worker on Render to run one agent and one service on a schedule.
+---
+
+The worker is `packages/sdk/src/worker.ts`, built to `packages/sdk/dist/worker.js`. It runs outside the web app. The Render service is declared in `render.yaml` with the `starter` plan.
+
+## Set up the spender
+
+1. Generate a Stellar keypair for the agent and keep the secret outside the browser.
+2. Add the public address in **Spenders** as an AI agent.
+3. Set an allowance, period, per-payment cap, payment count, expiry and service allowlist. The selected service must also be active in the registry.
+4. Keep the agent secret for the Render environment. Do not use the owner's secret.
+
+## Create the Render worker
+
+Create or update the Render Blueprint from the repository's `render.yaml`. The worker service uses Node and the `starter` plan. Set these environment variables:
+
+| Variable | Required | Value |
+| --- | --- | --- |
+| `AGENT_SECRET` | Yes | Secret key for the agent spender. Store it as a secret in Render. |
+| `AGENT_SERVICE` | Yes | One service id permitted by the policy, such as `search`. |
+| `AGENT_AMOUNT` | Yes | Decimal USDC amount within the policy cap. |
+| `AGENT_EVERY` | No | `hour`, `day` or `week`; defaults to `day`. |
+| `AGENT_MEMO` | No | Optional payment memo. |
+| `TEAM_ACCOUNT_ID` | No | Team-account contract id; defaults to `TESTNET.teamAccount`. |
+| `RPC_URL` | No | Soroban RPC endpoint; defaults to the testnet URL in `TESTNET`. |
+
+One worker instance handles one agent and one service. To run another combination, deploy another worker service. The app's Agents screen displays the team-account id and each configured agent address.
+
+## How the schedule avoids duplicate payments
+
+Every 60 seconds, the worker calculates the current slot and derives a deterministic key with `scheduleKey(team, agent, service, slot)`. It first calls `reconcile(key)`, which reads `is_key_used`. A paid key is skipped. Otherwise the worker calls `pay` with that same key.
+
+A refusal is logged and is not retried for that slot by the running process. A pending result is checked again after 150 seconds; the same key is used. No disk state is required. If a network failure leaves the outcome unknown, a retry with the same key is safe because the contract rejects duplicates (`DuplicatePayment`, code 7).
+
+The worker emits one JSON line per event. It does not hold the owner key or have a function to change the policy.
+
+Source: `packages/sdk/src/worker.ts`, `packages/sdk/src/index.ts`; `render.yaml`; contract method `is_key_used`.

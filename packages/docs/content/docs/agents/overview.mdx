@@ -1,0 +1,12 @@
+---
+title: Agents
+description: An agent is a spender with its own Stellar key and an on-chain spending policy.
+---
+
+An agent is a program using its own Stellar address as a spender. The owner creates its policy in **Spenders**. The contract applies the same service allowlist, cap, allowance, payment count, expiry and pause checks to each payment.
+
+An agent signs its own `pay` call. Its key cannot change policies, withdraw USDC or approve requests. If the payment fails a rule, the call stops; an agent cannot file an approval request (`AgentCannotRequest`).
+
+The app's **Agents** screen reads agent-kind spenders, their policies, usage and recent activity. Scheduled execution runs in the SDK worker, not in the browser. See [SDK](./sdk), [The worker](./the-worker) and [Agent limits](./agent-limits).
+
+Sources: `packages/app/src/screens/Agents.tsx`; `packages/sdk/src/worker.ts`; `contracts/team-account/src/lib.rs` (`set_policy`, `pay`, `request_approval`).

@@ -1,0 +1,45 @@
+---
+title: Service registry
+description: Payments go to registered services, named by id, never to a raw address.
+---
+
+The **service registry** is a separate contract, `service-registry`, that maps a service id such as `inference-credits` to the Stellar address that receives payment for it (the **payee**).
+
+## Why payments take an id, not an address
+
+The team account's `pay` function takes a service id. It has no parameter for a destination address. At the end of its checks the contract asks the registry to resolve the id, and pays whatever address the registry returns.
+
+This removes a whole class of mistakes and attacks: a mistyped address, a pasted address from a phishing message, or an address invented by a language model cannot be expressed as a payment.
+
+## What can happen to a service
+
+| State | Effect on payment |
+| --- | --- |
+| Registered, active | Resolves to its payee. Payment can proceed. |
+| Unknown id | Resolution fails and the payment reverts. |
+| Suspended | Resolution fails and the payment reverts until the service is resumed. |
+
+## Who controls what
+
+- The **registry owner** registers services and can **suspend** or **resume** them. Service ids are never reused.
+- A service's **payee** can **rotate its payout address**, for example to move to a new wallet.
+
+Because the payee can change, an [approved exception](../using/approvals) records the payee at the time of the request, and settlement refuses if the payee has changed since. The owner then has to look at the request again.
+
+## Services and spenders
+
+A spender's policy lists the service ids it may pay. The contract checks the allowlist before it checks the registry, so a payment to a registered service that is not on a spender's list fails for that spender. A person can ask the owner for a one-off [approval](../using/approvals); an agent cannot.
+
+## Testnet services
+
+These entries are copied from `deployments/testnet.json`. Their payees are demo addresses controlled by the deployer, not outside merchants.
+
+| Id | Name | Payee |
+| --- | --- | --- |
+| `inference` | Inference credits | [`GDJ3SEG6X36I35QV3SV4ZV6MKN76UTAFLVVFLTCG7YVVOHDIAGCIRIUM`](https://stellar.expert/explorer/testnet/account/GDJ3SEG6X36I35QV7SV4ZV6MKN76UTAFLVVFLTCG7YVVOHDIAGCIRIUM) |
+| `search` | Web search API | [`GC42JB6RR4Z5PK7DQIEXWC3IL3MX6SLKIKPOM5MPLIODRGI4BVIJ7DXY`](https://stellar.expert/explorer/testnet/account/GC42JB6RR4Z5PK7DQIEXWC3IL3MX6SLKIKPOM5MPLIODRGI4BVIJ7DXY) |
+| `data` | Market data feed | [`GCL2AGNPVOQ7GUU2ZGDQ5L6WJJVPSYZBLSS6YPS6FEKT6IRHWGKCG5LU`](https://stellar.expert/explorer/testnet/account/GCL2AGNPVOQ7GUU2ZGDQ5L6WJJVPSYZBLSS6YPS6FEKT6IRHWGKCG5LU) |
+| `gpu` | GPU hours | [`GAATM7XUUCBRW2QT5NN4SG7C2VWURDPP4DTP7RPVOC7N7BKJHDGDB7WG`](https://stellar.expert/explorer/testnet/account/GAATM7XUUCBRW2QT5NN4SG7C2VWURDPP4DTP7RPVOC7N7BKJHDGDB7WG) |
+| `storage` | Object storage | [`GD2EGCAOOLGFSI442SM7NWDRPMTEGADQQ2A77FYDW6LBIGCGSX2TYITI`](https://stellar.expert/explorer/testnet/account/GD2EGCAOOLGFSI442SM7NWDRPMTEGADQQ2A77FYDW6LBIGCGSX2TYITI) |
+
+Source: `deployments/testnet.json`; contract functions `resolve` and `list` in `contracts/service-registry/src/lib.rs`.

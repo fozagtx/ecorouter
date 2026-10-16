@@ -1,0 +1,14 @@
+---
+title: When a payment is refused
+description: Read the contract rule that stopped a payment and decide what can happen next.
+---
+
+The team-account contract checks a payment in order and stops at the first failing rule. A refused call does not transfer USDC. The app displays the rule title and, where relevant, the amount over the limit.
+
+For a person, four policy limits can be sent to the owner as an approval request: service not on the allowlist, per-payment cap, payment count or allowance. Other failures, including a paused account, expired policy, duplicate key, suspended service or insufficient balance, cannot be approved. Agents cannot file approval requests.
+
+A refusal detected before transaction submission is stored locally in this browser. It is not a contract event and does not have an explorer transaction link. A failure returned by the chain has a transaction result.
+
+See [Error codes](../reference/error-codes), [Approvals](./approvals) and [Activity and receipts](./activity-and-receipts).
+
+Sources: `packages/app/src/engine/rules.ts`; `packages/app/src/chain/testnet.ts`; `contracts/team-account/src/lib.rs` (`check`, `pay`, `request_approval`).

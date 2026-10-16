@@ -26,11 +26,7 @@ export function Activity() {
     <>
       <PageHead
         title="Activity"
-        sub={
-          snap.mode === "testnet"
-            ? "Receipts read from the contract's events, newest first. A payment refused before it reached the chain left nothing on chain; it is kept here, in this browser, so you can see it."
-            : "Every payment is a receipt: paid, held, asked, approved, declined or settled. A refusal is a normal outcome, not an error."
-        }
+        sub="Receipts read from the contract's events, newest first. A payment refused before it reached the chain left nothing on chain; it is kept here, in this browser, so you can see it."
       />
       <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
         {FILTERS.map((x) => (

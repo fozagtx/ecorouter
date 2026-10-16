@@ -1,0 +1,19 @@
+---
+title: Glossary
+description: Terms used in the app, SDK and team-account contract.
+---
+
+| Term | Meaning |
+| --- | --- |
+| Team account | Soroban `team-account` contract that holds the team's USDC and enforces spender policies. |
+| Spender | Stellar address with a policy that can authorize payments from the team account. |
+| Policy | Allowance, period, cap, payment count, expiry, approved service ids and pause state for a spender. |
+| Service | Registered id resolved by `service-registry` to a payee address. |
+| Agent | Program that signs as an agent-kind spender with its own Stellar key. |
+| Replay key | 32-byte value supplied to `pay`; a used key cannot authorize another payment. |
+| Refusal | A contract or pre-submission rule result that stops payment. A refusal before submission exists only in the browser. |
+| Approval request | A person's request for an exception to an eligible policy limit. It does not transfer funds until settled. |
+| Receipt | Contract result and event data describing a successful payment. |
+| Base units | USDC amounts represented as integers with seven decimal places. |
+
+Sources: `contracts/team-account/src/lib.rs`; `contracts/service-registry/src/lib.rs`; `packages/sdk/src/index.ts`.

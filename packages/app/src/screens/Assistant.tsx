@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { EXAMPLES, paymentTool, propose, validate, type Proposal, type SchemaResult } from "../assistant/intent";
-import { resolve } from "../engine/policy";
+import { resolve } from "../engine/validation";
 import { EXCEPTION_ELIGIBLE, Rule, ruleDetail, ruleTitle } from "../engine/rules";
 import type { PayResult, Verdict } from "../engine/types";
 import { fmt } from "../lib/money";
@@ -168,7 +168,7 @@ export function Assistant() {
                       if (res) setPaid(res);
                     }}
                   >
-                    {busy ? (snap.mode === "testnet" ? "Confirm in Freighter…" : "Paying…") : "Confirm and pay"}
+                    {busy ? "Confirm in Freighter…" : "Confirm and pay"}
                   </Button>
                 </div>
               )}
@@ -183,7 +183,7 @@ export function Assistant() {
                 />
               )}
               {!r.schema.ok && r.schema.registeredElsewhere && (
-                <p className="text-[12.5px] text-ink-muted">This service is registered but not on your list. If you need it once, submit it from New payment and ask the owner to approve an exception.</p>
+                <p className="text-[12.5px] text-ink-muted">This service is registered but not on your list. If you need it once, pick it under Needs owner approval in New payment and ask the owner to approve an exception.</p>
               )}
             </Card>
           )}

@@ -1,0 +1,14 @@
+---
+title: Agent limits
+description: What an agent key can do, what the policy limits, and what remains outside the contract.
+---
+
+An agent signs only as its own spender address. `pay` does not accept a recipient address; it resolves a service id through the registry. The policy limits the allowance, period, per-payment amount, payment count, expiry and approved services. The owner can pause or remove the spender.
+
+Agents cannot file approval requests. A refused agent payment ends at the contract check that failed. To permit a different payment, the owner must change the policy.
+
+The SDK worker runs one agent and one service per Render worker. Its key is a hot key held by the worker environment; the policy does not prevent someone with that key from spending within its limits. Keep the policy narrow and rotate or remove the spender if the key is exposed.
+
+EcoRouter is testnet-only and unaudited. The registered testnet services pay demo addresses controlled by the deployer; they are not outside merchants.
+
+Sources: `contracts/team-account/src/lib.rs` (`pay`, `request_approval`, `set_policy`, `set_spender_paused`, `remove_spender`); `packages/sdk/src/worker.ts`; `deployments/testnet.json`.

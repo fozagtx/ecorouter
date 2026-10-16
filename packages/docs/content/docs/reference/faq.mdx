@@ -1,0 +1,30 @@
+---
+title: FAQ
+description: Answers about testnet access, payment refusals, policy and agent workers.
+---
+
+## Do I need a wallet?
+
+Yes. Use Freighter connected to Stellar testnet. The app uses Freighter to authorize transactions.
+
+## Can I use real money?
+
+No. The current deployment is testnet only and has not been audited. Use test funds.
+
+## Where do I get the contract ids?
+
+The testnet defaults are in `deployments/testnet.json`. See [Networks and addresses](./networks-and-addresses).
+
+## What if a payment is refused?
+
+The contract reports the first failing rule. Some policy limits can be requested for approval by a person; an agent cannot request an approval. See [When a payment is refused](../using/when-a-payment-is-refused).
+
+## Does approving a request send money?
+
+No. `approve` records a decision. `settle` is a separate transaction that pays the service if its conditions still hold.
+
+## Can an agent pay any address?
+
+No. The agent uses an approved service id, and the registry resolves that id to its current payee.
+
+Sources: `packages/app/src/chain/config.ts`; contract methods `check`, `pay`, `approve` and `settle` in `contracts/team-account/src/lib.rs`.

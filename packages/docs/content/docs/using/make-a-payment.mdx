@@ -1,0 +1,12 @@
+---
+title: Make a payment
+description: Pay a registered service from the team account under a spender policy.
+---
+
+Open **Pay**, choose a spender, select an approved service and enter a USDC amount. The destination is resolved from the service registry; the payment form does not accept a recipient address.
+
+Before submitting, the app simulates `check` and shows the contract's verdict. If it passes, the spender signs `pay(spender, service, amount, memo, key)` in Freighter. The team-account contract verifies the policy, resolves the service and transfers USDC to the registered payee.
+
+After confirmation, **Activity** shows a receipt and an explorer link. A submitted transaction can take time to appear; check its explorer link before retrying.
+
+Sources: `packages/app/src/screens/Pay.tsx`; `packages/app/src/chain/testnet.ts` (`check`, `pay`); `contracts/team-account/src/lib.rs` (`check`, `pay`).

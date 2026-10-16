@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fmt, parseAmount } from "../lib/money";
 import { EXCEPTION_ELIGIBLE, Rule, ruleDetail, ruleTitle } from "../engine/rules";
+import { servicesNeedingApproval } from "../engine/payment-services";
 import type { PayResult, Spender, Verdict } from "../engine/types";
 import { useApp } from "../state";
 import { PageHead } from "../ui/Shell";
@@ -13,7 +14,7 @@ export function Outcome({ result, spender, service, amount, memo, via, onAsked }
   const [asked, setAsked] = useState<number | null>(null);
   if (!snap) return null;
   if (result.ok) {
-    const link = explorer(snap, result.txHash);
+    const link = explorer(result.txHash);
     return (
       <div className="rounded-lg border border-ok/30 bg-ok-soft p-4 rise">
         <div className="flex items-center gap-2 text-ok font-semibold text-[14px]"><Icon name="check" /> Paid {fmt(amount)} to {serviceName(snap, service)}</div>
@@ -112,6 +113,8 @@ export function Pay() {
     );
   }
 
+  const approvalServices = mine.policy.kind === "person" ? servicesNeedingApproval(snap.services, mine.policy.services) : [];
+
   const submit = async () => {
     if (amount === null) return;
     setBusy(true);
@@ -130,7 +133,12 @@ export function Pay() {
 
   return (
     <>
-      <PageHead title="New payment" sub="Pick one of your approved services and an amount. The contract checks your policy before anything moves; there is no recipient field." />
+      <PageHead
+        title="New payment"
+        sub={mine.policy.kind === "person"
+          ? "Pick an approved service to pay directly, or choose a registered service under Needs owner approval to ask the owner for an exception. The contract checks your policy before anything moves; there is no recipient field."
+          : "Pick one of your approved services and an amount. The contract checks your policy before anything moves; there is no recipient field."}
+      />
       <div className="grid lg:grid-cols-[1fr_1.1fr] gap-4 sm:gap-6 items-start">
         <Card eyebrow="Payment" title="Pay a registered service">
           <form
@@ -140,16 +148,28 @@ export function Pay() {
               submit();
             }}
           >
-            <Field label="Service" hint="Only services on your list appear here. The registry resolves who gets paid.">
+            <Field
+              label="Service"
+              hint={mine.policy.kind === "person"
+                ? "Services on your list can be paid directly. Other registered services need owner approval."
+                : "Only services on your list appear here. The registry resolves who gets paid."}
+            >
               <select className="input" value={service} onChange={(e) => { setService(e.target.value); setResult(null); }}>
-                {mine.policy.services.map((id) => {
-                  const s = snap.services.find((x) => x.id === id);
-                  return (
-                    <option key={id} value={id}>
-                      {s ? s.name : id} {s?.suspended ? "(suspended)" : !s ? "(not registered)" : ""}
-                    </option>
-                  );
-                })}
+                <optgroup label="On your list">
+                  {mine.policy.services.map((id) => {
+                    const s = snap.services.find((x) => x.id === id);
+                    return (
+                      <option key={id} value={id}>
+                        {s ? s.name : id} {s?.suspended ? "(suspended)" : !s ? "(not registered)" : ""}
+                      </option>
+                    );
+                  })}
+                </optgroup>
+                {approvalServices.length > 0 && (
+                  <optgroup label="Needs owner approval">
+                    {approvalServices.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </optgroup>
+                )}
               </select>
             </Field>
             <Field label="Amount (USDC)" hint={`Your cap per payment is ${fmt(mine.policy.maxPayment)}.`}>
@@ -163,7 +183,7 @@ export function Pay() {
             </Field>
             <div className="flex items-center gap-3 pt-1">
               <Button type="submit" variant={ok || !verdict ? "primary" : "secondary"} disabled={busy || amount === null || !service} className="flex-1 sm:flex-none">
-                {busy ? (snap.mode === "testnet" ? "Confirm in Freighter…" : "Paying…") : ok ? `Pay ${amount !== null ? fmt(amount) : ""}` : "Submit payment"}
+                {busy ? "Confirm in Freighter…" : ok ? `Pay ${amount !== null ? fmt(amount) : ""}` : "Submit payment"}
               </Button>
               {verdict && !ok && <Badge tone={EXCEPTION_ELIGIBLE.has(verdict.rule) ? "held" : "bad"}>Will be {EXCEPTION_ELIGIBLE.has(verdict.rule) ? "held" : "refused"}</Badge>}
             </div>

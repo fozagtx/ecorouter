@@ -1,0 +1,12 @@
+---
+title: Connect Freighter
+description: Connect the app to a Freighter wallet configured for Stellar testnet.
+---
+
+The app requires Freighter and the Stellar testnet network. Install the wallet from [freighter.app](https://freighter.app), open its network selector and choose **Testnet**, then reload the app.
+
+Choose **Connect Freighter** in the app. The backend checks `isConnected()`, requests access, reads the selected address and checks `getNetwork()` before creating the session. If Freighter is missing or its network is not Testnet, the app displays an error and leaves the button available to try again.
+
+Every transaction is signed in Freighter. The app does not receive or store the wallet's secret key.
+
+Source: `packages/app/src/chain/testnet.ts` (`TestnetBackend.connect`); `packages/app/src/screens/Welcome.tsx`.

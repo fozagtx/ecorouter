@@ -1,0 +1,171 @@
+---
+title: Agent SDK
+description: Install and use the EcoRouter TypeScript SDK for team-account agent payments.
+---
+
+The package `ecorouter` exposes `TeamAgent` for the deployed team-account contract. It uses `@stellar/stellar-sdk` and defaults to the testnet values in `TESTNET`. The TypeScript source is in `packages/sdk/src/index.ts`.
+
+## Install
+
+```bash
+pnpm add ecorouter @stellar/stellar-sdk
+```
+
+The package is ESM and builds TypeScript from `src/` to `dist/`.
+
+## Use from any language
+
+The `ecorouter-agent` binary has a one-shot `pay` subcommand. It reads `AGENT_SECRET` and the optional `TEAM_ACCOUNT_ID` and `RPC_URL` from the environment, calls `TeamAgent.pay` once, and writes the outcome as one JSON line. `bigint` fields are decimal strings. Exit status is `0` for paid, `3` for refused, `4` for pending, `2` for invalid arguments, and `1` for an unexpected error.
+
+```sh
+ecorouter-agent pay --service search --amount 0.25 --memo "Daily query" --key "$PAYMENT_KEY"
+```
+
+`--key` is optional and must be 64 hexadecimal characters when supplied. Reuse the same key to safely retry an unknown result. A caller can parse the JSON line and branch on `status`:
+
+```python
+import json
+import subprocess
+
+result = subprocess.run(
+    ["ecorouter-agent", "pay", "--service", "search", "--amount", "0.25"],
+    capture_output=True,
+    text=True,
+    check=False,
+)
+if result.returncode in (0, 3, 4):
+    outcome = json.loads(result.stdout)
+    print(outcome["status"])
+else:
+    raise RuntimeError(result.stderr.strip())
+```
+
+With no subcommand, the same binary starts the scheduled worker described in [The worker](./the-worker).
+
+## Example
+
+```ts
+import { TeamAgent, TESTNET, scheduleKey } from "ecorouter";
+
+const agent = new TeamAgent({ secret: process.env.AGENT_SECRET! });
+const key = scheduleKey(
+  TESTNET.teamAccount,
+  agent.address,
+  "search",
+  Math.floor(Date.now() / 1_000),
+);
+
+const outcome = await agent.pay({ service: "search", amount: "0.25", key });
+if (outcome.status === "paid") {
+  console.log(outcome.txHash, outcome.explorerUrl, outcome.receipt.amount);
+} else if (outcome.status === "refused") {
+  console.log(outcome.rule, outcome.reason, outcome.overBy);
+} else {
+  console.log("Check again with", await agent.reconcile(outcome.key));
+}
+```
+
+`TeamAgent` exposes the public address as `address`; use the same address when the owner creates the agent policy. `teamAccount`, `rpcUrl` and `networkPassphrase` are optional overrides in the constructor.
+
+## Public API
+
+```ts
+export const TESTNET: {
+  rpcUrl: string;
+  networkPassphrase: string;
+  teamAccount: string;
+  registry: string;
+  usdc: string;
+  explorer: "https://stellar.expert/explorer/testnet";
+};
+
+export interface AgentConfig {
+  secret: string;
+  teamAccount?: string;
+  rpcUrl?: string;
+  networkPassphrase?: string;
+}
+
+export class TeamAgent {
+  constructor(cfg: AgentConfig);
+  readonly address: string;
+  check(service: string, amount: string | bigint): Promise<Verdict>;
+  policy(): Promise<Policy | null>;
+  usage(): Promise<Usage>;
+  pay(input: {
+    service: string;
+    amount: string | bigint;
+    memo?: string;
+    key?: string;
+  }): Promise<PayOutcome>;
+  reconcile(key: string): Promise<"paid" | "unpaid">;
+}
+
+export function scheduleKey(team: string, agent: string, service: string, slot: number): string;
+export const Rule: Record<string, number>;
+export function ruleReason(code: number): string;
+export function parseUsdc(value: string): bigint;
+export function formatUsdc(value: bigint): string;
+```
+
+USDC amounts passed as strings are decimal USDC values with at most seven fractional places. A `bigint` is already in the token's base units. `scheduleKey` returns a SHA-256 hex digest of `ecorouter:v1:${team}:${agent}:${service}:${slot}`.
+
+```ts
+export interface Verdict {
+  rule: number;
+  overBy: bigint;
+  allowanceLeft: bigint;
+  periodSpent: bigint;
+  periodCount: number;
+}
+
+export interface Policy {
+  kind: "person" | "agent";
+  label: string;
+  allowance: bigint;
+  period: number;
+  maxPayment: bigint;
+  maxPayments: number;
+  expiresAt: number;
+  services: string[];
+  paused: boolean;
+  anchor: number;
+}
+
+export interface Usage {
+  periodStart: number;
+  spent: bigint;
+  count: number;
+}
+
+export interface Receipt {
+  spender: string;
+  service: string;
+  payee: string;
+  amount: bigint;
+  memo: string;
+  periodSpent: bigint;
+  allowanceLeft: bigint;
+  at: number;
+}
+```
+
+The i128 monetary values are `bigint`.
+
+`PayOutcome` is a discriminated union:
+
+| Status | Fields | Meaning |
+| --- | --- | --- |
+| `paid` | `key`, `txHash`, `explorerUrl`, `receipt` | The transaction succeeded on testnet. |
+| `refused` | `key`, `rule`, `reason`, `overBy` | The contract refused the payment; no funds moved. |
+| `pending` | `key`, `txHash` | Confirmation was not seen within about 60 seconds. Reconcile before retrying. |
+
+`Rule` and `ruleReason` cover the 25 `AccountError` codes. See [Error codes](../reference/error-codes).
+
+## Safe retry
+
+`pay()` does not resend a transaction automatically. If the result is unknown, call `reconcile(key)`. A safe retry calls `pay()` again with the **same key**. The contract rejects a reused key with rule 7 (`DuplicatePayment`) if the first transaction already paid; `reconcile()` checks `is_key_used` to distinguish that case. Reads, simulations and account-sequence lookups retry network errors up to three times with backoff.
+
+Offline tests are in `packages/sdk/test/sdk.test.js`. The testnet integration script is `packages/sdk/test/live.testnet.mjs`; it is gated by `ECOROUTER_LIVE=1`.
+
+Source: `packages/sdk/src/index.ts`; contract methods `check`, `pay` and `is_key_used` in `contracts/team-account/src/lib.rs`.

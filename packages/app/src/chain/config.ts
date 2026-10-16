@@ -6,16 +6,18 @@ export interface TestnetConfig {
   networkPassphrase: string;
   accountId: string;
   registryId: string;
+  usdcId: string;
 }
 
-export const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
+export const TESTNET_PASSPHRASE = deployment.networkPassphrase;
 
-export function configFromEnv(): TestnetConfig | null {
+export function configFromEnv(): TestnetConfig {
   const env = import.meta.env;
   return {
     rpcUrl: env.VITE_RPC_URL || deployment.rpcUrl,
     networkPassphrase: TESTNET_PASSPHRASE,
     accountId: env.VITE_TEAM_ACCOUNT_ID || deployment.teamAccount.contractId,
     registryId: env.VITE_REGISTRY_ID || deployment.registry.contractId,
+    usdcId: env.VITE_USDC_ID || deployment.usdc,
   };
 }

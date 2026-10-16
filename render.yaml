@@ -29,3 +29,15 @@ services:
         value: https://ecorouter.xyz
       - key: BASE_PATH
         value: /
+  - type: worker
+    name: ecorouter-agent
+    runtime: node
+    plan: starter
+    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm --filter ecorouter build
+    startCommand: node packages/sdk/dist/worker.js
+    envVars:
+      - { key: NODE_VERSION, value: 22 }
+      - { key: AGENT_SECRET, sync: false }
+      - { key: AGENT_SERVICE, value: search }
+      - { key: AGENT_AMOUNT, value: "0.25" }
+      - { key: AGENT_EVERY, value: day }

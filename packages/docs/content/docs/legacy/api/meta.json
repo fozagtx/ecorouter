@@ -1,5 +1,0 @@
-{
-  "title": "API Reference",
-  "defaultOpen": false,
-  "pages": ["ecorouter", "payment-client", "providers", "x402", "utilities", "errors"]
-}

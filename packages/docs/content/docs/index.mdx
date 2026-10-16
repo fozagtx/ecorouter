@@ -1,42 +1,23 @@
 ---
 title: Introduction
-description: EcoRouter is a shared USDC spending account on Stellar for teams and their AI agents.
+description: Product documentation for the EcoRouter team account on Stellar testnet.
 ---
 
-EcoRouter gives a team one shared USDC account on Stellar. Every spender on that account, whether a person or an AI agent, pays under its own on-chain policy: an allowance per period, a cap per payment, a maximum number of payments, an expiry date and a list of approved services. The policy is enforced by a Soroban contract that holds the money.
-
-> **The agent proposes. Only the contract authorizes.**
-
-An assistant or an agent can suggest a payment, and the app can pre-check it, but neither can move money on its own. The only thing that moves money is the `team-account` contract, and it runs the same checks on every payment, in the same order.
+EcoRouter is a shared USDC account on Stellar testnet. Each spender has an on-chain policy enforced by the `team-account` contract: allowance, per-payment cap, payment count, expiry and approved service ids.
 
 <Callout type="warn" title="Honest status">
-EcoRouter runs on **Stellar testnet only** and the contracts are **not audited**. Use test funds. The sandbox runs the same rules in your browser, using a TypeScript mirror of the contract, so you can try everything without a wallet.
+EcoRouter runs on **Stellar testnet only** and the contracts are **not audited**. Use test funds.
 </Callout>
 
-## What a team does with it
+## Start here
 
-1. **Fund one account.** The owner deposits USDC into the team account contract.
-2. **Add spenders.** Each person or agent gets a policy. The owner can pause or remove a spender at any time.
-3. **Pay registered services.** Payments go to services in the on-chain [service registry](/concepts/services), named by id, never by address.
-4. **Hold what breaks a rule.** A payment over a limit is held, not failed. Nothing moves until the owner approves and the payment is settled in a separate step.
-5. **Keep a receipt for everything.** Settled, held, declined and refused payments all show up in Activity, with a link to the Stellar transaction when one exists.
-
-## Two ways in
-
-| | Sandbox | Stellar testnet |
-| --- | --- | --- |
-| Wallet | None | Freighter, set to Testnet |
-| Money | Test dollars in your browser | Test USDC on Stellar testnet |
-| Rules | TypeScript mirror of the contract | `team-account` and `service-registry` contracts |
-| Receipts | Local | Contract events with transaction links |
-
-Open the app at [ecorouter.xyz/app](https://ecorouter.xyz/app/) and pick one.
+Install Freighter, switch it to Testnet, connect the app, then add testnet USDC from Settings. Add spenders with service-specific policies before making a payment.
 
 <Cards>
-  <Card title="Quickstart" href="/quickstart" description="Run a team in the sandbox, then on Stellar testnet with Freighter." />
-  <Card title="Team account" href="/concepts/team-account" description="The shared account, its owner and its balance." />
-  <Card title="Spenders and policies" href="/concepts/spenders" description="Allowance, cap, payment count, expiry and approved services." />
-  <Card title="Security model" href="/security" description="The exact check order, and what is not done yet." />
-  <Card title="Contracts reference" href="/contracts" description="Functions on team-account and service-registry." />
-  <Card title="Agents" href="/concepts/agents" description="Give an AI agent its own key and policy." />
+  <Card title="Quickstart" href="/getting-started/quickstart" description="Connect Freighter, add testnet funds and make a payment." />
+  <Card title="Spenders and policies" href="/using/spenders-and-policies" description="Read the limits stored on each spender." />
+  <Card title="Agents" href="/agents/overview" description="Give an agent its own key and policy." />
+  <Card title="Networks and addresses" href="/reference/networks-and-addresses" description="Find the committed testnet deployments." />
+  <Card title="Security model" href="/security/security-model" description="Read the contract check order and known risks." />
+  <Card title="What we built" href="/resources/what-we-built" description="Source paths, deployed addresses and current limits." />
 </Cards>

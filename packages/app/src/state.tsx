@@ -1,25 +1,21 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ContractError, ruleDetail, ruleTitle } from "./engine/rules";
-import { SandboxBackend } from "./engine/sandbox";
 import type { Backend, Snapshot, Spender } from "./engine/types";
 import { configFromEnv } from "./chain/config";
 
-type SessionMode = "sandbox" | "testnet" | null;
-const SESSION_KEY = "ecorouter.session";
+const AUTOCONNECT_KEY = "ecorouter.autoconnect";
 
-function readSession(): SessionMode {
+function readAutoConnect(): boolean {
   try {
-    const v = localStorage.getItem(SESSION_KEY);
-    return v === "sandbox" || v === "testnet" ? v : null;
+    return localStorage.getItem(AUTOCONNECT_KEY) !== "off";
   } catch {
-    return null;
+    return true;
   }
 }
 
-function writeSession(v: SessionMode) {
+function writeAutoConnect(enabled: boolean) {
   try {
-    if (v) localStorage.setItem(SESSION_KEY, v);
-    else localStorage.removeItem(SESSION_KEY);
+    localStorage.setItem(AUTOCONNECT_KEY, enabled ? "on" : "off");
   } catch {
     /* ignore */
   }
@@ -42,7 +38,6 @@ interface AppState {
   run: <T>(fn: (b: Backend) => Promise<T>, success?: string) => Promise<T | undefined>;
   toast: (t: Omit<Toast, "id">) => void;
   toasts: Toast[];
-  startSandbox: () => void;
   connectTestnet: () => Promise<void>;
   leave: () => void;
   route: string;
@@ -67,13 +62,15 @@ function currentRoute(): string {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [backend, setBackend] = useState<Backend | null>(() => (readSession() === "sandbox" ? new SandboxBackend() : null));
+  const [backend, setBackend] = useState<Backend | null>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [route, setRoute] = useState(currentRoute);
   const seq = useRef(0);
+  const autoConnectAttempted = useRef(false);
+  const manualConnectStarted = useRef(false);
 
   useEffect(() => {
     const on = () => setRoute(currentRoute());
@@ -109,22 +106,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSnap(null);
     if (!backend) return;
     let alive = true;
-    (async () => {
-      // Agents act on their own schedule; in the sandbox this tab plays the worker.
-      await backend.runAgents();
-      if (alive) await refresh();
-    })();
-    const t = setInterval(async () => {
-      if ((await backend.runAgents()) > 0 && alive) {
-        toast({ tone: "neutral", title: "An agent ran its schedule", detail: "See Activity for the receipt." });
-      }
-      if (alive) await refresh();
+    void refresh();
+    const t = setInterval(() => {
+      if (alive) void refresh();
     }, 30_000);
     return () => {
       alive = false;
       clearInterval(t);
     };
-  }, [backend, refresh, toast]);
+  }, [backend, refresh]);
 
   const run = useCallback(
     async <T,>(fn: (b: Backend) => Promise<T>, success?: string): Promise<T | undefined> => {
@@ -144,41 +134,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [backend, refresh, toast],
   );
 
-  const startSandbox = useCallback(() => {
-    writeSession("sandbox");
-    setBackend(new SandboxBackend());
-    go("/overview");
-  }, [go]);
+  useEffect(() => {
+    if (backend || autoConnectAttempted.current || !readAutoConnect()) return;
+    autoConnectAttempted.current = true;
+    void (async () => {
+      try {
+        const { getAddress, isAllowed, isConnected } = await import("@stellar/freighter-api");
+        const [connection, permission] = await Promise.all([isConnected(), isAllowed()]);
+        if (manualConnectStarted.current || !connection.isConnected || connection.error || !permission.isAllowed || permission.error) return;
+        const wallet = await getAddress();
+        if (manualConnectStarted.current || wallet.error || !wallet.address) return;
+        const { TestnetBackend } = await import("./chain/testnet");
+        const b = await TestnetBackend.connectAddress(configFromEnv(), wallet.address);
+        if (manualConnectStarted.current) return;
+        setBackend(b);
+        go("/overview");
+      } catch {
+        return;
+      }
+    })();
+  }, [backend, go]);
 
   const connectTestnet = useCallback(async () => {
+    manualConnectStarted.current = true;
     const cfg = configFromEnv();
-    if (!cfg) throw new Error("This build has no testnet contracts configured.");
     // The Stellar SDK and wallet code load only when someone connects.
     const { TestnetBackend } = await import("./chain/testnet");
     const b = await TestnetBackend.connect(cfg);
-    writeSession("testnet");
+    writeAutoConnect(true);
     setBackend(b);
     go("/overview");
   }, [go]);
 
   const leave = useCallback(() => {
-    writeSession(null);
+    writeAutoConnect(false);
     setBackend(null);
     setSnap(null);
     go("/");
   }, [go]);
 
-  // A testnet session needs the wallet again after a reload.
-  useEffect(() => {
-    if (readSession() === "testnet" && !backend) writeSession(null);
-  }, [backend]);
-
   const value = useMemo<AppState>(() => {
     const isOwner = !!snap && snap.me === snap.account.owner;
     const mine = snap?.spenders.find((s) => s.address === snap.me);
     const name = (a: string) => snap?.names[a] ?? `${a.slice(0, 4)}…${a.slice(-4)}`;
-    return { backend, snap, loading, error, refresh, run, toast, toasts, startSandbox, connectTestnet, leave, route, go, isOwner, mine, name };
-  }, [backend, snap, loading, error, refresh, run, toast, toasts, startSandbox, connectTestnet, leave, route, go]);
+    return { backend, snap, loading, error, refresh, run, toast, toasts, connectTestnet, leave, route, go, isOwner, mine, name };
+  }, [backend, snap, loading, error, refresh, run, toast, toasts, connectTestnet, leave, route, go]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

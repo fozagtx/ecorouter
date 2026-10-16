@@ -18,12 +18,12 @@ import {
   scValToNative,
   xdr,
 } from "@stellar/stellar-sdk";
-import { requestAccess, signTransaction } from "@stellar/freighter-api";
+import { getNetwork, isConnected, requestAccess, signTransaction } from "@stellar/freighter-api";
 import { Buffer } from "buffer";
 import { ContractError } from "../engine/rules";
+import { collectEventPages } from "./event-pages";
 import type {
   Activity,
-  AgentRule,
   ApprovalRequest,
   Backend,
   PayArgs,
@@ -45,7 +45,6 @@ const LOCAL_KEY = "ecorouter.testnet.local.v1";
 interface LocalState {
   names: Record<string, string>;
   refused: Activity[];
-  agentRules: AgentRule[];
 }
 
 function readLocal(): LocalState {
@@ -55,7 +54,7 @@ function readLocal(): LocalState {
   } catch {
     /* fall through */
   }
-  return { names: {}, refused: [], agentRules: [] };
+  return { names: {}, refused: [] };
 }
 
 function writeLocal(s: LocalState): void {
@@ -136,7 +135,6 @@ function randomKey(): Uint8Array {
 }
 
 export class TestnetBackend implements Backend {
-  readonly mode = "testnet" as const;
   private server: rpc.Server;
   private account: Contract;
   private registry: Contract;
@@ -151,11 +149,24 @@ export class TestnetBackend implements Backend {
   }
 
   static async connect(cfg: TestnetConfig): Promise<TestnetBackend> {
+    const connection = await isConnected();
+    if (!connection.isConnected) {
+      throw new Error("Freighter isn't installed in this browser. Install it from freighter.app, then reload this page.");
+    }
     const res = await requestAccess();
     if (res.error || !res.address) {
       throw new Error(res.error?.message || "Freighter did not share an address. Is the extension installed and unlocked?");
     }
-    return new TestnetBackend(cfg, res.address);
+    return TestnetBackend.connectAddress(cfg, res.address);
+  }
+
+  static async connectAddress(cfg: TestnetConfig, address: string): Promise<TestnetBackend> {
+    const { network, networkPassphrase, error } = await getNetwork();
+    if (error) throw new Error(error.message);
+    if (networkPassphrase !== cfg.networkPassphrase) {
+      throw new Error(`Freighter is on ${network}. Switch it to Testnet and try again.`);
+    }
+    return new TestnetBackend(cfg, address);
   }
 
   // ------------------------------------------------------------- reading
@@ -196,7 +207,6 @@ export class TestnetBackend implements Backend {
     names[owner] ??= "Owner";
     const activity = [...(await this.events(latest.sequence)), ...this.local.refused].sort((a, b) => b.at - a.at);
     return {
-      mode: "testnet",
       now: Math.floor(Date.now() / 1000),
       account: { id: this.cfg.accountId, name: "Team account", owner, balance: BigInt(balance), paused: Boolean(paused) },
       me: this.me,
@@ -206,22 +216,20 @@ export class TestnetBackend implements Backend {
       ),
       requests: requests.map(toRequest).sort((a, b) => b.id - a.id),
       activity,
-      agentRules: this.local.agentRules,
       names,
     };
   }
 
-  /** Recent contract events (RPC keeps about a week of them). */
+  /** Recent contract events retained by the RPC node. */
   private async events(latestLedger: number): Promise<Activity[]> {
-    const startLedger = Math.max(1, latestLedger - 17_280 * 6);
-    let res: rpc.Api.GetEventsResponse;
-    try {
-      res = await this.server.getEvents({ startLedger, filters: [{ type: "contract", contractIds: [this.cfg.accountId] }], limit: 200 });
-    } catch {
-      return [];
-    }
+    const { oldestLedger } = await this.server.getHealth();
+    const startLedger = Math.max(oldestLedger + 1, latestLedger - 103_680);
+    const events = await collectEventPages(
+      (request) => this.server.getEvents(request),
+      { startLedger, filters: [{ type: "contract", contractIds: [this.cfg.accountId] }], limit: 200 },
+    );
     const out: Activity[] = [];
-    for (const e of res.events) {
+    for (const e of events) {
       const topics = e.topic.map((t) => scValToNative(t));
       const data = scValToNative(e.value) ?? {};
       const at = Math.floor(new Date(e.ledgerClosedAt).getTime() / 1000);
@@ -351,20 +359,8 @@ export class TestnetBackend implements Backend {
     await this.invoke(this.account, "withdraw", addr(to), i128(amount));
   }
 
-  async saveAgentRule(rule: AgentRule): Promise<void> {
-    const i = this.local.agentRules.findIndex((r) => r.id === rule.id);
-    if (i >= 0) this.local.agentRules[i] = rule;
-    else this.local.agentRules.push(rule);
-    writeLocal(this.local);
+  async deposit(amount: bigint): Promise<void> {
+    await this.invoke(new Contract(this.cfg.usdcId), "transfer", addr(this.me), addr(this.cfg.accountId), i128(amount));
   }
 
-  async deleteAgentRule(id: string): Promise<void> {
-    this.local.agentRules = this.local.agentRules.filter((r) => r.id !== id);
-    writeLocal(this.local);
-  }
-
-  /** On testnet an agent signs with its own key, held by the agent worker, never by this page. */
-  async runAgents(): Promise<number> {
-    return 0;
-  }
 }
