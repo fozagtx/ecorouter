@@ -1,5 +1,6 @@
 import { TeamAgent, TESTNET, formatUsdc, parseUsdc, scheduleKey } from "./index.js";
 import { CliUsageError, PAY_USAGE, parsePayArguments, payExitCode, serializePayOutcome } from "./cli.js";
+import { runBuilderCommand } from "./builder.js";
 
 const scheduledUsage = "Usage: AGENT_SECRET=... AGENT_SERVICE=search AGENT_AMOUNT=0.25 [AGENT_EVERY=hour|day|week] [AGENT_MEMO=...] [TEAM_ACCOUNT_ID=...] [RPC_URL=...] node packages/sdk/dist/worker.js";
 const argv = process.argv.slice(2);
@@ -58,6 +59,13 @@ if (argv[0] === "pay") {
       console.error(error instanceof Error ? error.message : String(error));
       process.exitCode = 1;
     }
+  }
+} else if (["create-agent", "list", "connect"].includes(argv[0] ?? "")) {
+  try {
+    await runBuilderCommand(argv);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = error instanceof CliUsageError ? 2 : 1;
   }
 } else if (argv.length > 0) {
   console.error(`Unknown subcommand: ${argv[0]}\n${scheduledUsage}\n${PAY_USAGE}`);
