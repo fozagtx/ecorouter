@@ -14,12 +14,15 @@ import {
 } from "@stellar/stellar-sdk";
 import { decodePolicy, decodeReceipt, decodeUsage, decodeVerdict } from "./codec.js";
 import { formatUsdc, parseUsdc } from "./money.js";
+import { payX402 } from "./x402.js";
+
+export { payX402 } from "./x402.js";
 
 export const TESTNET = {
   rpcUrl: "https://soroban-testnet.stellar.org",
   networkPassphrase: Networks.TESTNET,
-  teamAccount: "CCTLA6VIJPYHLHEXDZVVUU4GP6SCK6XXF3AQ4IRIPKIXWI37T7MEABVJ",
-  registry: "CCHZQVTD4VDTDKHPBYPEDUQ5CBCFYEH6ZDMYE7L63SAK22AXIQZCWDUD",
+  teamAccount: "CB3IBFXCPR6N5CJTE4WNUEAMPPIVJ2NTR7WM5AO2RYIDKILAEKEP4HY2",
+  registry: "CCM6XHG3JPZHKYD7ZY2GWRVRQHLU5IQ6RNX3OOWSUB7MWQWL57PUOYTM",
   usdc: "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
   explorer: "https://stellar.expert/explorer/testnet",
 } as const;
@@ -27,6 +30,7 @@ export const TESTNET = {
 export interface AgentConfig {
   secret: string;
   teamAccount?: string;
+  registry?: string;
   rpcUrl?: string;
   networkPassphrase?: string;
 }
@@ -186,6 +190,7 @@ export class TeamAgent {
   private readonly server: rpc.Server;
   private readonly contract: Contract;
   private readonly teamAccount: string;
+  private readonly registry: string;
   private readonly networkPassphrase: string;
   private readonly readSource: Account;
 
@@ -193,6 +198,7 @@ export class TeamAgent {
     this.keypair = Keypair.fromSecret(cfg.secret);
     this.address = this.keypair.publicKey();
     this.teamAccount = cfg.teamAccount ?? TESTNET.teamAccount;
+    this.registry = cfg.registry ?? TESTNET.registry;
     this.networkPassphrase = cfg.networkPassphrase ?? TESTNET.networkPassphrase;
     this.server = new rpc.Server(cfg.rpcUrl ?? TESTNET.rpcUrl);
     this.contract = new Contract(this.teamAccount);
@@ -200,11 +206,15 @@ export class TeamAgent {
   }
 
   private async read(method: string, ...args: xdr.ScVal[]): Promise<unknown> {
+    return this.readFrom(this.teamAccount, method, ...args);
+  }
+
+  private async readFrom(contractId: string, method: string, ...args: xdr.ScVal[]): Promise<unknown> {
     const tx = new TransactionBuilder(this.readSource, {
       fee: BASE_FEE,
       networkPassphrase: this.networkPassphrase,
     })
-      .addOperation(this.contract.call(method, ...args))
+      .addOperation(new Contract(contractId).call(method, ...args))
       .setTimeout(30)
       .build();
     const result = await retryRead(() => this.server.simulateTransaction(tx));
@@ -214,6 +224,67 @@ export class TeamAgent {
       throw new Error(result.error);
     }
     return result.result?.retval ? scValToNative(result.result.retval) : undefined;
+  }
+
+  async fetch(url: string | URL, init?: RequestInit): Promise<{
+    response: Response;
+    payment: { tx: string; explorerUrl: string } | null;
+    resourceFeeStroops: string;
+    rule?: number;
+  }> {
+    const result = await payX402(String(url), {
+      secret: this.keypair.secret(),
+      teamAccount: this.teamAccount,
+      init,
+      beforeSign: async (requirement) => {
+        let service: unknown;
+        try {
+          service = await this.readFrom(this.registry, "by_payee", address(requirement.payTo));
+        } catch {
+          return Rule.UnknownService;
+        }
+        if (typeof service !== "string" || !service) return Rule.UnknownService;
+        const rule = (await this.check(service, BigInt(requirement.amount))).rule;
+        return rule === Rule.Ok ? undefined : rule;
+      },
+    });
+    const transaction = result.paymentResponse?.transaction;
+    return {
+      response: result.response,
+      payment: transaction
+        ? { tx: transaction, explorerUrl: `${TESTNET.explorer}/tx/${transaction}` }
+        : null,
+      resourceFeeStroops: result.resourceFeeStroops,
+      ...(result.rule !== undefined ? { rule: result.rule } : {}),
+    };
+  }
+
+  async mcpCall(
+    url: string | URL,
+    tool: string,
+    args: Record<string, unknown>,
+  ): Promise<{ response: Response; payment: { tx: string; explorerUrl: string } | null; resourceFeeStroops: string; rule?: number }> {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+      "Mcp-Protocol-Version": "2025-03-26",
+    };
+    const initialized = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        jsonrpc: "2.0", id: 1, method: "initialize",
+        params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "ecorouter-agent", version: "0.1.0" } },
+      }),
+    });
+    if (!initialized.ok) throw new Error(`MCP initialize failed: HTTP ${initialized.status}`);
+    const session = initialized.headers.get("Mcp-Session-Id");
+    const callHeaders = { ...headers, ...(session ? { "Mcp-Session-Id": session } : {}) };
+    return this.fetch(url, {
+      method: "POST",
+      headers: callHeaders,
+      body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/call", params: { name: tool, arguments: args } }),
+    });
   }
 
   async check(service: string, amount: string | bigint): Promise<Verdict> {

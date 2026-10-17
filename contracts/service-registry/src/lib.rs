@@ -114,6 +114,7 @@ impl ServiceRegistry {
         price: i128,
     ) -> Result<(), RegistryError> {
         seller.require_auth();
+        payee.require_auth();
         if (kind != soroban_sdk::symbol_short!("mcp")
             && kind != soroban_sdk::symbol_short!("api"))
             || task.len() > 280
@@ -159,6 +160,7 @@ impl ServiceRegistry {
     pub fn set_payee(env: Env, id: Symbol, new_payee: Address) -> Result<(), RegistryError> {
         let mut service = service(&env, &id)?;
         service.seller.require_auth();
+        new_payee.require_auth();
         let new_key = DataKey::Payee(new_payee.clone());
         if let Some(existing) = env.storage().persistent().get::<_, Symbol>(&new_key) {
             if existing != id {

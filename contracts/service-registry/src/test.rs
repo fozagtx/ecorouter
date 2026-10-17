@@ -125,6 +125,47 @@ fn register_is_permissionless_but_requires_the_seller() {
 }
 
 #[test]
+fn register_requires_payee_authorization() {
+    let (env, client, _) = setup();
+    let seller = Address::generate(&env);
+    let payee = Address::generate(&env);
+    let id = symbol_short!("infer");
+    let args = (
+        seller.clone(),
+        id.clone(),
+        String::from_str(&env, "Inference"),
+        String::from_str(&env, "A task"),
+        symbol_short!("api"),
+        payee.clone(),
+        String::from_str(&env, ""),
+        1_000_000_i128,
+    )
+        .into_val(&env);
+    env.mock_auths(&[MockAuth {
+        address: &seller,
+        invoke: &MockAuthInvoke {
+            contract: &client.address,
+            fn_name: "register",
+            args,
+            sub_invokes: &[],
+        },
+    }]);
+
+    assert!(client
+        .try_register(
+            &seller,
+            &id,
+            &String::from_str(&env, "Inference"),
+            &String::from_str(&env, "A task"),
+            &symbol_short!("api"),
+            &payee,
+            &String::from_str(&env, ""),
+            &1_000_000,
+        )
+        .is_err());
+}
+
+#[test]
 fn suspended_service_does_not_resolve_and_can_be_restored() {
     let (env, client, owner) = setup();
     env.mock_all_auths();
@@ -155,6 +196,29 @@ fn payee_can_move_its_own_payout_address() {
     assert_eq!(client.resolve(&id), next);
     assert_eq!(client.by_payee(&payee), None);
     assert_eq!(client.by_payee(&next), Some(id));
+}
+
+#[test]
+fn set_payee_requires_new_payee_authorization() {
+    let (env, client, _) = setup();
+    env.mock_all_auths();
+    let seller = Address::generate(&env);
+    let payee = Address::generate(&env);
+    let next = Address::generate(&env);
+    let id = symbol_short!("data");
+    register(&env, &client, &seller, &id, &payee);
+    env.mock_auths(&[MockAuth {
+        address: &seller,
+        invoke: &MockAuthInvoke {
+            contract: &client.address,
+            fn_name: "set_payee",
+            args: (id.clone(), next.clone()).into_val(&env),
+            sub_invokes: &[],
+        },
+    }]);
+
+    assert!(client.try_set_payee(&id, &next).is_err());
+    assert_eq!(client.resolve(&id), payee);
 }
 
 #[test]

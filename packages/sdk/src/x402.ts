@@ -22,11 +22,13 @@ const NETWORK = "stellar:testnet";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 
 export interface X402PaymentResult {
+  response: Response;
   body: unknown;
   paymentResponse?: ReturnType<typeof decodePaymentResponseHeader>;
   paymentRequired?: ReturnType<typeof decodePaymentRequiredHeader>;
   resourceFeeStroops: string;
   status: number;
+  rule?: number;
 }
 
 function signatureScVal(pair: Keypair, payload: Uint8Array): xdr.ScVal {
@@ -55,12 +57,18 @@ function responseBody(response: Response): Promise<unknown> {
 
 export async function payX402(
   fetchUrl: string,
-  options: { secret: string; teamAccount: string },
+  options: {
+    secret: string;
+    teamAccount: string;
+    init?: RequestInit;
+    beforeSign?: (requirement: ReturnType<typeof decodePaymentRequiredHeader>["accepts"][number]) => Promise<number | undefined>;
+  },
 ): Promise<X402PaymentResult> {
-  const initial = await fetch(fetchUrl);
+  const initial = await fetch(fetchUrl, options.init);
   if (initial.status !== 402) {
     return {
-      body: await responseBody(initial),
+      response: initial,
+      body: await responseBody(initial.clone()),
       resourceFeeStroops: "0",
       status: initial.status,
     };
@@ -73,6 +81,17 @@ export async function payX402(
     (requirement) => requirement.scheme === "exact" && requirement.network === NETWORK,
   );
   if (!accepted) throw new Error("402 response has no exact Stellar testnet requirement");
+  const rule = await options.beforeSign?.(accepted);
+  if (rule !== undefined) {
+    return {
+      response: initial,
+      body: await responseBody(initial.clone()),
+      resourceFeeStroops: "0",
+      status: initial.status,
+      paymentRequired,
+      rule,
+    };
+  }
 
   const spender = Keypair.fromSecret(options.secret);
   const server = new rpc.Server(RPC_URL);
@@ -139,15 +158,14 @@ export async function payX402(
     accepted,
     payload: { transaction: prepared.toXDR() },
   };
-  const paid = await fetch(fetchUrl, {
-    headers: {
-      "PAYMENT-SIGNATURE": encodePaymentSignatureHeader(payload),
-    },
-  });
-  const body = await responseBody(paid);
+  const headers = new Headers(options.init?.headers);
+  headers.set("PAYMENT-SIGNATURE", encodePaymentSignatureHeader(payload));
+  const paid = await fetch(fetchUrl, { ...options.init, headers });
+  const body = await responseBody(paid.clone());
   const paymentResponseHeader = paid.headers.get("PAYMENT-RESPONSE");
   const failedRequiredHeader = paid.headers.get("PAYMENT-REQUIRED");
   return {
+    response: paid,
     body,
     ...(paymentResponseHeader
       ? { paymentResponse: decodePaymentResponseHeader(paymentResponseHeader) }

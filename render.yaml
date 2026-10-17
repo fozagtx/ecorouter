@@ -1,5 +1,16 @@
 services:
   - type: web
+    name: ecorouter-gateway
+    runtime: node
+    plan: starter
+    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm --filter @ecorouter/gateway build
+    startCommand: pnpm --filter @ecorouter/gateway start
+    envVars:
+      - { key: NODE_VERSION, value: 22 }
+      - { key: DATABASE_URL, fromDatabase: { name: ecorouter-gateway-db, property: connectionString } }
+      - { key: NEBIUS_API_KEY, sync: false }
+      - { key: PUBLIC_URL, fromService: { type: web, name: ecorouter-gateway, property: host } }
+  - type: web
     name: ecorouter-site
     runtime: static
     buildCommand: npm install -g pnpm@10 && pnpm install && pnpm build:site
@@ -41,3 +52,8 @@ services:
       - { key: AGENT_SERVICE, value: search }
       - { key: AGENT_AMOUNT, value: "0.25" }
       - { key: AGENT_EVERY, value: day }
+databases:
+  - name: ecorouter-gateway-db
+    plan: basic-256mb
+    databaseName: ecorouter_gateway
+    user: ecorouter_gateway

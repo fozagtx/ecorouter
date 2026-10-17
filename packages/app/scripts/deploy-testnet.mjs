@@ -22,6 +22,7 @@ import {
   Keypair,
   Operation,
   TransactionBuilder,
+  authorizeEntry,
   nativeToScVal,
   rpc,
   scValToNative,
@@ -63,8 +64,43 @@ async function fund(kp, funder) {
 async function submit(source, op, label, signers = [source]) {
   const account = await server.getAccount(source.publicKey());
   const tx = new TransactionBuilder(account, { fee: BASE_FEE, networkPassphrase: PASSPHRASE }).addOperation(op).setTimeout(120).build();
-  const prepared = await server.prepareTransaction(tx);
-  for (const s of signers) prepared.sign(s);
+  let prepared;
+  if (tx.operations[0]?.type === "invokeHostFunction") {
+    const simulation = await server.simulateTransaction(tx);
+    if (!rpc.Api.isSimulationSuccess(simulation)) {
+      throw new Error(`${label}: simulation failed ${simulation.error}`);
+    }
+    const latestLedger = await server.getLatestLedger();
+    const authEntries = await Promise.all((simulation.result?.auth ?? []).map(async (entry) => {
+      const credentials = entry.credentials;
+      if (credentials.type === "sorobanCredentialsSourceAccount") return entry;
+      const addressCredentials = credentials.addressV2 ??
+        credentials.address ??
+        credentials.addressWithDelegates?.addressCredentials;
+      if (!addressCredentials) throw new Error(`${label}: unsupported authorization credentials`);
+      const address = Address.fromScAddress(addressCredentials.address).toString();
+      const signer = signers.find((candidate) => candidate.publicKey() === address);
+      if (!signer) throw new Error(`${label}: missing authorization signer ${address}`);
+      return authorizeEntry(entry, signer, latestLedger.sequence + 30, PASSPHRASE, address);
+    }));
+    const invoke = tx.operations[0];
+    const authorized = rpc.assembleTransaction(tx, simulation)
+      .clearOperations()
+      .addOperation(Operation.invokeHostFunction({
+        source: invoke.source,
+        func: invoke.func,
+        auth: authEntries,
+      }))
+      .build();
+    const authorizedSimulation = await server.simulateTransaction(authorized);
+    if (!rpc.Api.isSimulationSuccess(authorizedSimulation)) {
+      throw new Error(`${label}: authorized simulation failed ${authorizedSimulation.error}`);
+    }
+    prepared = rpc.assembleTransaction(authorized, authorizedSimulation).build();
+  } else {
+    prepared = await server.prepareTransaction(tx);
+  }
+  prepared.sign(source);
   const sent = await server.sendTransaction(prepared);
   if (sent.status === "ERROR") throw new Error(`${label}: rejected ${sent.errorResult?.toXDR("base64")}`);
   const done = await server.pollTransaction(sent.hash, { attempts: 40 });
@@ -119,6 +155,11 @@ function optimizeWasm(path) {
   return output;
 }
 
+function wasmMetadata(file, contractId) {
+  const wasm = readFileSync(optimizeWasm(resolve(ROOT, "target/wasm32v1-none/release", file)));
+  return { contractId, wasmHash: createHash("sha256").update(wasm).digest("hex"), wasmBytes: wasm.length };
+}
+
 async function deployWasm(owner, file, label, constructorArgs) {
   const path = resolve(ROOT, "target/wasm32v1-none/release", file);
   if (!existsSync(path)) throw new Error(`${path} not found. Build it first:\n  cargo build --target wasm32v1-none --release -p service-registry -p team-account`);
@@ -142,6 +183,14 @@ async function deployWasm(owner, file, label, constructorArgs) {
 
 async function main() {
   const teamOnly = process.argv.includes("--team-account-only");
+  const resumeRegistryId = process.argv.find((arg) => arg.startsWith("--registry-id="))?.split("=")[1];
+  const resumeTeamAccountId = process.argv.find((arg) => arg.startsWith("--team-account-id="))?.split("=")[1];
+  if (Boolean(resumeRegistryId) !== Boolean(resumeTeamAccountId) || (teamOnly && resumeRegistryId)) {
+    throw new Error("Resuming a partial deploy requires both --registry-id and --team-account-id");
+  }
+  const gatewayUrl = process.env.PUBLIC_URL;
+  if (!teamOnly && !gatewayUrl) throw new Error("PUBLIC_URL is required to register the gateway endpoint");
+  const gatewayBase = gatewayUrl?.replace(/\/$/, "");
   const keysPath = resolve(ROOT, ".deploy/testnet-keys.json");
   mkdirSync(dirname(keysPath), { recursive: true });
   const keys = existsSync(keysPath) ? JSON.parse(readFileSync(keysPath, "utf8")) : {};
@@ -182,6 +231,10 @@ async function main() {
     record.registry = oldDeployment.registry;
     record.services = oldDeployment.services;
     log(`service registry (reuse)  ${registryId}`);
+  } else if (resumeRegistryId) {
+    registryId = resumeRegistryId;
+    record.registry = wasmMetadata("service_registry.wasm", registryId);
+    log(`service registry (resume)  ${registryId}`);
   } else {
     log("service registry");
     registryId = await deployWasm(owner, "service_registry.wasm", "registry", [new Address(owner.publicKey()).toScVal()]);
@@ -189,11 +242,14 @@ async function main() {
   }
 
   log("team account");
-  const accountId = await deployWasm(owner, "team_account.wasm", "teamAccount", [
-    new Address(owner.publicKey()).toScVal(),
-    new Address(usdcId).toScVal(),
-    new Address(registryId).toScVal(),
-  ]);
+  const accountId = resumeTeamAccountId
+    ? resumeTeamAccountId
+    : await deployWasm(owner, "team_account.wasm", "teamAccount", [
+        new Address(owner.publicKey()).toScVal(),
+        new Address(usdcId).toScVal(),
+        new Address(registryId).toScVal(),
+      ]);
+  if (resumeTeamAccountId) record.teamAccount = wasmMetadata("team_account.wasm", accountId);
   log(`  ${accountId}`);
 
   if (!teamOnly) {
@@ -211,9 +267,14 @@ async function main() {
     await fund(facilitator, owner);
     await classic(seller, Operation.changeTrust({ asset: USDC }), "trustline seller");
     await classic(payee, Operation.changeTrust({ asset: USDC }), "trustline payee");
-    await submit(
-      seller,
-      new Contract(registryId).call(
+    const existingNebius = await read(registryId, "get", xdr.ScVal.scvSymbol("nebius_llm"));
+    if (!existingNebius.error) {
+      log("  · nebius_llm already registered");
+    } else {
+      if (!/Error\(Contract, #3\)/.test(existingNebius.error)) throw new Error(existingNebius.error);
+      await submit(
+        seller,
+        new Contract(registryId).call(
         "register",
         new Address(seller.publicKey()).toScVal(),
         xdr.ScVal.scvSymbol("nebius_llm"),
@@ -221,11 +282,45 @@ async function main() {
         nativeToScVal("LLM inference with gpt-oss-120b: send a prompt, get a completion", { type: "string" }),
         xdr.ScVal.scvSymbol("api"),
         new Address(payee.publicKey()).toScVal(),
-        nativeToScVal("", { type: "string" }),
+        nativeToScVal(`${gatewayBase}/a/nebius_llm`, { type: "string" }),
         nativeToScVal(100_000n, { type: "i128" }),
-      ),
-      "register nebius_llm",
-    );
+        ),
+        "register nebius_llm",
+        [seller, payee],
+      );
+    }
+    const echoSeller = keys.echoSeller ? Keypair.fromSecret(keys.echoSeller) : Keypair.random();
+    const echoPayee = keys.echoPayee ? Keypair.fromSecret(keys.echoPayee) : Keypair.random();
+    keys.echoSeller = echoSeller.secret();
+    keys.echoPayee = echoPayee.secret();
+    writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
+    chmodSync(keysPath, 0o600);
+    await fund(echoSeller, owner);
+    await fund(echoPayee, owner);
+    await classic(echoSeller, Operation.changeTrust({ asset: USDC }), "trustline echo seller");
+    await classic(echoPayee, Operation.changeTrust({ asset: USDC }), "trustline echo payee");
+    const existingEcho = await read(registryId, "get", xdr.ScVal.scvSymbol("echo_mcp"));
+    if (!existingEcho.error) {
+      log("  · echo_mcp already registered");
+    } else {
+      if (!/Error\(Contract, #3\)/.test(existingEcho.error)) throw new Error(existingEcho.error);
+      await submit(
+        echoSeller,
+        new Contract(registryId).call(
+        "register",
+        new Address(echoSeller.publicKey()).toScVal(),
+        xdr.ScVal.scvSymbol("echo_mcp"),
+        nativeToScVal("Echo MCP", { type: "string" }),
+        nativeToScVal("Echo test tool: returns your text, uppercased", { type: "string" }),
+        xdr.ScVal.scvSymbol("mcp"),
+        new Address(echoPayee.publicKey()).toScVal(),
+        nativeToScVal(`${gatewayBase}/a/echo_mcp`, { type: "string" }),
+        nativeToScVal(50_000n, { type: "i128" }),
+        ),
+        "register echo_mcp",
+        [echoSeller, echoPayee],
+      );
+    }
     record.services = {
       nebius_llm: {
         name: "Nebius inference",
@@ -233,17 +328,30 @@ async function main() {
         kind: "api",
         seller: seller.publicKey(),
         payee: payee.publicKey(),
-        url: "",
+        url: `${gatewayBase}/a/nebius_llm`,
         price: "100000",
+      },
+      echo_mcp: {
+        name: "Echo MCP",
+        task: "Echo test tool: returns your text, uppercased",
+        kind: "mcp",
+        seller: echoSeller.publicKey(),
+        payee: echoPayee.publicKey(),
+        url: `${gatewayBase}/a/echo_mcp`,
+        price: "50000",
       },
     };
   }
   await classic(owner, Operation.changeTrust({ asset: USDC }), "trustline owner");
 
-  const migrationAmount = 700_000_000n;
   const oldBalance = await read(oldDeployment.teamAccount.contractId, "balance");
-  if (oldBalance.error || BigInt(oldBalance.value) < migrationAmount) {
-    throw new Error(`Previous team account does not have the expected 70 USDC balance: ${oldBalance.error ?? oldBalance.value}`);
+  if (oldBalance.error) throw new Error(`Could not read previous team-account balance: ${oldBalance.error}`);
+  const migrationAmount = BigInt(oldBalance.value);
+  if (migrationAmount <= 0n || migrationAmount > 700_000_000n) {
+    throw new Error(`Previous team-account balance is outside the expected migration range: ${migrationAmount}`);
+  }
+  if (migrationAmount < 700_000_000n) {
+    log(`  · migrating available balance ${migrationAmount} stroops; prior payments reduced the original 70 USDC`);
   }
   await submit(
     owner,
