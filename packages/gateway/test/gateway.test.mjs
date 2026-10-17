@@ -10,6 +10,7 @@ import {
   validateUpstreamUrl,
   verifySellerSignature,
 } from "../dist/index.js";
+import { normalizePublicUrl } from "../dist/public-url.js";
 
 const listing = {
   id: "echo_mcp",
@@ -22,6 +23,11 @@ const listing = {
   price: 50_000n,
   suspended: false,
 };
+
+test("normalizes a scheme-less public URL to HTTPS", () => {
+  assert.equal(normalizePublicUrl("gateway.onrender.com"), "https://gateway.onrender.com");
+  assert.equal(normalizePublicUrl("http://localhost:8787"), "http://localhost:8787");
+});
 
 test("verifies SEP-53 signatures over the upstream registration message", () => {
   const seller = Keypair.random();

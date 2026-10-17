@@ -156,7 +156,7 @@ const KIND: Record<Activity["kind"], { label: string; tone: "ok" | "held" | "bad
 export function ActivityRow({ a }: { a: Activity }) {
   const { snap, name } = useApp();
   if (!snap) return null;
-  const who = a.spender ? name(a.spender) : "Owner";
+  const who = a.via === "x402" ? "Team account" : a.spender ? name(a.spender) : "Owner";
   const svc = a.service ? serviceName(snap, a.service) : "";
   const k = KIND[a.kind];
   const byAgent = a.via === "agent" || snap.spenders.find((s) => s.address === a.spender)?.policy.kind === "agent";
@@ -165,7 +165,9 @@ export function ActivityRow({ a }: { a: Activity }) {
   let text: ReactNode;
   switch (a.kind) {
     case "paid":
-      text = <><b className="font-semibold">{who}</b> paid {svc}</>;
+      text = a.via === "x402"
+        ? <><b className="font-semibold">{who}</b> x402 payment to {svc}</>
+        : <><b className="font-semibold">{who}</b> paid {svc}</>;
       break;
     case "refused":
       text = <><b className="font-semibold">{who}</b>'s payment to {svc} was {refusedHard ? "refused" : "held by the rules"}</>;

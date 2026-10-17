@@ -1,11 +1,12 @@
 import { Pool } from "pg";
 import deployment from "../../../deployments/testnet.json" with { type: "json" };
 import { ChainRegistry, createGateway, PostgresUpstreams } from "./index.js";
+import { normalizePublicUrl } from "./public-url.js";
 
 const port = Number(process.env.PORT ?? 8787);
 const publicUrl = process.env.PUBLIC_URL ?? process.env.RENDER_EXTERNAL_URL;
 if (!publicUrl) throw new Error("PUBLIC_URL or RENDER_EXTERNAL_URL is required");
-const normalizedPublicUrl = publicUrl.startsWith("http") ? publicUrl : `https://${publicUrl}`;
+const normalizedPublicUrl = normalizePublicUrl(publicUrl);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const upstreams = new PostgresUpstreams(pool);
 await upstreams.initialize();

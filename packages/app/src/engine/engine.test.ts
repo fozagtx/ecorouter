@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fmt, parseAmount, usd } from "../lib/money";
 import { propose, validate } from "../assistant/intent";
+import { normalizeGatewayUrl } from "../chain/config";
 import { servicesNeedingApproval } from "./payment-services";
 
 describe("money", () => {
@@ -48,6 +49,14 @@ describe("payment service choices", () => {
     ];
 
     expect(servicesNeedingApproval(services, ["inference"])).toEqual([services[1]]);
+  });
+});
+
+describe("gateway URL config", () => {
+  it("normalizes scheme-less hosts to HTTPS and preserves explicit schemes", () => {
+    expect(normalizeGatewayUrl("gateway.onrender.com")).toBe("https://gateway.onrender.com");
+    expect(normalizeGatewayUrl("http://localhost:8787")).toBe("http://localhost:8787");
+    expect(normalizeGatewayUrl(null)).toBeNull();
   });
 });
 

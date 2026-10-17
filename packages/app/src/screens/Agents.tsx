@@ -3,7 +3,7 @@ import { useApp } from "../state";
 import { configFromEnv } from "../chain/config";
 import { PageHead } from "../ui/Shell";
 import { ActivityRow, AllowanceLine, Avatar, KindBadge, SpenderStatus } from "../ui/domain";
-import { Addr, Button, Card, Empty, ago } from "../ui/kit";
+import { Addr, Button, Card, Empty } from "../ui/kit";
 
 export function Agents() {
   const { snap, name, go } = useApp();
@@ -28,33 +28,24 @@ export function Agents() {
           <div className="hidden md:block overflow-x-auto">
             <table className="min-w-[800px] w-full text-left text-[12.5px]">
               <thead className="bg-surface-soft text-[11px] uppercase tracking-wide text-ink-muted">
-                <tr>{["Name", "Address", "Allowance used", "Cap", "Last payment", "Status"].map((title) => <th key={title} className="px-4 py-3 font-medium">{title}</th>)}</tr>
+                <tr>{["Name", "Address", "Allowance used", "Cap", "Payments this period", "Status"].map((title) => <th key={title} className="px-4 py-3 font-medium">{title}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {agents.map((agent) => {
-                  const lastPayment = snap.activity.find((activity) => activity.kind === "paid" && activity.spender === agent.address);
-                  return (
+                {agents.map((agent) => (
                     <tr key={agent.address}>
                       <td className="px-4 py-4"><div className="flex items-center gap-2.5"><Avatar name={name(agent.address)} kind="agent" size={32} /><div><div className="font-semibold">{name(agent.address)}</div><KindBadge kind="agent" /></div></div></td>
                       <td className="px-4 py-4 font-mono text-[11px]"><Addr value={agent.address} /></td>
                       <td className="px-4 py-4"><AllowanceLine s={agent} compact /></td>
                       <td className="px-4 py-4 font-semibold tnum">{fmt(agent.policy.maxPayment)}</td>
-                      <td className="px-4 py-4">
-                        {lastPayment
-                          ? <span title={lastPayment.txHash}>{lastPayment.service ?? "Payment"} · {ago(lastPayment.at, snap.now)}</span>
-                          : <span className="text-ink-muted">No attributed payment</span>}
-                      </td>
+                      <td className="px-4 py-4 tnum">{agent.usage.count} / {agent.policy.maxPayments}</td>
                       <td className="px-4 py-4"><SpenderStatus s={agent} now={snap.now} /></td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>
           <div className="grid md:hidden gap-3 p-4">
-            {agents.map((agent) => {
-              const lastPayment = snap.activity.find((activity) => activity.kind === "paid" && activity.spender === agent.address);
-              return (
+            {agents.map((agent) => (
                 <div key={agent.address} className="rounded-lg border border-line p-4">
                   <div className="flex items-start gap-3">
                     <Avatar name={name(agent.address)} kind="agent" size={36} />
@@ -63,13 +54,11 @@ export function Agents() {
                   <div className="mt-4"><AllowanceLine s={agent} /></div>
                   <div className="mt-3 grid grid-cols-2 gap-3 text-[12px]">
                     <div><div className="eyebrow mb-1">Per-payment cap</div><b className="tnum">{fmt(agent.policy.maxPayment)}</b></div>
-                    <div><div className="eyebrow mb-1">Last payment</div>{lastPayment ? <span>{lastPayment.service ?? "Payment"} · {ago(lastPayment.at, snap.now)}</span> : <span className="text-ink-muted">No attributed payment</span>}</div>
+                    <div><div className="eyebrow mb-1">Payments this period</div><b className="tnum">{agent.usage.count} / {agent.policy.maxPayments}</b></div>
                   </div>
                 </div>
-              );
-            })}
+            ))}
           </div>
-          <p className="px-4 pb-4 text-[11.5px] text-ink-muted">x402 SAC transfers are shown in Activity as account-level payments; the transfer event does not identify an individual agent.</p>
         </Card>
       )}
 

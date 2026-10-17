@@ -213,20 +213,19 @@ export function Spenders() {
       ) : (
         <>
           <div className="hidden md:block panel overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-[1120px] w-full text-left text-[12.5px]">
-                <thead className="bg-surface-soft text-[11px] uppercase tracking-wide text-ink-muted"><tr>{["Name", "Address", "Allowance", "Per-payment cap", "Payments", "Services", "Status", ""].map((label, index) => <th key={`${label}-${index}`} className="px-4 py-3 font-medium">{label}</th>)}</tr></thead>
+            <table className="w-full table-fixed text-left text-[12px]">
+                <colgroup><col className="w-[25%]" /><col className="w-[23%]" /><col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[14%]" /><col className="w-[9%]" /><col className="w-[7%]" /></colgroup>
+                <thead className="bg-surface-soft text-[11px] uppercase tracking-wide text-ink-muted"><tr>{["Name", "Allowance", "Per-payment cap", "Payments", "Services", "Status", "Actions"].map((label) => <th key={label} className="px-2.5 py-3 font-medium">{label}</th>)}</tr></thead>
                 <tbody className="divide-y divide-line">
                   {snap.spenders.map((spender) => (
                     <tr key={spender.address} className="align-top">
-                      <td className="px-4 py-4"><div className="flex items-center gap-2.5"><Avatar name={name(spender.address)} kind={spender.policy.kind} size={32} /><div><div className="font-semibold">{name(spender.address)}</div><div className="mt-0.5"><KindBadge kind={spender.policy.kind} /></div></div></div></td>
-                      <td className="px-4 py-4 font-mono text-[11px]"><Addr value={spender.address} /></td>
-                      <td className="px-4 py-4"><div className="font-medium tnum">{fmt(spender.usage.spent)} / {fmt(spender.policy.allowance)}</div><Meter value={spender.usage.spent} max={spender.policy.allowance} className="mt-1.5" /><div className="mt-1 text-[11px] text-ink-muted">per {periodLabel(spender.policy.period)}</div></td>
-                      <td className="px-4 py-4 font-medium tnum">{fmt(spender.policy.maxPayment)}</td>
-                      <td className="px-4 py-4 tnum">{spender.usage.count} / {spender.policy.maxPayments}</td>
-                      <td className="px-4 py-4"><div className="flex max-w-[180px] flex-wrap gap-1">{spender.policy.services.slice(0, 2).map((id) => <Badge key={id}>{serviceName(snap, id)}</Badge>)}{spender.policy.services.length > 2 && <Badge>+{spender.policy.services.length - 2}</Badge>}{spender.policy.services.length === 0 && <span className="text-ink-muted">None</span>}</div></td>
-                      <td className="px-4 py-4"><SpenderStatus s={spender} now={snap.now} /></td>
-                      <td className="px-4 py-4">{isOwner && <details className="relative"><summary className="list-none cursor-pointer rounded-full px-2 py-1 text-[20px] leading-none hover:bg-surface-muted" aria-label={`Actions for ${name(spender.address)}`}>···</summary><div className="absolute right-0 z-10 mt-1 w-36 rounded-lg border border-line bg-white p-1 shadow-card">
+                      <td className="px-2.5 py-4"><div className="flex min-w-0 items-center gap-2"><Avatar name={name(spender.address)} kind={spender.policy.kind} size={32} /><div className="min-w-0"><div className="break-words font-semibold">{name(spender.address)}</div><div className="mt-0.5"><KindBadge kind={spender.policy.kind} /></div><div className="mt-1 truncate font-mono text-[10px] text-ink-muted"><Addr value={spender.address} /></div></div></div></td>
+                      <td className="px-2.5 py-4"><div className="font-medium tnum">{fmt(spender.usage.spent)} / {fmt(spender.policy.allowance)}</div><Meter value={spender.usage.spent} max={spender.policy.allowance} className="mt-1.5" /><div className="mt-1 text-[11px] text-ink-muted">per {periodLabel(spender.policy.period)}</div></td>
+                      <td className="px-2.5 py-4 font-medium tnum">{fmt(spender.policy.maxPayment)}</td>
+                      <td className="px-2.5 py-4 tnum">{spender.usage.count} / {spender.policy.maxPayments}</td>
+                      <td className="px-2.5 py-4"><div className="flex flex-wrap gap-1">{spender.policy.services.slice(0, 1).map((id) => <Badge key={id}>{serviceName(snap, id)}</Badge>)}{spender.policy.services.length > 1 && <Badge>+{spender.policy.services.length - 1}</Badge>}{spender.policy.services.length === 0 && <span className="text-ink-muted">None</span>}</div></td>
+                      <td className="px-2.5 py-4"><SpenderStatus s={spender} now={snap.now} /></td>
+                      <td className="px-2.5 py-4">{isOwner && <details className="relative"><summary className="list-none cursor-pointer rounded-full px-2 py-1 text-[20px] leading-none hover:bg-surface-muted" aria-label={`Actions for ${name(spender.address)}`}>···</summary><div className="absolute right-0 z-10 mt-1 w-36 rounded-lg border border-line bg-white p-1 shadow-card">
                         <button className="block w-full rounded px-3 py-2 text-left hover:bg-surface-soft" onClick={() => { setInitial(null); setEditing(spender); }}>Edit</button>
                         <button className="block w-full rounded px-3 py-2 text-left hover:bg-surface-soft" onClick={() => void run((backend) => backend.setSpenderPaused(spender.address, !spender.policy.paused), spender.policy.paused ? "Spender resumed" : "Spender paused")}>{spender.policy.paused ? "Resume" : "Pause"}</button>
                         <button className="block w-full rounded px-3 py-2 text-left text-destructive hover:bg-surface-soft" onClick={() => { if (confirm(`Remove ${name(spender.address)}? New payments will be refused.`)) void run((backend) => backend.removeSpender(spender.address), "Spender removed"); }}>Remove</button>
@@ -234,8 +233,7 @@ export function Spenders() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+            </table>
           </div>
           <div className="grid md:hidden gap-3">
             {snap.spenders.map((spender) => (
@@ -243,7 +241,7 @@ export function Spenders() {
                 <div className="flex items-start gap-3"><Avatar name={name(spender.address)} kind={spender.policy.kind} size={36} /><div className="min-w-0 flex-1"><div className="font-semibold">{name(spender.address)}</div><div className="mt-1 flex gap-2"><KindBadge kind={spender.policy.kind} /><SpenderStatus s={spender} now={snap.now} /></div><div className="mt-2 font-mono text-[11px]"><Addr value={spender.address} /></div></div></div>
                 <div className="mt-4"><AllowanceLine s={spender} /></div>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-[12px]"><div><div className="eyebrow mb-1">Per-payment cap</div><b className="tnum">{fmt(spender.policy.maxPayment)}</b></div><div><div className="eyebrow mb-1">Payments</div><b className="tnum">{spender.usage.count} / {spender.policy.maxPayments}</b></div></div>
-                <div className="mt-3 flex flex-wrap gap-1">{spender.policy.services.slice(0, 2).map((id) => <Badge key={id}>{serviceName(snap, id)}</Badge>)}{spender.policy.services.length > 2 && <Badge>+{spender.policy.services.length - 2}</Badge>}</div>
+                <div className="mt-3 flex flex-wrap gap-1">{spender.policy.services.slice(0, 1).map((id) => <Badge key={id}>{serviceName(snap, id)}</Badge>)}{spender.policy.services.length > 1 && <Badge>+{spender.policy.services.length - 1}</Badge>}</div>
                 {isOwner && <div className="mt-4 flex gap-2 border-t border-line pt-3"><Button size="sm" onClick={() => { setInitial(null); setEditing(spender); }}>Edit</Button><Button size="sm" onClick={() => void run((backend) => backend.setSpenderPaused(spender.address, !spender.policy.paused), spender.policy.paused ? "Spender resumed" : "Spender paused")}>{spender.policy.paused ? "Resume" : "Pause"}</Button><Button size="sm" variant="danger" onClick={() => { if (confirm(`Remove ${name(spender.address)}? New payments will be refused.`)) void run((backend) => backend.removeSpender(spender.address), "Spender removed"); }}>Remove</Button></div>}
               </Card>
             ))}

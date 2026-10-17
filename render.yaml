@@ -40,6 +40,11 @@ services:
         value: https://ecorouter.xyz
       - key: BASE_PATH
         value: /
+      - key: VITE_GATEWAY_URL
+        fromService:
+          type: web
+          name: ecorouter-gateway
+          property: host
   - type: worker
     name: ecorouter-agent
     runtime: node
