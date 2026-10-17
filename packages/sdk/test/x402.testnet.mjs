@@ -94,13 +94,13 @@ async function setBuyerPolicy(buyer, maxPayment) {
   if (simulatedFee > MAX_POLICY_FEE_STROOPS) {
     throw new Error(`set_policy simulation exceeds 50 XLM; transaction was not submitted (${simulatedFee} stroops)`);
   }
-  const prepared = rpc.assembleTransaction(tx, simulation).build();
+  const prepared = stellarRpc.assembleTransaction(tx, simulation).build();
   prepared.sign(owner);
   const sent = await rpc.sendTransaction(prepared);
   if (sent.status !== "PENDING") throw new Error(`set_policy submit failed: ${JSON.stringify(sent)}`);
   const done = await rpc.pollTransaction(sent.hash, { attempts: 40 });
   if (done.status !== "SUCCESS") throw new Error(`set_policy failed: ${done.status} (${sent.hash})`);
-  console.log(`set_policy max=${maxPayment} tx=${sent.hash} fee=${done.feeCharged} stroops`);
+  console.log(`set_policy max=${maxPayment} tx=${sent.hash} fee=${done.feeCharged ?? prepared.fee} stroops`);
   return sent.hash;
 }
 
@@ -211,17 +211,29 @@ async function startSeller(facilitatorUrl) {
 }
 
 async function startLocalFacilitator() {
-  const local = new x402Facilitator().register(
-    "stellar:testnet",
-    new ExactStellarFacilitator(
-      [createEd25519Signer(keys.facilitator)],
-      {
-        rpcConfig: { url: TESTNET_RPC },
-        areFeesSponsored: true,
-        maxTransactionFeeStroops: 100_000_000,
-      },
-    ),
+  const exact = new ExactStellarFacilitator(
+    [createEd25519Signer(keys.facilitator)],
+    {
+      rpcConfig: { url: TESTNET_RPC },
+      areFeesSponsored: true,
+      maxTransactionFeeStroops: 100_000_000,
+    },
   );
+  const validateSimulationEvents = exact.validateSimulationEvents.bind(exact);
+  exact.validateSimulationEvents = (events, ...args) => {
+    const topics = events.flatMap((diagnosticEvent) => {
+      const event = diagnosticEvent.event();
+      if (event.type().name !== "contract") return [];
+      return [
+        event.body().v0().topics().map((topic) =>
+          topic.switch().name === "scvSymbol" ? topic.sym().toString() : topic.switch().name,
+        ),
+      ];
+    });
+    console.log(`local facilitator simulation event topics: ${JSON.stringify(topics)}`);
+    return validateSimulationEvents(events, ...args);
+  };
+  const local = new x402Facilitator().register("stellar:testnet", exact);
   const app = express();
   app.use(express.json());
   app.get("/supported", (_req, res) => res.json(local.getSupported()));
@@ -256,6 +268,13 @@ function succeeded(result) {
   return result?.status === 200 && result.paymentResponse?.success === true;
 }
 
+function facilitatorRefused(result) {
+  return (
+    result?.status === 402 &&
+    Boolean(result.paymentRequired?.error || result.paymentRequired?.invalidReason)
+  );
+}
+
 async function main() {
   const supported = await new HTTPFacilitatorClient({ url: FACILITATOR_URL }).getSupported();
   const exact = supported.kinds.find((kind) => kind.scheme === "exact" && kind.network === "stellar:testnet");
@@ -272,20 +291,25 @@ async function main() {
   await setBuyerPolicy(buyer, AMOUNT);
   const initialTeamBalance = await read(USDC, "balance", new Address(teamAccount).toScVal());
   const initialPayeeBalance = await read(USDC, "balance", new Address(payee.publicKey()).toScVal());
+  const prompt = "In one short sentence, what is 2 + 2?";
   let facilitatorUrl = FACILITATOR_URL;
   let localFacilitator;
   let seller = await startSeller(facilitatorUrl);
+  const inferenceUrl = () => `${seller.url}?prompt=${encodeURIComponent(prompt)}`;
   try {
     let result;
     let x402OrgFailure;
     try {
-      result = await payX402(seller.url, { secret: buyer.secret(), teamAccount });
+      result = await payX402(inferenceUrl(), { secret: buyer.secret(), teamAccount });
     } catch (error) {
       x402OrgFailure = String(error);
     }
     if (!succeeded(result)) {
       x402OrgFailure ??= JSON.stringify(result?.paymentRequired ?? result?.body ?? result);
       console.log(`x402.org exact failure: ${x402OrgFailure}`);
+      if (!facilitatorRefused(result)) {
+        throw new Error(`x402.org did not return a facilitator refusal; not using local fallback: ${x402OrgFailure}`);
+      }
       const teamAfterExternal = await read(USDC, "balance", new Address(teamAccount).toScVal());
       const payeeAfterExternal = await read(USDC, "balance", new Address(payee.publicKey()).toScVal());
       if (teamAfterExternal !== initialTeamBalance || payeeAfterExternal !== initialPayeeBalance) {
@@ -295,14 +319,21 @@ async function main() {
       localFacilitator = await startLocalFacilitator();
       facilitatorUrl = localFacilitator.url;
       seller = await startSeller(facilitatorUrl);
-      result = await payX402(seller.url, { secret: buyer.secret(), teamAccount });
+      result = await payX402(inferenceUrl(), { secret: buyer.secret(), teamAccount });
     }
-    console.log(`successful call: status=${result.status} fee=${result.resourceFeeStroops} stroops body=${JSON.stringify(result.body)}`);
+    console.log(`x402 response: status=${result.status} simulated_resource_fee=${result.resourceFeeStroops} stroops body=${JSON.stringify(result.body)}`);
     console.log(`facilitator settlement: ${JSON.stringify(result.paymentResponse)}`);
     if (!succeeded(result) || !result.paymentResponse.transaction) {
       throw new Error(`x402 settlement failed through ${facilitatorUrl}: ${JSON.stringify(result)}`);
     }
     const afterPayment = await read(USDC, "balance", new Address(teamAccount).toScVal());
+    const afterPaymentPayeeBalance = await read(USDC, "balance", new Address(payee.publicKey()).toScVal());
+    const paymentUsage = await read(teamAccount, "usage", new Address(buyer.publicKey()).toScVal());
+    const settlementHash = result.paymentResponse.transaction;
+    const explorerUrl = `https://stellar.expert/explorer/testnet/tx/${settlementHash}`;
+    console.log(`settlement hash=${settlementHash} explorer=${explorerUrl}`);
+    console.log(`payment balance delta team=${BigInt(afterPayment) - BigInt(initialTeamBalance)} payee=${BigInt(afterPaymentPayeeBalance) - BigInt(initialPayeeBalance)} stroops`);
+    console.log(`usage after payment: ${JSON.stringify(paymentUsage, (_key, value) => typeof value === "bigint" ? value.toString() : value)}`);
 
     await setBuyerPolicy(buyer, AMOUNT - 1n);
     const verdict = await read(
@@ -314,17 +345,23 @@ async function main() {
     );
     let refused;
     try {
-      refused = await payX402(seller.url, { secret: buyer.secret(), teamAccount });
+      refused = await payX402(inferenceUrl(), { secret: buyer.secret(), teamAccount });
     } catch (error) {
       refused = { status: 0, body: String(error) };
     }
     const afterRefusal = await read(USDC, "balance", new Address(teamAccount).toScVal());
+    const payeeAfterRefusal = await read(USDC, "balance", new Address(payee.publicKey()).toScVal());
     console.log(`over-cap call: status=${refused.status} response=${JSON.stringify(refused.paymentRequired ?? refused.body)}`);
-    console.log(`over-cap policy check: ${JSON.stringify(verdict)}`);
-    if (Number(verdict.rule) !== 8 || succeeded(refused) || afterRefusal !== afterPayment) {
-      throw new Error(`over-cap request was not refused without moving funds (balances ${afterPayment} -> ${afterRefusal})`);
+    console.log(`over-cap policy check: ${JSON.stringify(verdict, (_key, value) => typeof value === "bigint" ? value.toString() : value)}`);
+    if (
+      Number(verdict.rule) !== 8 ||
+      succeeded(refused) ||
+      afterRefusal !== afterPayment ||
+      payeeAfterRefusal !== afterPaymentPayeeBalance
+    ) {
+      throw new Error("over-cap request was not refused without moving funds");
     }
-    console.log(`over-cap refusal code=8 teamBalance=${afterRefusal}`);
+    console.log(`over-cap refusal code=8 teamBalance=${afterRefusal} payeeBalance=${payeeAfterRefusal}`);
   } finally {
     await close(seller.http);
     if (localFacilitator) await close(localFacilitator.http);

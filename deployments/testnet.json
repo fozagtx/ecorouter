@@ -2,32 +2,174 @@
   "network": "testnet",
   "networkPassphrase": "Test SDF Network ; September 2015",
   "rpcUrl": "https://soroban-testnet.stellar.org",
-  "deployedAt": "2026-10-16T23:43:52.179Z",
+  "deployedAt": "2026-10-17T00:03:54.173Z",
   "txs": {
-    "upload registry": "a46d9fb44fc4408cce4c23922cf0f3aa1ecf93d47610e18986e9c2fd691caaf7",
-    "deploy registry": "241735aa6765dbb4ea2b79e7cf3fd79d2c280995bbe476e041fce39af3807d45",
-    "upload teamAccount": "cac74fe934bb86d0881c5c8d0ec0b8e2545e89207ea3305e79026e2d05421e71",
-    "deploy teamAccount": "743a47768c7bcdd47e02ce6e1500f8a123a5ed39472074da534eaadb67fd480d",
-    "trustline seller": "b9322d41f5c3d561035ffcbab19def29e18518c6fa398b1a3bf4c4a1d6d89fa0",
-    "trustline payee": "4ce7e010c976344ce544894c234aca0cdc7ed7b5313ecbe4647b3d249d3921fd",
-    "register nebius_llm": "e54bb02f08fde19f6016d6ca8c57abc016c9a729d4c65ef05683d11bd9c6e5dc",
-    "trustline owner": "77e088c9526b9955b56e2246a67d8db5722dc6ff01d4d09416f24f02ce1760d4",
-    "withdraw 70 USDC from previous team account": "2d0a79b9b790d10c50a69b1fd0ff8cb52307fdb32a8ddc864b8749d02382a466",
-    "deposit 70 USDC into new team account": "8a5cf926e852ad9beee5320c51ae866cb45ece00976a7cb966cf3668b7907f4e"
+    "upload teamAccount": "c660ee2aeed440699ba61ad6ae3fcebb46ba18471ecd433635292d43c9f30d70",
+    "deploy teamAccount": "7287b6853f13cbe53cce6b5f363e37933ae976800a2c75e3268e036e1d51928b",
+    "trustline owner": "c75a87511c0b2857cd6e114a988a625b5e5adc60b65384bad9e61b22654011d3",
+    "withdraw 70 USDC from previous team account": "a636b5ad5aa2b3c9a662ef4ff70e127fccb3bf08852411af0eec0d3f61244253",
+    "deposit 70 USDC into new team account": "0c4ce99a85c8c77742937cb6b9a2d722ba81ada31213ba8c7e9b5437a8f02133"
   },
   "fees": {
-    "upload registry": "133307024",
-    "deploy registry": "438557038",
-    "upload teamAccount": "333822356",
-    "deploy teamAccount": "370715",
-    "trustline seller": "100",
-    "trustline payee": "100",
-    "register nebius_llm": "2366047",
+    "upload teamAccount": "332397696",
+    "deploy teamAccount": "371642",
     "trustline owner": "100",
-    "withdraw 70 USDC from previous team account": "12192",
-    "deposit 70 USDC into new team account": "806664"
+    "withdraw 70 USDC from previous team account": "12195",
+    "deposit 70 USDC into new team account": "808704"
   },
   "previous": [
+    {
+      "network": "testnet",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "rpcUrl": "https://soroban-testnet.stellar.org",
+      "deployedAt": "2026-10-16T23:57:26.634Z",
+      "txs": {
+        "upload teamAccount": "a95918acdd175d47a3ab6e50b86afd7c6f033be0a43e604a838d583d2c7151c1",
+        "deploy teamAccount": "20d38f045907732010ad5ab5e6b7ca136977cc1db077dabe3b53f4946c788871",
+        "trustline owner": "00be555896eac98656d3012739d72a3adcb86c401378445fbd256939219bb03d",
+        "withdraw 70 USDC from previous team account": "e334fc80ac08c7688202e407800a5fbe2eb96bbbe2e67b49572a336c036bef79",
+        "deposit 70 USDC into new team account": "c7ae37d69c5cce3634d02ae36f0949e7ea99182376a4c354b69adbcdbd2ea062"
+      },
+      "fees": {
+        "upload teamAccount": "333992186",
+        "deploy teamAccount": "371154",
+        "trustline owner": "100",
+        "withdraw 70 USDC from previous team account": "12195",
+        "deposit 70 USDC into new team account": "807630"
+      },
+      "owner": "GAC32UPERV6U2QDR2XZPDT6Z3L3BEMHBRKATB765MOBGNCY3L4YJE53H",
+      "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "registry": {
+        "contractId": "CCHZQVTD4VDTDKHPBYPEDUQ5CBCFYEH6ZDMYE7L63SAK22AXIQZCWDUD",
+        "wasmHash": "a02a79846bd71f720e6c575425c70124fcec31c861d4e781e7f1d0be21bc4488",
+        "wasmBytes": 19978
+      },
+      "services": {
+        "nebius_llm": {
+          "name": "Nebius inference",
+          "task": "LLM inference with gpt-oss-120b: send a prompt, get a completion",
+          "kind": "api",
+          "seller": "GDBLI22YPHJ7P2MMHHXHSYNLBLVPF3GSBN6GILZURDPRMXASVADYKS6P",
+          "payee": "GCPQCJ73SXITDDRSHRG5UHR4ZPL5VEUR7NYEWGRVSBWKO46G66B5WP3A",
+          "url": "",
+          "price": "100000"
+        }
+      },
+      "teamAccount": {
+        "contractId": "CDW2N6R6HKM4FBMFESPK4MHG46KLXXUZHQZF2CFNOXFO45VC3PBM6D6I",
+        "wasmHash": "84258a0e770fccc4032dbf28b4cc65ef6524021f81aff54822d60412b9ecf097",
+        "wasmBytes": 58227
+      },
+      "readBack": "ok"
+    },
+    {
+      "network": "testnet",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "rpcUrl": "https://soroban-testnet.stellar.org",
+      "deployedAt": "2026-10-16T23:52:06.146Z",
+      "txs": {
+        "upload registry": "87326a476295fbae8b11947bea89e3418a95f72cf05371af3880fd773c47ac67",
+        "deploy registry": "1ca5008988d5fbc4087521ebd66230d53681019c0419ca4209e0ea3361e559f9",
+        "upload teamAccount": "a408e9732386da84b819d0dd630179e2066c1383ec5acf7b81cd81fd241c4a98",
+        "deploy teamAccount": "b9fc7cd95e187349d63cc3018d4e380ab937a228b421ea0eda1fbb728f2e68d3",
+        "trustline seller": "767f7f44caff0faa52e5972c4121ecb056762d3c81773a010bd074c793cd849c",
+        "trustline payee": "bc8f88644fcc3873c3dfedb35d8ec5b794841302f5625111c4e3bdcdbe3bad41",
+        "register nebius_llm": "25b475e56737bad209a88be05c8d44c42596387424d88e31cb6c3fa2f37acadc",
+        "trustline owner": "87f7260a714afeff90f8267a39d7ef6feb7ea5f1c9205d5a662e8c186ce18681",
+        "withdraw 70 USDC from previous team account": "8c9fd212eb3ffccaed6aff2bdd2b39de2f1cb6a9b11cbfcdcbc243b8dbc7d1d1",
+        "deposit 70 USDC into new team account": "7b3183a925344f7b9357f55c039197eb3c4dcea0d87165fc86612c77f7eff5ea"
+      },
+      "fees": {
+        "upload registry": "134603096",
+        "deploy registry": "775037",
+        "upload teamAccount": "334434533",
+        "deploy teamAccount": "370910",
+        "trustline seller": "100",
+        "trustline payee": "100",
+        "register nebius_llm": "2368910",
+        "trustline owner": "100",
+        "withdraw 70 USDC from previous team account": "12193",
+        "deposit 70 USDC into new team account": "807630"
+      },
+      "owner": "GAC32UPERV6U2QDR2XZPDT6Z3L3BEMHBRKATB765MOBGNCY3L4YJE53H",
+      "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "registry": {
+        "contractId": "CCHZQVTD4VDTDKHPBYPEDUQ5CBCFYEH6ZDMYE7L63SAK22AXIQZCWDUD",
+        "wasmHash": "a02a79846bd71f720e6c575425c70124fcec31c861d4e781e7f1d0be21bc4488",
+        "wasmBytes": 19978
+      },
+      "teamAccount": {
+        "contractId": "CBTRTIBCJNFW5MVNYTFP3CRDJHJWOSPQRODUTPQJ2JQ3IBYIBK5X7ACF",
+        "wasmHash": "e6995f90e46e126c1fde397d06073a90a22ce49773bab89497498a2dc042de2b",
+        "wasmBytes": 58329
+      },
+      "services": {
+        "nebius_llm": {
+          "name": "Nebius inference",
+          "task": "LLM inference with gpt-oss-120b: send a prompt, get a completion",
+          "kind": "api",
+          "seller": "GDBLI22YPHJ7P2MMHHXHSYNLBLVPF3GSBN6GILZURDPRMXASVADYKS6P",
+          "payee": "GCPQCJ73SXITDDRSHRG5UHR4ZPL5VEUR7NYEWGRVSBWKO46G66B5WP3A",
+          "url": "",
+          "price": "100000"
+        }
+      },
+      "readBack": "ok"
+    },
+    {
+      "network": "testnet",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "rpcUrl": "https://soroban-testnet.stellar.org",
+      "deployedAt": "2026-10-16T23:43:52.179Z",
+      "txs": {
+        "upload registry": "a46d9fb44fc4408cce4c23922cf0f3aa1ecf93d47610e18986e9c2fd691caaf7",
+        "deploy registry": "241735aa6765dbb4ea2b79e7cf3fd79d2c280995bbe476e041fce39af3807d45",
+        "upload teamAccount": "cac74fe934bb86d0881c5c8d0ec0b8e2545e89207ea3305e79026e2d05421e71",
+        "deploy teamAccount": "743a47768c7bcdd47e02ce6e1500f8a123a5ed39472074da534eaadb67fd480d",
+        "trustline seller": "b9322d41f5c3d561035ffcbab19def29e18518c6fa398b1a3bf4c4a1d6d89fa0",
+        "trustline payee": "4ce7e010c976344ce544894c234aca0cdc7ed7b5313ecbe4647b3d249d3921fd",
+        "register nebius_llm": "e54bb02f08fde19f6016d6ca8c57abc016c9a729d4c65ef05683d11bd9c6e5dc",
+        "trustline owner": "77e088c9526b9955b56e2246a67d8db5722dc6ff01d4d09416f24f02ce1760d4",
+        "withdraw 70 USDC from previous team account": "2d0a79b9b790d10c50a69b1fd0ff8cb52307fdb32a8ddc864b8749d02382a466",
+        "deposit 70 USDC into new team account": "8a5cf926e852ad9beee5320c51ae866cb45ece00976a7cb966cf3668b7907f4e"
+      },
+      "fees": {
+        "upload registry": "133307024",
+        "deploy registry": "438557038",
+        "upload teamAccount": "333822356",
+        "deploy teamAccount": "370715",
+        "trustline seller": "100",
+        "trustline payee": "100",
+        "register nebius_llm": "2366047",
+        "trustline owner": "100",
+        "withdraw 70 USDC from previous team account": "12192",
+        "deposit 70 USDC into new team account": "806664"
+      },
+      "owner": "GAC32UPERV6U2QDR2XZPDT6Z3L3BEMHBRKATB765MOBGNCY3L4YJE53H",
+      "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "registry": {
+        "contractId": "CBCUCDIRCIV4V76WDM7AS7EEPGDXSHWHFVACZVECRMQYXXR4HF7OMF4Z",
+        "wasmHash": "ebbfe4d8ea4a1d16793a9215041d44d407257418849c156f1768f679d9c59988",
+        "wasmBytes": 19859
+      },
+      "teamAccount": {
+        "contractId": "CCV7EPWBRR7Q23NIKO5H32P45PFDFGY6JNDE6SQIZYNFP7CJGNS43MZ2",
+        "wasmHash": "9633e0bea2aa0187c3731006136bd0185efe6a25dcfddcc13e80db3076b99b8b",
+        "wasmBytes": 58277
+      },
+      "services": {
+        "nebius_llm": {
+          "name": "Nebius inference",
+          "task": "LLM inference with gpt-oss-120b: send a prompt, get a completion",
+          "kind": "api",
+          "seller": "GDBLI22YPHJ7P2MMHHXHSYNLBLVPF3GSBN6GILZURDPRMXASVADYKS6P",
+          "payee": "GCPQCJ73SXITDDRSHRG5UHR4ZPL5VEUR7NYEWGRVSBWKO46G66B5WP3A",
+          "url": "",
+          "price": "100000"
+        }
+      },
+      "readBack": "ok"
+    },
     {
       "network": "testnet",
       "networkPassphrase": "Test SDF Network ; September 2015",
@@ -133,14 +275,9 @@
   "owner": "GAC32UPERV6U2QDR2XZPDT6Z3L3BEMHBRKATB765MOBGNCY3L4YJE53H",
   "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
   "registry": {
-    "contractId": "CBCUCDIRCIV4V76WDM7AS7EEPGDXSHWHFVACZVECRMQYXXR4HF7OMF4Z",
-    "wasmHash": "ebbfe4d8ea4a1d16793a9215041d44d407257418849c156f1768f679d9c59988",
-    "wasmBytes": 19859
-  },
-  "teamAccount": {
-    "contractId": "CCV7EPWBRR7Q23NIKO5H32P45PFDFGY6JNDE6SQIZYNFP7CJGNS43MZ2",
-    "wasmHash": "9633e0bea2aa0187c3731006136bd0185efe6a25dcfddcc13e80db3076b99b8b",
-    "wasmBytes": 58277
+    "contractId": "CCHZQVTD4VDTDKHPBYPEDUQ5CBCFYEH6ZDMYE7L63SAK22AXIQZCWDUD",
+    "wasmHash": "a02a79846bd71f720e6c575425c70124fcec31c861d4e781e7f1d0be21bc4488",
+    "wasmBytes": 19978
   },
   "services": {
     "nebius_llm": {
@@ -152,6 +289,11 @@
       "url": "",
       "price": "100000"
     }
+  },
+  "teamAccount": {
+    "contractId": "CCTLA6VIJPYHLHEXDZVVUU4GP6SCK6XXF3AQ4IRIPKIXWI37T7MEABVJ",
+    "wasmHash": "047661f527864d1d598eba01072a230d5aa3386516d6679400073df62e8da675",
+    "wasmBytes": 57680
   },
   "readBack": "ok"
 }

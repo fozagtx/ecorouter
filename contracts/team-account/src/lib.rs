@@ -118,22 +118,13 @@ impl CustomAccountInterface for TeamAccount {
 
         let evaluation = evaluate(&env, &spender, &service, amount, None)
             .map_err(|(error, _)| error)?;
-        if balance(&env) < amount {
-            return Err(AccountError::InsufficientFunds);
-        }
+        // The SAC transfer enforces balance and reverts this usage write if funds are insufficient.
         let mut usage = evaluation.usage;
         usage.spent += amount;
         usage.count += 1;
         write_persistent(&env, &DataKey::Usage(spender.clone()), &usage);
-        bump_instance(&env);
-        X402Paid {
-            spender,
-            service,
-            payee,
-            amount,
-            period_spent: usage.spent,
-        }
-        .publish(&env);
+        extend_instance_ttl(&env);
+        // x402 facilitators reject simulations that emit non-transfer events.
         Ok(())
     }
 }
@@ -336,16 +327,6 @@ pub enum AccountError {
     AlreadyConfigured = 28,
 }
 
-#[contractevent(topics = ["x402", "paid"])]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct X402Paid {
-    pub spender: Address,
-    pub service: Symbol,
-    pub payee: Address,
-    pub amount: i128,
-    pub period_spent: i128,
-}
-
 #[contractevent(topics = ["join", "requested"])]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct JoinRequested {
@@ -535,7 +516,7 @@ impl TeamAccount {
             );
         }
         clear_join_request(&env, &spender);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         PolicySet {
             spender,
             allowance: policy.allowance,
@@ -654,7 +635,7 @@ impl TeamAccount {
         usage.count += 1;
         write_persistent(&env, &DataKey::Usage(spender.clone()), &usage);
         write_persistent(&env, &replay, &true);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
 
         let before = balance(&env);
         token_client(&env).transfer(&env.current_contract_address(), &payee, &amount);
@@ -763,7 +744,7 @@ impl TeamAccount {
             expires_at: now + REQUEST_TTL_SECS,
         };
         write_persistent(&env, &DataKey::Request(id), &request);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         RequestFiled {
             id,
             spender,
@@ -922,7 +903,7 @@ impl TeamAccount {
         env.storage()
             .instance()
             .set(&DataKey::JoinRequests, &addresses);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         JoinRequested { who, label: request.label, at: request.at }.publish(&env);
         Ok(())
     }
@@ -954,7 +935,7 @@ impl TeamAccount {
             .get(&DataKey::JoinRequest(who.clone()))
             .ok_or(AccountError::NoJoinRequest)?;
         clear_join_request(&env, &who);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         JoinDismissed {
             who,
             label: request.label,
@@ -1127,8 +1108,12 @@ where
         .extend_ttl(key, BUMP_THRESHOLD, BUMP_TO);
 }
 
-fn bump_instance(env: &Env) {
-    env.storage().instance().extend_ttl(BUMP_THRESHOLD, BUMP_TO);
+fn extend_instance_ttl(env: &Env) {
+    env.deployer().extend_ttl_for_contract_instance(
+        env.current_contract_address(),
+        BUMP_THRESHOLD,
+        BUMP_TO,
+    );
 }
 
 fn clear_join_request(env: &Env, who: &Address) {

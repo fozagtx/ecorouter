@@ -90,7 +90,7 @@ impl ServiceRegistry {
         env.storage()
             .instance()
             .set(&DataKey::Ids, &Vec::<Symbol>::new(&env));
-        bump_instance(&env);
+        extend_instance_ttl(&env);
     }
 
     pub fn version() -> u32 {
@@ -148,7 +148,7 @@ impl ServiceRegistry {
             .unwrap_or(Vec::new(&env));
         ids.push_back(id.clone());
         env.storage().instance().set(&DataKey::Ids, &ids);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         ServiceRegistered { id, payee }.publish(&env);
         Ok(())
     }
@@ -265,7 +265,7 @@ impl ServiceRegistry {
         env.storage()
             .instance()
             .set(&DataKey::PendingOwner, &new_owner);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         Ok(())
     }
 
@@ -278,7 +278,7 @@ impl ServiceRegistry {
         pending.require_auth();
         env.storage().instance().set(&DataKey::Owner, &pending);
         env.storage().instance().remove(&DataKey::PendingOwner);
-        bump_instance(&env);
+        extend_instance_ttl(&env);
         Ok(())
     }
 }
@@ -305,11 +305,15 @@ where
     env.storage()
         .persistent()
         .extend_ttl(key, BUMP_THRESHOLD, BUMP_TO);
-    bump_instance(env);
+    extend_instance_ttl(env);
 }
 
-fn bump_instance(env: &Env) {
-    env.storage().instance().extend_ttl(BUMP_THRESHOLD, BUMP_TO);
+fn extend_instance_ttl(env: &Env) {
+    env.deployer().extend_ttl_for_contract_instance(
+        env.current_contract_address(),
+        BUMP_THRESHOLD,
+        BUMP_TO,
+    );
 }
 
 #[cfg(test)]

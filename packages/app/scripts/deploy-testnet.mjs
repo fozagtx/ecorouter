@@ -141,6 +141,7 @@ async function deployWasm(owner, file, label, constructorArgs) {
 }
 
 async function main() {
+  const teamOnly = process.argv.includes("--team-account-only");
   const keysPath = resolve(ROOT, ".deploy/testnet-keys.json");
   mkdirSync(dirname(keysPath), { recursive: true });
   const keys = existsSync(keysPath) ? JSON.parse(readFileSync(keysPath, "utf8")) : {};
@@ -175,9 +176,17 @@ async function main() {
   record.usdc = usdcId;
   log(`  ${usdcId}`);
 
-  log("service registry");
-  const registryId = await deployWasm(owner, "service_registry.wasm", "registry", [new Address(owner.publicKey()).toScVal()]);
-  log(`  ${registryId}`);
+  let registryId;
+  if (teamOnly) {
+    registryId = oldDeployment.registry.contractId;
+    record.registry = oldDeployment.registry;
+    record.services = oldDeployment.services;
+    log(`service registry (reuse)  ${registryId}`);
+  } else {
+    log("service registry");
+    registryId = await deployWasm(owner, "service_registry.wasm", "registry", [new Address(owner.publicKey()).toScVal()]);
+    log(`  ${registryId}`);
+  }
 
   log("team account");
   const accountId = await deployWasm(owner, "team_account.wasm", "teamAccount", [
@@ -187,46 +196,48 @@ async function main() {
   ]);
   log(`  ${accountId}`);
 
-  log("Nebius listing");
-  const seller = keys.seller ? Keypair.fromSecret(keys.seller) : Keypair.random();
-  const payee = keys.payee ? Keypair.fromSecret(keys.payee) : Keypair.random();
-  keys.seller = seller.secret();
-  keys.payee = payee.secret();
-  const facilitator = keys.facilitator ? Keypair.fromSecret(keys.facilitator) : Keypair.random();
-  keys.facilitator = facilitator.secret();
-  writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
-  chmodSync(keysPath, 0o600);
-  await fund(seller, owner);
-  await fund(payee, owner);
-  await fund(facilitator, owner);
-  await classic(seller, Operation.changeTrust({ asset: USDC }), "trustline seller");
-  await classic(payee, Operation.changeTrust({ asset: USDC }), "trustline payee");
-  await submit(
-    seller,
-    new Contract(registryId).call(
-      "register",
-      new Address(seller.publicKey()).toScVal(),
-      xdr.ScVal.scvSymbol("nebius_llm"),
-      nativeToScVal("Nebius inference", { type: "string" }),
-      nativeToScVal("LLM inference with gpt-oss-120b: send a prompt, get a completion", { type: "string" }),
-      xdr.ScVal.scvSymbol("api"),
-      new Address(payee.publicKey()).toScVal(),
-      nativeToScVal("", { type: "string" }),
-      nativeToScVal(100_000n, { type: "i128" }),
-    ),
-    "register nebius_llm",
-  );
-  record.services = {
-    nebius_llm: {
-      name: "Nebius inference",
-      task: "LLM inference with gpt-oss-120b: send a prompt, get a completion",
-      kind: "api",
-      seller: seller.publicKey(),
-      payee: payee.publicKey(),
-      url: "",
-      price: "100000",
-    },
-  };
+  if (!teamOnly) {
+    log("Nebius listing");
+    const seller = keys.seller ? Keypair.fromSecret(keys.seller) : Keypair.random();
+    const payee = keys.payee ? Keypair.fromSecret(keys.payee) : Keypair.random();
+    keys.seller = seller.secret();
+    keys.payee = payee.secret();
+    const facilitator = keys.facilitator ? Keypair.fromSecret(keys.facilitator) : Keypair.random();
+    keys.facilitator = facilitator.secret();
+    writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
+    chmodSync(keysPath, 0o600);
+    await fund(seller, owner);
+    await fund(payee, owner);
+    await fund(facilitator, owner);
+    await classic(seller, Operation.changeTrust({ asset: USDC }), "trustline seller");
+    await classic(payee, Operation.changeTrust({ asset: USDC }), "trustline payee");
+    await submit(
+      seller,
+      new Contract(registryId).call(
+        "register",
+        new Address(seller.publicKey()).toScVal(),
+        xdr.ScVal.scvSymbol("nebius_llm"),
+        nativeToScVal("Nebius inference", { type: "string" }),
+        nativeToScVal("LLM inference with gpt-oss-120b: send a prompt, get a completion", { type: "string" }),
+        xdr.ScVal.scvSymbol("api"),
+        new Address(payee.publicKey()).toScVal(),
+        nativeToScVal("", { type: "string" }),
+        nativeToScVal(100_000n, { type: "i128" }),
+      ),
+      "register nebius_llm",
+    );
+    record.services = {
+      nebius_llm: {
+        name: "Nebius inference",
+        task: "LLM inference with gpt-oss-120b: send a prompt, get a completion",
+        kind: "api",
+        seller: seller.publicKey(),
+        payee: payee.publicKey(),
+        url: "",
+        price: "100000",
+      },
+    };
+  }
   await classic(owner, Operation.changeTrust({ asset: USDC }), "trustline owner");
 
   const migrationAmount = 700_000_000n;
@@ -272,6 +283,14 @@ async function main() {
   writeFileSync(resolve(ROOT, "deployments/testnet.json"), JSON.stringify(record, null, 2) + "\n");
   writeFileSync(keysPath, JSON.stringify(keys, null, 2), { mode: 0o600 });
   chmodSync(keysPath, 0o600);
+  log("\nextending contract code and instance TTL by 7 days");
+  const ttl = spawnSync(process.execPath, [resolve(ROOT, "packages/app/scripts/extend-ttl.mjs"), "--days", "7"], {
+    cwd: ROOT,
+    env: process.env,
+    encoding: "utf8",
+    stdio: "inherit",
+  });
+  if (ttl.error || ttl.status !== 0) throw new Error(`extend-ttl failed: ${ttl.error?.message ?? ttl.status}`);
   log("\nwrote deployments/testnet.json and local .deploy/testnet-keys.json");
   log(`explorer  https://stellar.expert/explorer/testnet/contract/${accountId}`);
   log("next      send testnet USDC to the team account, then add spenders in the app");

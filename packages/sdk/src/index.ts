@@ -18,8 +18,8 @@ import { formatUsdc, parseUsdc } from "./money.js";
 export const TESTNET = {
   rpcUrl: "https://soroban-testnet.stellar.org",
   networkPassphrase: Networks.TESTNET,
-  teamAccount: "CCV7EPWBRR7Q23NIKO5H32P45PFDFGY6JNDE6SQIZYNFP7CJGNS43MZ2",
-  registry: "CBCUCDIRCIV4V76WDM7AS7EEPGDXSHWHFVACZVECRMQYXXR4HF7OMF4Z",
+  teamAccount: "CCTLA6VIJPYHLHEXDZVVUU4GP6SCK6XXF3AQ4IRIPKIXWI37T7MEABVJ",
+  registry: "CCHZQVTD4VDTDKHPBYPEDUQ5CBCFYEH6ZDMYE7L63SAK22AXIQZCWDUD",
   usdc: "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
   explorer: "https://stellar.expert/explorer/testnet",
 } as const;
