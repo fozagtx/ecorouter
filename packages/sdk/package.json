@@ -4,7 +4,8 @@
   "description": "Pay from an EcoRouter team account on Stellar as an AI agent",
   "type": "module",
   "bin": {
-    "ecorouter-agent": "./dist/worker.js"
+    "ecorouter-agent": "./dist/worker.js",
+    "ecorouter": "./dist/worker.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,6 +13,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./x402": {
+      "types": "./dist/x402.d.ts",
+      "import": "./dist/x402.js"
     }
   },
   "files": [
@@ -31,7 +36,11 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@stellar/stellar-sdk": "^17.2.1"
+    "@stellar/stellar-sdk": "^17.2.1",
+    "@x402/core": "2.28.0",
+    "@x402/express": "2.28.0",
+    "@x402/stellar": "2.28.0",
+    "express": "5.3.0"
   },
   "engines": {
     "node": ">=20"

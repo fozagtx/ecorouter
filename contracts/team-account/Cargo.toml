@@ -16,3 +16,4 @@ soroban-sdk = { workspace = true }
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
 service-registry = { path = "../service-registry" }
+ed25519-dalek.workspace = true

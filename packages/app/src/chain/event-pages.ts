@@ -1,5 +1,5 @@
 export type EventPageRequest = {
-  filters: Array<{ type: "contract"; contractIds: string[] }>;
+  filters: Array<{ type: "contract"; contractIds: string[]; topics?: string[][] }>;
   limit: number;
 } & ({ startLedger: number; cursor?: never } | { cursor: string; startLedger?: never });
 

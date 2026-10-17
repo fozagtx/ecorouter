@@ -5,10 +5,10 @@
 @layer base {
   html {
     color-scheme: light;
-    background: #ffffff;
+    background: #fafaf7;
   }
   body {
-    @apply bg-white text-ink font-sans antialiased text-[14px];
+    @apply bg-surface-soft text-ink font-sans antialiased text-[14px];
     letter-spacing: -0.01em;
     font-feature-settings: "cv11", "ss01";
     overflow-x: hidden;

@@ -12,11 +12,5 @@
     "test": "pnpm --filter ecorouter test && pnpm --filter @ecorouter/app test",
     "test:contracts": "cargo test --workspace",
     "typecheck": "pnpm --filter ecorouter typecheck && pnpm --filter @ecorouter/app typecheck"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp"
-    ]
   }
 }

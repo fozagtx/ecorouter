@@ -12,7 +12,11 @@ use soroban_sdk::{
     Symbol, Vec,
 };
 
-pub const VERSION: u32 = 1;
+pub const VERSION: u32 = 2;
+const DAY_IN_LEDGERS: u32 = 17_280;
+// Expired persistent entries are archived and can be restored.
+const BUMP_THRESHOLD: u32 = 7 * DAY_IN_LEDGERS;
+const BUMP_TO: u32 = 30 * DAY_IN_LEDGERS;
 
 #[contract]
 pub struct ServiceRegistry;
@@ -22,7 +26,12 @@ pub struct ServiceRegistry;
 pub struct Service {
     pub id: Symbol,
     pub name: String,
+    pub task: String,
+    pub seller: Address,
+    pub kind: Symbol,
     pub payee: Address,
+    pub url: String,
+    pub price: i128,
     pub suspended: bool,
 }
 
@@ -32,6 +41,7 @@ enum DataKey {
     PendingOwner,
     Ids,
     Service(Symbol),
+    Payee(Address),
 }
 
 #[contracterror]
@@ -43,6 +53,9 @@ pub enum RegistryError {
     UnknownService = 3,
     ServiceSuspended = 4,
     NoPendingOwner = 5,
+    NotAuthorized = 6,
+    PayeeTaken = 7,
+    InvalidListing = 8,
 }
 
 #[contractevent(topics = ["service", "registered"])]
@@ -77,6 +90,7 @@ impl ServiceRegistry {
         env.storage()
             .instance()
             .set(&DataKey::Ids, &Vec::<Symbol>::new(&env));
+        extend_instance_ttl(&env);
     }
 
     pub fn version() -> u32 {
@@ -87,25 +101,47 @@ impl ServiceRegistry {
         owner(&env)
     }
 
-    /// Owner-only. Registers a new service id. Ids are never reused.
+    /// Registers a unique listing. The seller owns listing metadata.
     pub fn register(
         env: Env,
+        seller: Address,
         id: Symbol,
         name: String,
+        task: String,
+        kind: Symbol,
         payee: Address,
+        url: String,
+        price: i128,
     ) -> Result<(), RegistryError> {
-        owner(&env)?.require_auth();
+        seller.require_auth();
+        payee.require_auth();
+        if (kind != soroban_sdk::symbol_short!("mcp")
+            && kind != soroban_sdk::symbol_short!("api"))
+            || task.len() > 280
+        {
+            return Err(RegistryError::InvalidListing);
+        }
         let key = DataKey::Service(id.clone());
         if env.storage().persistent().has(&key) {
             return Err(RegistryError::AlreadyRegistered);
         }
+        let payee_key = DataKey::Payee(payee.clone());
+        if env.storage().persistent().has(&payee_key) {
+            return Err(RegistryError::PayeeTaken);
+        }
         let service = Service {
             id: id.clone(),
             name,
+            task,
+            seller,
+            kind,
             payee: payee.clone(),
+            url,
+            price,
             suspended: false,
         };
-        env.storage().persistent().set(&key, &service);
+        write_persistent(&env, &key, &service);
+        write_persistent(&env, &payee_key, &id);
         let mut ids: Vec<Symbol> = env
             .storage()
             .instance()
@@ -113,6 +149,7 @@ impl ServiceRegistry {
             .unwrap_or(Vec::new(&env));
         ids.push_back(id.clone());
         env.storage().instance().set(&DataKey::Ids, &ids);
+        extend_instance_ttl(&env);
         ServiceRegistered { id, payee }.publish(&env);
         Ok(())
     }
@@ -122,12 +159,21 @@ impl ServiceRegistry {
     /// was filed.
     pub fn set_payee(env: Env, id: Symbol, new_payee: Address) -> Result<(), RegistryError> {
         let mut service = service(&env, &id)?;
-        service.payee.require_auth();
+        service.seller.require_auth();
+        new_payee.require_auth();
+        let new_key = DataKey::Payee(new_payee.clone());
+        if let Some(existing) = env.storage().persistent().get::<_, Symbol>(&new_key) {
+            if existing != id {
+                return Err(RegistryError::PayeeTaken);
+            }
+        }
         let old_payee = service.payee.clone();
-        service.payee = new_payee.clone();
         env.storage()
             .persistent()
-            .set(&DataKey::Service(id.clone()), &service);
+            .remove(&DataKey::Payee(old_payee.clone()));
+        service.payee = new_payee.clone();
+        write_persistent(&env, &DataKey::Service(id.clone()), &service);
+        write_persistent(&env, &new_key, &id);
         PayeeChanged {
             id,
             old_payee,
@@ -137,14 +183,47 @@ impl ServiceRegistry {
         Ok(())
     }
 
-    /// Owner-only. A suspended service resolves to nothing.
-    pub fn set_suspended(env: Env, id: Symbol, suspended: bool) -> Result<(), RegistryError> {
-        owner(&env)?.require_auth();
+    pub fn set_url(env: Env, id: Symbol, url: String) -> Result<(), RegistryError> {
         let mut service = service(&env, &id)?;
+        service.seller.require_auth();
+        service.url = url;
+        write_persistent(&env, &DataKey::Service(id), &service);
+        Ok(())
+    }
+
+    pub fn set_price(env: Env, id: Symbol, price: i128) -> Result<(), RegistryError> {
+        let mut service = service(&env, &id)?;
+        service.seller.require_auth();
+        service.price = price;
+        write_persistent(&env, &DataKey::Service(id), &service);
+        Ok(())
+    }
+
+    pub fn set_task(env: Env, id: Symbol, task: String) -> Result<(), RegistryError> {
+        let mut service = service(&env, &id)?;
+        service.seller.require_auth();
+        if task.len() > 280 {
+            return Err(RegistryError::InvalidListing);
+        }
+        service.task = task;
+        write_persistent(&env, &DataKey::Service(id), &service);
+        Ok(())
+    }
+
+    /// A seller or the registry owner may suspend a listing.
+    pub fn set_suspended(
+        env: Env,
+        id: Symbol,
+        suspended: bool,
+        caller: Address,
+    ) -> Result<(), RegistryError> {
+        let mut service = service(&env, &id)?;
+        caller.require_auth();
+        if caller != service.seller && caller != owner(&env)? {
+            return Err(RegistryError::NotAuthorized);
+        }
         service.suspended = suspended;
-        env.storage()
-            .persistent()
-            .set(&DataKey::Service(id.clone()), &service);
+        write_persistent(&env, &DataKey::Service(id.clone()), &service);
         SuspensionChanged { id, suspended }.publish(&env);
         Ok(())
     }
@@ -161,6 +240,10 @@ impl ServiceRegistry {
 
     pub fn get(env: Env, id: Symbol) -> Option<Service> {
         env.storage().persistent().get(&DataKey::Service(id))
+    }
+
+    pub fn by_payee(env: Env, payee: Address) -> Option<Symbol> {
+        env.storage().persistent().get(&DataKey::Payee(payee))
     }
 
     pub fn list(env: Env) -> Vec<Service> {
@@ -184,6 +267,7 @@ impl ServiceRegistry {
         env.storage()
             .instance()
             .set(&DataKey::PendingOwner, &new_owner);
+        extend_instance_ttl(&env);
         Ok(())
     }
 
@@ -196,6 +280,7 @@ impl ServiceRegistry {
         pending.require_auth();
         env.storage().instance().set(&DataKey::Owner, &pending);
         env.storage().instance().remove(&DataKey::PendingOwner);
+        extend_instance_ttl(&env);
         Ok(())
     }
 }
@@ -212,6 +297,25 @@ fn service(env: &Env, id: &Symbol) -> Result<Service, RegistryError> {
         .persistent()
         .get(&DataKey::Service(id.clone()))
         .ok_or(RegistryError::UnknownService)
+}
+
+fn write_persistent<V>(env: &Env, key: &DataKey, value: &V)
+where
+    V: soroban_sdk::IntoVal<Env, soroban_sdk::Val>,
+{
+    env.storage().persistent().set(key, value);
+    env.storage()
+        .persistent()
+        .extend_ttl(key, BUMP_THRESHOLD, BUMP_TO);
+    extend_instance_ttl(env);
+}
+
+fn extend_instance_ttl(env: &Env) {
+    env.deployer().extend_ttl_for_contract_instance(
+        env.current_contract_address(),
+        BUMP_THRESHOLD,
+        BUMP_TO,
+    );
 }
 
 #[cfg(test)]

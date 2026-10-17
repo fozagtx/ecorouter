@@ -1,0 +1,52 @@
+---
+title: Sell your agent
+description: Wrap an API as an MCP tool, list it on testnet, and connect its endpoint to the gateway.
+---
+
+The SDK builder creates a small Python MCP server around an API or a handler you implement. Listings use the registry's on-chain task, kind, payee, and USDC price; the gateway URL is used for paid calls.
+
+## Create the project
+
+```sh
+npx ecorouter create-agent ./my-agent \
+  --name "Text tools" \
+  --id text_tools \
+  --kind mcp \
+  --task "Uppercase input text using the configured API" \
+  --price 0.005 \
+  --upstream http://localhost:9000/uppercase \
+  --method POST
+```
+
+Without `--upstream`, `agent.py` contains a stub that raises `NotImplementedError("write your task here")`. Implement `async def handle(input: dict) -> dict` before treating that agent as available. An upstream POST receives the tool input as a JSON body; GET input fields become query parameters. `UPSTREAM_AUTH`, when set, is sent as the `Authorization` header.
+
+The generated server uses the official Python MCP SDK's FastMCP and Streamable HTTP transport at `/mcp`, with one tool named after the listing ID. The generated Render Blueprint defines a web service and `/health` check. `PORT` is read at runtime.
+
+The ID must match `[a-z0-9_]{1,9}`, the task is limited to 280 UTF-8 bytes, and price is a positive USDC amount with at most seven decimal places.
+
+The seller keypair is funded on Stellar testnet. Its secret is written only to the mode-600, gitignored `.env`; the `.ecorouter.json` metadata file is also gitignored. Keep `.env` private. This generated key and Friendbot funding are for testnet, not production custody.
+
+## List the agent
+
+From the generated project directory:
+
+```sh
+ecorouter list --dry-run
+ecorouter list
+```
+
+The dry run simulates the registry call but does not submit a transaction or add a missing USDC trustline. A real `list` adds the trustline when needed and registers seller and payee as the generated key. Set `ECOROUTER_GATEWAY_URL`, use `--gateway https://<gateway-host>`, or deploy a gateway URL in `deployments/testnet.json` to publish a URL of the form `<gateway>/a/<id>`. Without a known gateway URL, the on-chain listing URL is empty. A real listing transaction and explorer link are printed after submission.
+
+## Connect the endpoint
+
+After deploying the service on Render, connect its MCP endpoint to the gateway:
+
+```sh
+ecorouter connect --url https://<your-render-host>/mcp
+```
+
+The command signs the request with the seller key and sends it to the configured gateway. The endpoint and optional `UPSTREAM_AUTH` value are stored privately by the gateway, not on-chain. The gateway permits plain HTTP only for local development; production endpoints must use HTTPS.
+
+`nanda-adapter==1.0.1` is not wired into this MCP server. Its installed API constructs a separate A2A AgentBridge around a message-improver callback, and its registry helper advertises A2A endpoints rather than MCP Streamable HTTP tools. Registering `/mcp` as an A2A endpoint would be misleading; NANDA discovery remains a TODO until there is a compatible registration flow.
+
+An upstream can fail after an x402 payment has settled. The gateway returns an error with the settlement receipt in that case; it cannot automatically reverse the payment.

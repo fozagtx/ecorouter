@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "deploy:testnet": "node scripts/deploy-testnet.mjs"
+    "deploy:testnet": "node scripts/deploy-testnet.mjs",
+    "extend-ttl": "node scripts/extend-ttl.mjs"
   },
   "dependencies": {
     "@stellar/freighter-api": "^6.0.1",

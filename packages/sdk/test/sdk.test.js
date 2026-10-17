@@ -82,6 +82,7 @@ test("contract errors map to contract codes and rule titles", () => {
 test("native policy, usage, verdict, and receipt values decode to camelCase", () => {
   const policy = decodePolicy({
     kind: 1,
+    signer: Uint8Array.from([1, 2, 255]),
     label: "agent",
     allowance: 20_000_000n,
     period: 2_592_000,
@@ -94,6 +95,7 @@ test("native policy, usage, verdict, and receipt values decode to camelCase", ()
   });
   assert.deepEqual(policy, {
     kind: "agent",
+    signer: "0102ff",
     label: "agent",
     allowance: 20_000_000n,
     period: 2_592_000,

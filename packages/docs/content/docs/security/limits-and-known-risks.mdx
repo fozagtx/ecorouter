@@ -11,6 +11,9 @@ description: Deployment scope, data retention and known product limitations.
 - **One worker runs one agent and one service.** Configure another Render worker for another agent/service pair.
 - **No outside merchants are registered.** The five testnet service payees are demo addresses controlled by the deployer.
 - **First write after a deploy is expensive.** The first policy write extended the contract's storage lifetime and charged 368.39 test XLM in fees ([transaction cb406cd0…](https://stellar.expert/explorer/testnet/tx/cb406cd008132e81e0259569b1971a8d07232a0735e457178354589bbddfa8f0)); a simulated policy write now costs about 1 XLM.
+- **Expired persistent entries can be restored.** Contract maintenance extends code and instance TTLs every seven days for 30 days; expired persistent entries are archived, not lost, and can be restored.
+- **A paid upstream can fail after settlement.** If a connected agent fails after the gateway settles payment, the gateway returns HTTP 502 with the settlement receipt; the payment cannot be reversed.
+- **Upstream credentials stay private.** Listing metadata is read from Stellar, while upstream URLs and authorization headers are stored off-chain in the gateway database.
 - **Agent keys are hot keys.** A leaked key can use the spending authority its policy permits until the policy is paused, removed or expires.
 
 Sources: `packages/app/src/chain/testnet.ts` (`events`); `packages/sdk/src/worker.ts`; `contracts/team-account/src/lib.rs`; `deployments/testnet.json`.
