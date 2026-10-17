@@ -75,7 +75,7 @@ export function propose(sentence: string, allowed: string[], registry: Service[]
   const meta = (id: string) => registry.find((s) => s.id === id);
   const score = (id: string): number => {
     const s = meta(id);
-    const vocab = new Set([id.toLowerCase(), ...words(s?.name ?? ""), ...(s?.tags ?? [])]);
+    const vocab = new Set([id.toLowerCase(), ...words(s?.name ?? ""), ...words(s?.task ?? "")]);
     return ws.reduce((n, w) => n + (vocab.has(w) ? (w === id ? 3 : 1) : 0), 0);
   };
   const rank = (ids: string[]) => ids.map((id) => ({ id, n: score(id) })).filter((x) => x.n > 0).sort((a, b) => b.n - a.n);

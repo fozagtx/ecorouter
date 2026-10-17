@@ -200,6 +200,7 @@ export function ActivityRow({ a }: { a: Activity }) {
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-ink-muted">
           <span title={new Date(a.at * 1000).toLocaleString()}>{ago(a.at, snap.now)}</span>
           {a.memo && <span className="truncate max-w-[260px]">· “{a.memo}”</span>}
+          {a.via === "x402" && <Badge tone="accent">x402</Badge>}
           {a.via === "agent" && <Badge tone="agent">by schedule</Badge>}
           {a.via === "assistant" && <Badge tone="accent">assistant draft</Badge>}
           {a.rule !== undefined && a.kind !== "paid" && <span>· {ruleTitle(a.rule)}{a.overBy && a.overBy > 0n && a.rule !== Rule.OverFrequency ? `, ${fmt(a.overBy)} over` : ""}</span>}

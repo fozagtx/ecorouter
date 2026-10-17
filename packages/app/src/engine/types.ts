@@ -37,10 +37,32 @@ export interface Spender {
 export interface Service {
   id: string;
   name: string;
+  seller: string;
+  kind: "api" | "mcp";
+  task: string;
   payee: string;
+  url: string;
+  price: bigint;
   suspended: boolean;
-  /** Words the assistant can match against. Display-only; not on chain. */
-  tags?: string[];
+}
+
+export interface JoinRequest {
+  who: string;
+  label: string;
+  at: number;
+}
+
+export interface ListingInput {
+  id: string;
+  name: string;
+  kind: "api" | "mcp";
+  task: string;
+  price: bigint;
+}
+
+export interface GatewayListingStatus {
+  id: string;
+  connected: boolean;
 }
 
 export type RequestStatus = "pending" | "approved" | "declined" | "settled";
@@ -91,7 +113,7 @@ export interface Activity {
   requestId?: number;
   txHash?: string;
   /** What submitted it: a person in the app, the assistant draft, or an agent schedule. */
-  via?: "app" | "assistant" | "agent";
+  via?: "app" | "assistant" | "agent" | "x402";
   note?: string;
 }
 
@@ -108,6 +130,7 @@ export interface Snapshot {
   me: string;
   spenders: Spender[];
   services: Service[];
+  joinRequests: JoinRequest[];
   requests: ApprovalRequest[];
   activity: Activity[];
   /** Display names for addresses (owner, people, agents). */
@@ -140,6 +163,11 @@ export interface Backend {
   setPolicy(spender: string, input: PolicyInput, name?: string): Promise<void>;
   setSpenderPaused(spender: string, paused: boolean): Promise<void>;
   removeSpender(spender: string): Promise<void>;
+  requestJoin(label: string): Promise<void>;
+  dismissJoin(who: string): Promise<void>;
+  registerListing(input: ListingInput): Promise<void>;
+  gatewayListings(): Promise<GatewayListingStatus[]>;
+  connectUpstream(id: string, upstream: { url: string; kind: "api" | "mcp"; authHeader?: string }): Promise<void>;
   setAccountPaused(paused: boolean): Promise<void>;
   withdraw(to: string, amount: bigint): Promise<void>;
   deposit(amount: bigint): Promise<void>;

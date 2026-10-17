@@ -35,7 +35,7 @@ export function Shell({ children }: { children: ReactNode }) {
     { path: "/approvals", label: "Approvals", icon: "approvals", badge: pending + toSettle, show: true },
     { path: "/spenders", label: "Spenders", icon: "spenders", show: true },
     { path: "/agents", label: "Agents", icon: "agents", show: true },
-    { path: "/services", label: "Services", icon: "services", show: true },
+    { path: "/marketplace", label: "Marketplace", icon: "services", show: true },
     { path: "/activity", label: "Activity", icon: "activity", show: true },
     { path: "/settings", label: "Settings", icon: "settings", show: true },
   ];

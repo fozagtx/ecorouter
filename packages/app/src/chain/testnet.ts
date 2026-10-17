@@ -19,14 +19,18 @@ import {
   scValToNative,
   xdr,
 } from "@stellar/stellar-sdk";
-import { getNetwork, isConnected, requestAccess, signTransaction } from "@stellar/freighter-api";
+import { getNetwork, isConnected, requestAccess, signMessage, signTransaction } from "@stellar/freighter-api";
 import { Buffer } from "buffer";
 import { ContractError } from "../engine/rules";
+import { mapRegistryListing, mapX402Transfers, type SacTransfer } from "../engine/marketplace";
 import { collectEventPages } from "./event-pages";
 import type {
   Activity,
   ApprovalRequest,
   Backend,
+  GatewayListingStatus,
+  JoinRequest,
+  ListingInput,
   PayArgs,
   PayResult,
   Policy,
@@ -131,6 +135,10 @@ function toRequest(raw: any): ApprovalRequest {
   };
 }
 
+function toJoinRequest(raw: any): JoinRequest {
+  return { who: String(raw.who), label: String(raw.label), at: Number(raw.at) };
+}
+
 function randomKey(): Uint8Array {
   const b = new Uint8Array(32);
   crypto.getRandomValues(b);
@@ -190,13 +198,14 @@ export class TestnetBackend implements Backend {
   }
 
   async load(): Promise<Snapshot> {
-    const [owner, paused, balance, spenders, services, requests, latest] = await Promise.all([
+    const [owner, paused, balance, spenders, services, requests, joinRequests, latest] = await Promise.all([
       this.read(this.account, "owner"),
       this.read(this.account, "paused"),
       this.read(this.account, "balance"),
       this.read(this.account, "spenders") as Promise<string[]>,
       this.read(this.registry, "list") as Promise<any[]>,
       this.read(this.account, "requests", u64(1), u32(200)) as Promise<any[]>,
+      this.read(this.account, "join_requests") as Promise<any[]>,
       this.server.getLatestLedger(),
     ]);
     const spenderViews = await Promise.all(
@@ -208,15 +217,17 @@ export class TestnetBackend implements Backend {
     const names: Record<string, string> = { ...this.local.names };
     for (const s of spenderViews) names[s.address] ??= s.policy.label;
     names[owner] ??= "Owner";
-    const activity = [...(await this.events(latest.sequence)), ...this.local.refused].sort((a, b) => b.at - a.at);
+    const chainActivity = await this.events(latest.sequence);
+    const mappedServices = services.map(mapRegistryListing);
+    const x402Activity = await this.sacTransfers(latest.sequence, mappedServices, chainActivity);
+    const activity = [...chainActivity, ...x402Activity, ...this.local.refused].sort((a, b) => b.at - a.at);
     return {
       now: Math.floor(Date.now() / 1000),
       account: { id: this.cfg.accountId, name: "Team account", owner, balance: BigInt(balance), paused: Boolean(paused) },
       me: this.me,
       spenders: spenderViews,
-      services: services.map(
-        (s): Service => ({ id: String(s.id), name: String(s.name), payee: String(s.payee), suspended: Boolean(s.suspended) }),
-      ),
+      services: mappedServices,
+      joinRequests: joinRequests.map(toJoinRequest),
       requests: requests.map(toRequest).sort((a, b) => b.id - a.id),
       activity,
       names,
@@ -255,6 +266,40 @@ export class TestnetBackend implements Backend {
       }
     }
     return out;
+  }
+
+  private async sacTransfers(latestLedger: number, services: Service[], existing: Activity[]): Promise<Activity[]> {
+    const { oldestLedger } = await this.server.getHealth();
+    const startLedger = Math.max(oldestLedger + 1, latestLedger - 10_000);
+    const events = await collectEventPages(
+      (request) => this.server.getEvents(request),
+      {
+        startLedger,
+        filters: [{
+          type: "contract",
+          contractIds: [this.cfg.usdcId],
+          topics: [[sym("transfer").toXDR("base64"), addr(this.cfg.accountId).toXDR("base64"), "*", "*"]],
+        }],
+        limit: 200,
+      },
+    );
+    const transfers: SacTransfer[] = events.flatMap((event) => {
+      const topics = event.topic.map((topic) => String(scValToNative(topic)));
+      if (topics[0] !== "transfer" || topics.length < 3) return [];
+      try {
+        return [{
+          id: event.id,
+          txHash: event.txHash,
+          at: Math.floor(new Date(event.ledgerClosedAt).getTime() / 1000),
+          from: topics[1],
+          to: topics[2],
+          amount: BigInt(String(scValToNative(event.value))),
+        }];
+      } catch {
+        return [];
+      }
+    });
+    return mapX402Transfers(transfers, this.cfg.accountId, services, existing);
   }
 
   async check(spender: string, service: string, amount: bigint): Promise<Verdict> {
@@ -354,6 +399,75 @@ export class TestnetBackend implements Backend {
     await this.invoke(this.account, "remove_spender", addr(spender));
   }
 
+  async requestJoin(label: string): Promise<void> {
+    await this.invoke(this.account, "request_join", addr(this.me), str(label));
+  }
+
+  async dismissJoin(who: string): Promise<void> {
+    await this.invoke(this.account, "dismiss_join", addr(who));
+  }
+
+  async registerListing(input: ListingInput): Promise<void> {
+    const url = this.cfg.gatewayUrl ? `${this.cfg.gatewayUrl.replace(/\/$/, "")}/a/${input.id}` : "";
+    await this.invoke(
+      this.registry,
+      "register",
+      addr(this.me),
+      sym(input.id),
+      str(input.name),
+      str(input.task),
+      sym(input.kind),
+      addr(this.me),
+      str(url),
+      i128(input.price),
+    );
+  }
+
+  async gatewayListings(): Promise<GatewayListingStatus[]> {
+    if (!this.cfg.gatewayUrl) return [];
+    const response = await fetch(`${this.cfg.gatewayUrl.replace(/\/$/, "")}/listings`);
+    if (!response.ok) throw new Error(`Gateway returned HTTP ${response.status}.`);
+    const value: unknown = await response.json();
+    if (!Array.isArray(value)) throw new Error("Gateway returned an invalid listings response.");
+    return value.flatMap((row): GatewayListingStatus[] => {
+      if (!row || typeof row !== "object" || typeof row.id !== "string" || typeof row.connected !== "boolean") return [];
+      return [{ id: row.id, connected: row.connected }];
+    });
+  }
+
+  async connectUpstream(id: string, upstream: { url: string; kind: "api" | "mcp"; authHeader?: string }): Promise<void> {
+    if (!this.cfg.gatewayUrl) throw new Error("Gateway not deployed yet.");
+    const body = JSON.stringify({
+      url: upstream.url,
+      kind: upstream.kind,
+      ...(upstream.authHeader ? { authHeader: upstream.authHeader } : {}),
+    });
+    const timestamp = Math.floor(Date.now() / 1000);
+    const bodyHash = await sha256Hex(body);
+    const message = `ecorouter:upstream:${id}:${bodyHash}:${timestamp}`;
+    const signed = await signMessage(message, { address: this.me, networkPassphrase: this.cfg.networkPassphrase });
+    if (signed.error) throw new Error(signed.error.message || "Freighter could not sign the upstream connection.");
+    if (signed.signerAddress && signed.signerAddress !== this.me) throw new Error("Freighter signed with a different account.");
+    if (!signed.signedMessage) throw new Error("Freighter did not return a signature.");
+    const signature = typeof signed.signedMessage === "string"
+      ? signed.signedMessage
+      : Buffer.from(signed.signedMessage).toString("base64");
+    const response = await fetch(`${this.cfg.gatewayUrl.replace(/\/$/, "")}/listings/${encodeURIComponent(id)}/upstream`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Stellar-Address": this.me,
+        "X-Stellar-Signature": signature,
+        "X-Timestamp": String(timestamp),
+      },
+      body,
+    });
+    if (!response.ok) {
+      const result = await response.json().catch(() => null) as { error?: unknown } | null;
+      throw new Error(typeof result?.error === "string" ? result.error : `Gateway returned HTTP ${response.status}.`);
+    }
+  }
+
   async setAccountPaused(paused: boolean): Promise<void> {
     await this.invoke(this.account, "set_paused", xdr.ScVal.scvBool(paused));
   }
@@ -366,4 +480,9 @@ export class TestnetBackend implements Backend {
     await this.invoke(new Contract(this.cfg.usdcId), "transfer", addr(this.me), addr(this.cfg.accountId), i128(amount));
   }
 
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }

@@ -15,8 +15,8 @@ describe("money", () => {
 
 describe("assistant", () => {
   const registry = [
-    { id: "inference", name: "Inference credits", payee: "G1", suspended: false, tags: ["inference", "model", "credits"] },
-    { id: "gpu", name: "GPU hours", payee: "G2", suspended: false, tags: ["gpu", "compute"] },
+    { id: "inference", name: "Inference credits", seller: "S1", kind: "api" as const, task: "Model inference", url: "", price: 1n, payee: "G1", suspended: false },
+    { id: "gpu", name: "GPU hours", seller: "S2", kind: "api" as const, task: "GPU compute", url: "", price: 1n, payee: "G2", suspended: false },
   ];
   const allowed = ["inference", "translate"];
 
@@ -42,9 +42,9 @@ describe("assistant", () => {
 describe("payment service choices", () => {
   it("lists registered, active services outside a person's policy for owner approval", () => {
     const services = [
-      { id: "inference", name: "Inference", payee: "G1", suspended: false },
-      { id: "search", name: "Search", payee: "G2", suspended: false },
-      { id: "gpu", name: "GPU", payee: "G3", suspended: true },
+      { id: "inference", name: "Inference", seller: "S1", kind: "api" as const, task: "Inference", url: "", price: 1n, payee: "G1", suspended: false },
+      { id: "search", name: "Search", seller: "S2", kind: "api" as const, task: "Search", url: "", price: 1n, payee: "G2", suspended: false },
+      { id: "gpu", name: "GPU", seller: "S3", kind: "api" as const, task: "GPU", url: "", price: 1n, payee: "G3", suspended: true },
     ];
 
     expect(servicesNeedingApproval(services, ["inference"])).toEqual([services[1]]);

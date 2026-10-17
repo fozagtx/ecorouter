@@ -58,7 +58,8 @@ export function useApp(): AppState {
 
 function currentRoute(): string {
   const h = window.location.hash.replace(/^#/, "");
-  return h.startsWith("/") ? h : "/";
+  const path = (h.startsWith("/") ? h : "/").split("?")[0];
+  return path === "/services" ? "/marketplace" : path;
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -73,13 +74,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const manualConnectStarted = useRef(false);
 
   useEffect(() => {
-    const on = () => setRoute(currentRoute());
+    const on = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash.split("?")[0] === "/services") {
+        window.location.hash = hash.replace("/services", "/marketplace");
+        return;
+      }
+      setRoute(currentRoute());
+    };
+    if (window.location.hash.slice(1).split("?")[0] === "/services") {
+      window.location.hash = window.location.hash.slice(1).replace("/services", "/marketplace");
+    }
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
 
   const go = useCallback((path: string) => {
-    window.location.hash = path;
+    window.location.hash = path.replace(/^\/services(?=\/|$|\?)/, "/marketplace");
     window.scrollTo({ top: 0 });
   }, []);
 
@@ -148,12 +159,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const b = await TestnetBackend.connectAddress(configFromEnv(), wallet.address);
         if (manualConnectStarted.current) return;
         setBackend(b);
-        go("/overview");
+        go(route === "/" ? "/overview" : route);
       } catch {
         return;
       }
     })();
-  }, [backend, go]);
+  }, [backend, go, route]);
 
   const connectTestnet = useCallback(async () => {
     manualConnectStarted.current = true;
@@ -163,7 +174,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const b = await TestnetBackend.connect(cfg);
     writeAutoConnect(true);
     setBackend(b);
-    go("/overview");
+    const hashRoute = window.location.hash.slice(1);
+    go(hashRoute && hashRoute.split("?")[0] !== "/" ? hashRoute : "/overview");
   }, [go]);
 
   const leave = useCallback(() => {

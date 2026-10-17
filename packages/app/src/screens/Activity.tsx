@@ -26,7 +26,7 @@ export function Activity() {
     <>
       <PageHead
         title="Activity"
-        sub="Receipts read from the contract's events, newest first. A payment refused before it reached the chain left nothing on chain; it is kept here, in this browser, so you can see it."
+        sub="Contract receipts and USDC transfers to registered payees, newest first. x402 payments are identified from transfers sent by this account."
       />
       <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
         {FILTERS.map((x) => (

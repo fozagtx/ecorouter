@@ -10,7 +10,8 @@ import { Assistant } from "./screens/Assistant";
 import { Approvals } from "./screens/Approvals";
 import { Spenders } from "./screens/Spenders";
 import { Agents } from "./screens/Agents";
-import { Services } from "./screens/Services";
+import { Marketplace } from "./screens/Marketplace";
+import { Join } from "./screens/Join";
 import { Activity } from "./screens/Activity";
 import { Settings } from "./screens/Settings";
 import { Button } from "./ui/kit";
@@ -22,14 +23,15 @@ const ROUTES: Record<string, () => React.ReactElement | null> = {
   "/approvals": Approvals,
   "/spenders": Spenders,
   "/agents": Agents,
-  "/services": Services,
+  "/marketplace": Marketplace,
+  "/join": Join,
   "/activity": Activity,
   "/settings": Settings,
 };
 
 function App() {
   const { backend, snap, route, error, refresh, leave } = useApp();
-  if (!backend) return <Welcome />;
+  if (!backend) return route === "/join" ? <Join /> : <Welcome />;
   if (!snap) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
