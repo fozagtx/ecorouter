@@ -1,0 +1,123 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "EcoRouter | A unified resource router for agentic inference",
+  description = "EcoRouter sources every AI step by live price and latency across model, search and scraping providers, and reroutes when a spending cap or speed target changes. Settlement on Airwallex is in progress."
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || "https://ecorouter.xyz");
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="inference routing, agentic inference, AI agent spending caps, LLM router, provider routing, live pricing, Firecrawl, context.dev, Exa, Airwallex" />
+    <meta name="theme-color" content="#F5F4EF" />
+    <link rel="canonical" href={canonicalUrl.href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl.href} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    <title>{title}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="icon" type="image/svg+xml" href={`${basePath}/logo.svg`} />
+
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body id="top" class="bg-paper text-ink selection:bg-accent/20 selection:text-ink antialiased min-h-screen flex flex-col font-sans">
+    <slot />
+
+    <div id="copy-toast" class="toast-msg" role="status" aria-live="polite">Copied to clipboard</div>
+
+    <script>
+      import Lenis from 'lenis';
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!prefersReducedMotion) {
+        const lenis = new Lenis({
+          duration: 1.1,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        });
+
+        (window as any).lenis = lenis;
+
+        function raf(time: number) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener('click', (e) => {
+            const targetId = (anchor as HTMLAnchorElement).getAttribute('href');
+            if (!targetId || targetId === '#') return;
+            if (targetId === '#top') {
+              e.preventDefault();
+              lenis.scrollTo(0);
+              return;
+            }
+            const target = document.querySelector(targetId);
+            if (target) {
+              e.preventDefault();
+              lenis.scrollTo(target as HTMLElement, { offset: -64 });
+            }
+          });
+        });
+      }
+    </script>
+
+    <script is:inline>
+      window.showToast = function(text = "Copied to clipboard") {
+        const toast = document.getElementById('copy-toast');
+        if (!toast) return;
+        toast.textContent = text;
+        toast.classList.add('show');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+      };
+
+      window.copyText = function(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => window.showToast());
+          return;
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        window.showToast();
+      };
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-copy]');
+        if (btn) window.copyText(btn.getAttribute('data-copy'));
+      });
+    </script>
+  </body>
+</html>

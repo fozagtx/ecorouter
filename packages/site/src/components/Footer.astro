@@ -1,0 +1,30 @@
+---
+import Logo from "./Logo.astro";
+const cols = [
+  { h: "Product", links: [["How it works", "#how"], ["Router", "#router"], ["Spending caps", "#caps"], ["FAQ", "#faq"]] },
+  { h: "Project", links: [["Source code", "https://github.com/fozagtx/ecorouter"], ["Airwallex plan", "https://github.com/fozagtx/ecorouter/blob/main/plans/airwallex-integration.md"]] },
+  { h: "Hackathon", links: [["Agentic Banking Hackathon", "https://airwallex.hackerearth.com/"], ["Inference Sourcing track", "https://airwallex.hackerearth.com/"]] },
+  { h: "Airwallex", links: [["Airwallex", "https://www.airwallex.com"], ["API docs", "https://www.airwallex.com/docs/api"], ["Issuing", "https://www.airwallex.com/docs/issuing/overview"]] },
+];
+---
+
+<footer class="bg-paper border-t border-line-strong">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8 pt-14 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 text-[15px]">
+      {cols.map((c) => (
+        <div>
+          <div class="font-semibold text-ink">{c.h}</div>
+          <ul class="mt-4 space-y-3">
+            {c.links.map(([label, href]) => (
+              <li><a href={href} class="text-ink-secondary hover:text-ink" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div class="mt-14 flex items-center justify-between gap-4 text-[13px] text-ink-muted">
+      <span class="inline-flex items-center gap-2"><Logo class="w-4 h-4 text-ink" /> © {new Date().getFullYear()} EcoRouter contributors · Apache 2.0</span>
+      <a href="#top" class="hover:text-ink">Back to top ↑</a>
+    </div>
+  </div>
+</footer>

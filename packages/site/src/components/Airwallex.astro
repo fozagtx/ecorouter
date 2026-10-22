@@ -1,0 +1,35 @@
+---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const plan = [
+  { n: "01", title: "One funding wallet", body: "Agent caps are budgets drawn from an Airwallex balance. The SDK refuses caps that add up to more than the wallet holds.", api: "GET /api/v1/balances/current", status: "Built" },
+  { n: "02", title: "A virtual card per provider", body: "Each provider is paid with its own virtual card. Its transaction limits mirror the agent's period cap, so a router bug still cannot overspend at the card.", api: "POST /api/v1/issuing/cards/create · transaction_limits", status: "Built" },
+  { n: "03", title: "Prices in any currency", body: "Providers billing in EUR or other currencies are converted at the live Airwallex rate before the router compares them to the cap.", api: "GET /api/v1/fx/rates/current", status: "Built" },
+  { n: "04", title: "Spend reconciled per step", body: "Card transactions are matched to router receipts. A decline at the card reroutes the next step, the same way a slow provider does.", api: "issuing.transaction.* webhooks · HMAC-SHA256", status: "Built" },
+];
+---
+
+<section id="airwallex" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label">
+      <span class="inline-flex items-center gap-2"><img src={`${basePath}/logos/airwallex.png`} alt="" class="w-4 h-4" /> Settlement on Airwallex</span>
+      <span class="rule"></span>
+      <span class="text-ink-muted">In the SDK</span>
+    </div>
+    <h2 class="mt-14 max-w-[760px] font-display text-[36px] sm:text-[44px] leading-[1.08] font-medium tracking-[-0.035em] text-ink">Caps enforced twice: at the router, then at the card.</h2>
+
+    <div class="mt-12 border-t border-ink">
+      {plan.map((p) => (
+        <div class="py-6 border-b border-line-strong grid grid-cols-1 md:grid-cols-[60px_1fr_1.4fr_auto] gap-2 md:gap-8 items-baseline">
+          <span class="num text-[12px]">{p.n}</span>
+          <h3 class="font-display text-[20px] font-medium tracking-[-0.02em] text-ink">{p.title}</h3>
+          <div>
+            <p class="text-[15px] leading-relaxed text-ink-secondary">{p.body}</p>
+            <div class="mt-2 font-mono text-[11.5px] text-ink-muted">{p.api}</div>
+          </div>
+          <span class={`font-mono text-[11px] uppercase tracking-[0.05em] ${p.status === "Built" ? "text-accent" : "text-ink-muted"}`}>{p.status}</span>
+        </div>
+      ))}
+    </div>
+    <p class="mt-6 text-[13px] text-ink-muted">Built in the SDK and tested offline against the documented API. Not yet run against a live Airwallex sandbox account. Details in <a class="underline hover:text-ink" href="https://github.com/fozagtx/ecorouter/blob/main/plans/airwallex-integration.md" target="_blank" rel="noopener noreferrer">plans/airwallex-integration.md</a>.</p>
+  </div>
+</section>

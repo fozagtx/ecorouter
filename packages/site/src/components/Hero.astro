@@ -1,0 +1,71 @@
+---
+import Header from "./Header.astro";
+import Logo from "./Logo.astro";
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const brands = [
+  { name: "OpenAI", logo: "openai.svg" },
+  { name: "Anthropic", logo: "anthropic.svg" },
+  { name: "Firecrawl", logo: "firecrawl.png" },
+  { name: "context.dev", logo: "context.png" },
+  { name: "Exa", logo: "exa.png" },
+  { name: "Tavily", logo: "tavily.png" },
+  { name: "Groq", logo: "groq.png" },
+  { name: "OpenRouter", logo: "openrouter.png" },
+  { name: "Together AI", logo: "together.png" },
+  { name: "Fireworks AI", logo: "fireworks.png" },
+  { name: "Mistral AI", logo: "mistralai.svg" },
+  { name: "Gemini", logo: "googlegemini.svg" },
+  { name: "DeepSeek", logo: "deepseek.png" },
+  { name: "Cohere", logo: "cohere.png" },
+  { name: "Perplexity", logo: "perplexity.svg" },
+  { name: "Replicate", logo: "replicate.svg" },
+  { name: "Hugging Face", logo: "huggingface.svg" },
+  { name: "Ollama", logo: "ollama.svg" },
+];
+---
+
+<section class="relative atmo min-h-[100svh] flex flex-col overflow-hidden">
+  <Header />
+
+  <div class="relative flex-1 flex flex-col items-center justify-center text-center px-5 pt-16 pb-10">
+    <div class="float rise">
+      <div class="tile">
+        <Logo class="relative z-10 w-[76px] h-[76px] text-ink" />
+      </div>
+    </div>
+
+    <h1 class="rise rise-2 mt-14 font-display text-[52px] sm:text-[76px] lg:text-[88px] leading-[0.98] font-medium tracking-[-0.05em] text-ink">
+      EcoRouter
+    </h1>
+    <p class="rise rise-3 mt-5 max-w-[620px] text-[19px] sm:text-[22px] leading-[1.4] text-ink-secondary">
+      One router for every paid step your agents take, held to a spending cap.
+    </p>
+    <div class="rise rise-4 mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a href="#router" class="btn-primary h-12 px-5 text-[15px]">Try the router</a>
+      <a href="#app" class="btn-secondary h-12 px-5 text-[15px]">See how it routes</a>
+    </div>
+    <div class="rise rise-4 mt-6 inline-flex items-center gap-2 text-[13px] text-ink-muted">
+      <img src={`${basePath}/logos/airwallex.png`} alt="" class="w-4 h-4" />
+      Airwallex Agentic Banking Hackathon · Inference Sourcing track
+    </div>
+  </div>
+
+  <div class="relative pb-8">
+    <div class="relative overflow-hidden">
+      <div class="absolute left-0 inset-y-0 w-32 bg-gradient-to-r from-[#EEE9E2] to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 inset-y-0 w-32 bg-gradient-to-l from-[#EEE9E2] to-transparent z-10 pointer-events-none"></div>
+      <div class="animate-marquee items-center gap-12 px-6">
+        {brands.concat(brands).map((b) => (
+          <div class="flex items-center gap-2.5 shrink-0 text-[15px] font-semibold text-ink/65">
+            <img src={`${basePath}/logos/${b.logo}`} alt="" class="w-6 h-6 object-contain" loading="lazy" />
+            {b.name}
+          </div>
+        ))}
+      </div>
+    </div>
+    <a href="#app" class="mt-6 mx-auto flex w-10 h-10 items-center justify-center text-ink-secondary hover:text-ink" aria-label="Scroll down">
+      <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 9l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>

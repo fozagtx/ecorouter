@@ -1,0 +1,38 @@
+---
+const checks = [
+  ["Agent active", "the owner can pause any agent at once"],
+  ["Step kind allowed", "an agent only uses the kinds it was given"],
+  ["Provider allowlist", "only providers approved for this agent"],
+  ["Per-step ceiling", "no single step above the ceiling"],
+  ["Run budget left", "the whole run stays inside its cap"],
+  ["Period cap left", "daily, weekly or monthly spend per agent"],
+  ["Quote fresh", "prices older than the window are refetched"],
+  ["Latency target", "slow providers are skipped, not waited on"],
+  ["Provider healthy", "errors and timeouts take a provider out for a while"],
+  ["Call and meter", "the real cost replaces the quote on the receipt"],
+];
+---
+
+<section id="caps" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>Spending caps</span><span class="rule"></span></div>
+    <div class="mt-14 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12">
+      <div>
+        <h2 class="font-display text-[36px] sm:text-[44px] leading-[1.08] font-medium tracking-[-0.035em] text-ink">The agent asks. The router decides what it can afford.</h2>
+        <p class="mt-5 max-w-[460px] text-[16px] leading-relaxed text-ink-secondary">Agents never hold provider keys or a card. Every step passes these checks in order, and the first one that fails stops the step before anything is spent. The agent gets a refusal it can act on.</p>
+        <p class="mt-6 text-[13px] text-ink-muted">Hackathon build. Not audited.</p>
+      </div>
+      <ol class="border-t border-ink">
+        {checks.map(([k, v], i) => (
+          <li class="py-3.5 border-b border-line-strong flex items-baseline gap-4">
+            <span class="num text-[12px] w-6 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+            <span class="flex-1 min-w-0 sm:flex sm:items-baseline sm:justify-between sm:gap-6">
+              <span class="block text-[16px] text-ink">{k}</span>
+              <span class="block text-[13px] text-ink-muted sm:text-right">{v}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

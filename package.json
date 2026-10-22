@@ -1,0 +1,19 @@
+{
+  "name": "ecorouter-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.28.1",
+  "scripts": {
+    "build": "pnpm --filter ecorouter build && pnpm build:site",
+    "build:site": "pnpm --filter @ecorouter/site build",
+    "dev:site": "pnpm --filter @ecorouter/site dev",
+    "router": "pnpm --filter ecorouter build && node packages/sdk/dist/cli.js",
+    "test": "pnpm --filter ecorouter test",
+    "typecheck": "pnpm --filter ecorouter typecheck"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  }
+}

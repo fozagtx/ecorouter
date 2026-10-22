@@ -1,0 +1,22 @@
+---
+const steps = [
+  { n: "01", tag: "Cap", title: "Give every agent a cap", body: "A budget per period, a ceiling per step and the providers it may use. Checked before any provider is called, not reconciled after the invoice." },
+  { n: "02", tag: "Quote", title: "Price the step everywhere", body: "Each step has a kind. The router keeps a quote per provider for that kind, from published prices plus the latency it measured on recent calls." },
+  { n: "03", tag: "Route", title: "Pick, call, reroute", body: "The cheapest provider under the latency target and the budget left wins. When a price moves, a provider slows down or the cap runs low, the next step goes elsewhere." },
+];
+---
+
+<section id="how" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>How it works</span><span class="rule"></span></div>
+    <ol class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+      {steps.map((s) => (
+        <li class="border-t border-ink pt-6">
+          <div class="rule-label !text-[11px]"><span><span class="num">{s.n}</span>&nbsp;&nbsp;{s.tag}</span></div>
+          <h3 class="mt-5 font-display text-[26px] font-medium tracking-[-0.03em] text-ink">{s.title}</h3>
+          <p class="mt-3 text-[16px] leading-relaxed text-ink-secondary">{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
