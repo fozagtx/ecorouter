@@ -42,15 +42,8 @@ test("Kit 12 run: every job finishes, overrun asks the customer, slow provider i
   assert.equal(approvals[0].customer, "Contoso");
   assert.ok(approvals[0].newHold > approvals[0].currentHold);
 
-  // After Swift slowed down, writes went elsewhere: it timed out and was rerouted, or was skipped as slow or unhealthy.
-  const avoided = events.some(
-    (e) =>
-      (e.type === "reroute" && e.from === "swift") ||
-      (e.type === "quotes" && e.stepId === "write" && e.offers.some((o) => o.providerId === "swift" && o.skip)),
-  );
-  assert.ok(avoided, "swift routed around after slowing down");
-  const writes = events.filter((e) => e.type === "step_paid" && e.stepId === "write");
-  assert.ok(writes.every((w) => w.providerId !== "swift"), "no write step was answered by the slowed provider");
+  // Paid calls are never abandoned early: every paid step produced an answer, so nothing was paid for nothing.
+  assert.equal(events.filter((e) => e.type === "reroute").length, 0);
 
   // Captured never exceeds the hold, every job settled, and the float is whole again at the end.
   for (const r of reports) assert.ok(r.captured === r.spent);
@@ -66,6 +59,22 @@ test("the float never drops below its floor while jobs run", async () => {
   await done;
   clearInterval(timer);
   assert.ok(lowest >= DEMO_FLOOR, `float dipped to ${lowest}`);
+});
+
+test("once a provider is measured slow, later jobs route around it", async () => {
+  const rail = new SimRail(CATALOG, 0.01);
+  const ledger = new FloatLedger(usd(10), 0);
+  const events = [];
+  const agent = new SourcingAgent({ rail, holds: new SimHolds(), ledger, approve: async () => true, onEvent: (e) => events.push(e) });
+  const job = (id) => ({ id, customer: "c", budget: usd(1), latencyTargetMs: 6000, steps: [{ id: "write", kind: "reasoning", prompt: "summarise", maxTokens: 1200 }] });
+  rail.state.get("swift").slowFactor = 8;
+  await agent.runAll([job("first")]);
+  const first = events.find((e) => e.type === "step_paid");
+  assert.equal(first.providerId, "swift", "first job pays the slow provider and still gets its answer");
+  await agent.runAll([job("second")]);
+  const quotes = events.filter((e) => e.type === "quotes").at(-1);
+  assert.match(quotes.offers.find((o) => o.providerId === "swift").skip, /^slow/);
+  assert.equal(events.filter((e) => e.type === "step_paid").at(-1).providerId, "atlas");
 });
 
 test("a job the float can never cover fails at once instead of hanging", async () => {

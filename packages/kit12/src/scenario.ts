@@ -7,12 +7,13 @@ const LONG_CONTEXT = "Quarterly filings, pricing pages and customer reviews for 
  * The Kit 12 story: three research reports run at once on a float smaller than their budgets together.
  * Report B's final prompt carries four times the context it was budgeted for.
  */
-export function demoJobs(): JobSpec[] {
+/** `latencyTargetMs`: 6s for the simulator; about 15s live, since Metal verifies and settles each payment before the provider answers. */
+export function demoJobs(latencyTargetMs = 6_000): JobSpec[] {
   const report = (id: string, customer: string, company: string, budget: number, overrun = false): JobSpec => ({
     id,
     customer,
     budget: usd(budget),
-    latencyTargetMs: 6_000,
+    latencyTargetMs,
     steps: [
       { id: "plan", kind: "reasoning", prompt: `Plan a research report on ${company}.`, maxTokens: 400 },
       { id: "search", kind: "search", prompt: `${company} pricing and revenue 2026` },

@@ -59,7 +59,7 @@ async function main() {
   const judge: Judge | undefined = env.ANTHROPIC_API_KEY ? claudeJudge({ apiKey: env.ANTHROPIC_API_KEY, model: env.ECOROUTER_JUDGE_MODEL }) : undefined;
 
   const ledger = new FloatLedger(DEMO_FLOAT, DEMO_FLOOR);
-  const jobs = demoJobs();
+  const jobs = demoJobs(rail instanceof SimRail ? 6_000 : Number(env.LATENCY_TARGET_MS ?? 15_000));
   console.log(`EcoRouter · Kit 12 Inference Sourcing Agent`);
   console.log(`payments: ${rail.name} · holds: ${holds instanceof SimHolds ? "simulated" : "airwallex sandbox"} · judge: ${judge ? "claude" : "rule"}`);
   console.log(`float ${formatUsd(DEMO_FLOAT, 2)} (floor ${formatUsd(DEMO_FLOOR, 2)}), budgets ${jobs.map((j) => `${j.id} ${formatUsd(j.budget, 2)}`).join(", ")}\n`);
@@ -74,8 +74,14 @@ async function main() {
     onEvent: (e) => {
       console.log(line(e));
       // Midway: once every job has its plan, the cheapest model provider slows under load.
-      if (e.type === "step_paid" && e.stepId === "plan" && ++plans === jobs.length && rail instanceof SimRail) {
-        rail.state.get("swift")!.slowFactor = 8;
+      if (e.type === "step_paid" && e.stepId === "plan" && ++plans === jobs.length) {
+        if (rail instanceof SimRail) rail.state.get("swift")!.slowFactor = 8;
+        else
+          void fetch(`${env.PROVIDERS_URL}/admin/swift`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ slowFactor: 8 }),
+          });
         console.log(`\n  >> swift slows down under load (8x latency)\n`);
       }
     },

@@ -49,6 +49,14 @@ export class MetalRail implements PaymentRail {
   private readonly jobs = new Map<string, JobClient>();
   private readonly account;
   private clearing: { settlement: `0x${string}`; serviceUrl: string } | null = null;
+  /** The float key sends every deposit and withdrawal. One at a time, or concurrent jobs collide on its nonce. */
+  private chainQueue: Promise<unknown> = Promise.resolve();
+
+  private serial<T>(fn: () => Promise<T>): Promise<T> {
+    const run = this.chainQueue.then(fn, fn);
+    this.chainQueue = run.catch(() => undefined);
+    return run;
+  }
 
   constructor(private readonly config: MetalRailConfig) {
     this.account = privateKeyToAccount(config.floatPrivateKey);
@@ -118,7 +126,7 @@ export class MetalRail implements PaymentRail {
   async deposit(jobId: string, amount: Micros) {
     const { settlement } = await this.deployment();
     const job = this.job(jobId);
-    const { depositTx } = await depositToClearing({
+    const { depositTx } = await this.serial(() => depositToClearing({
       rpcUrl: this.config.rpcUrl,
       chainId: CHAIN_ID,
       from: this.account,
@@ -126,7 +134,7 @@ export class MetalRail implements PaymentRail {
       asset: USDZ.address,
       account: job.wallet.signer.publicKey,
       amount: microsToBase(amount),
-    });
+    }));
     return { tx: depositTx };
   }
 
@@ -136,14 +144,23 @@ export class MetalRail implements PaymentRail {
     job.lastOffer = null;
     const started = Date.now();
     try {
-      const res = await job.fetchWithPayment(`${this.config.providersUrl}/p/${providerId}`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(req),
-        signal: AbortSignal.timeout(timeoutMs),
+      // The x402 wrapper does not pass an abort signal through to the paid retry, so the timeout
+      // is enforced around the whole call: stop waiting, and let the agent reroute.
+      let timer: NodeJS.Timeout | undefined;
+      const deadline = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`timed out after ${timeoutMs}ms`)), timeoutMs);
       });
-      if (!res.ok) throw new Error(`${providerId} answered ${res.status}`);
-      const text = await res.text();
+      const call = (async () => {
+        const res = await job.fetchWithPayment(`${this.config.providersUrl}/p/${providerId}`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(req),
+        });
+        if (!res.ok) throw new Error(`${providerId} answered ${res.status}`);
+        return res.text();
+      })();
+      call.catch(() => undefined);
+      const text = await Promise.race([call, deadline]).finally(() => clearTimeout(timer));
       return { providerId, text, paid: job.lastOffer === null ? 0 : baseToMicros(job.lastOffer), latencyMs: Date.now() - started };
     } catch (err) {
       const cause = (err as { cause?: unknown }).cause;
@@ -162,14 +179,14 @@ export class MetalRail implements PaymentRail {
   async withdraw(jobId: string) {
     const { settlement, serviceUrl } = await this.deployment();
     const job = this.job(jobId);
-    const r = await withdrawFromClearing({
+    const r = await this.serial(() => withdrawFromClearing({
       rpcUrl: this.config.rpcUrl,
       chainId: CHAIN_ID,
       from: this.account,
       settlement,
       signer: job.wallet.signer,
       serviceUrl,
-    });
+    }));
     if (r.status === "waiting") return { status: "waiting" as const, detail: `epoch ${r.epoch}` };
     if (r.status === "empty") return { status: "empty" as const };
     return { status: "sent" as const, detail: r.claimed.map((c) => c.tx).join(",") };

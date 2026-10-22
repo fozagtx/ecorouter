@@ -66,7 +66,7 @@ export interface AgentConfig {
   judge?: Judge;
   approve: Approver;
   onEvent?: (e: AgentEvent) => void;
-  /** Abort a step after this long and reroute. */
+  /** Give up on a paid step after this long (default 4x the job's latency target) and reroute. */
   stepTimeoutMs?: number;
   /** How long a paused job waits for float before failing. */
   pauseTimeoutMs?: number;
@@ -198,7 +198,9 @@ export class SourcingAgent {
         pick = cheapest;
       }
 
-      const timeoutMs = this.cfg.stepTimeoutMs ?? Math.round(job.latencyTargetMs * 1.5);
+      // Clearing pays before the provider answers, so abandoning a slow call never saves money.
+      // Let it finish and route later steps away; the hard timeout is only a safety net.
+      const timeoutMs = this.cfg.stepTimeoutMs ?? job.latencyTargetMs * 4;
       const started = Date.now();
       const flights = this.inFlight.get(pick.providerId) ?? new Set<number>();
       this.inFlight.set(pick.providerId, flights);
