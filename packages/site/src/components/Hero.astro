@@ -1,41 +1,71 @@
 ---
+import Header from "./Header.astro";
+import Logo from "./Logo.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const brands = [
+  { name: "OpenAI", logo: "openai.svg" },
+  { name: "Anthropic", logo: "anthropic.svg" },
+  { name: "Firecrawl", logo: "firecrawl.png" },
+  { name: "context.dev", logo: "context.png" },
+  { name: "Exa", logo: "exa.png" },
+  { name: "Tavily", logo: "tavily.png" },
+  { name: "Groq", logo: "groq.png" },
+  { name: "OpenRouter", logo: "openrouter.png" },
+  { name: "Together AI", logo: "together.png" },
+  { name: "Fireworks AI", logo: "fireworks.png" },
+  { name: "Mistral AI", logo: "mistralai.svg" },
+  { name: "Gemini", logo: "googlegemini.svg" },
+  { name: "DeepSeek", logo: "deepseek.png" },
+  { name: "Cohere", logo: "cohere.png" },
+  { name: "Perplexity", logo: "perplexity.svg" },
+  { name: "Replicate", logo: "replicate.svg" },
+  { name: "Hugging Face", logo: "huggingface.svg" },
+  { name: "Ollama", logo: "ollama.svg" },
+];
 ---
 
-<section class="relative -mt-[72px] sm:-mt-[76px] min-h-[820px] sm:min-h-[900px] lg:min-h-[max(66.7vw,760px)] overflow-hidden bg-[#FAF9F2]">
-  <img
-    src={`${basePath}/assets/hero-hill.jpg`}
-    alt="A woman and a small robot sitting together on a grassy hill, working on one laptop"
-    class="absolute inset-x-0 bottom-0 w-full h-[58%] sm:h-full object-cover object-[28%_100%] sm:object-[center_bottom] select-none"
-    fetchpriority="high"
-  />
-  <div class="absolute inset-x-0 top-0 h-[62%] sm:h-[50%] bg-gradient-to-b from-[#FAF9F2] via-[#FAF9F2]/70 to-transparent pointer-events-none"></div>
+<section class="relative atmo min-h-[100svh] flex flex-col overflow-hidden">
+  <Header />
 
-  <div class="relative max-w-[1180px] mx-auto px-5 pt-[116px] sm:pt-[140px] lg:pt-[150px] text-center">
-    <h1 class="mx-auto max-w-[1040px] text-[40px] leading-[1.06] sm:text-[56px] lg:text-[66px] font-semibold tracking-[-0.045em] text-ink">
-      Every agent step at the
-      <span class="inline-flex align-middle items-center justify-center w-[0.9em] h-[0.9em] -mt-[0.12em] mx-[0.04em] rounded-full bg-ink text-white">
-        <svg viewBox="0 0 24 24" class="w-[0.48em] h-[0.48em]" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h11l-3-3M20 17H9l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </span>
-      <span class="font-light italic text-ink-secondary">right price</span>,
-      <br class="hidden sm:block" />
-      inside its spending cap.
-    </h1>
-
-    <p class="mt-5 mx-auto max-w-[620px] text-[16px] sm:text-[18px] leading-[1.55] text-ink-secondary">
-      EcoRouter is a unified resource router for agentic inference. Each model call, search and scrape goes to the provider with the best live price and speed, and gets rerouted the moment a budget or latency target changes.
-    </p>
-
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-      <a href="#router" class="pill-cta h-12 text-[15px]">
-        Try the router
-        <span class="pill-cta-dot w-9 h-9" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      </a>
-      <a href="#how" class="inline-flex items-center gap-2 h-12 px-5 rounded-full bg-white/70 backdrop-blur border border-white text-[15px] text-ink hover:bg-white transition-colors">
-        How it works
-        <svg viewBox="0 0 16 16" class="w-3 h-3" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg>
-      </a>
+  <div class="relative flex-1 flex flex-col items-center justify-center text-center px-5 pt-16 pb-10">
+    <div class="float rise">
+      <div class="tile">
+        <Logo class="relative z-10 w-[76px] h-[76px] text-ink" />
+      </div>
     </div>
-    <p class="mt-4 text-[13px] text-ink-muted">Built for the Airwallex Agentic Banking Hackathon · Inference Sourcing track · Airwallex settlement in progress</p>
+
+    <h1 class="rise rise-2 mt-14 font-display text-[52px] sm:text-[76px] lg:text-[88px] leading-[0.98] font-medium tracking-[-0.05em] text-ink">
+      EcoRouter
+    </h1>
+    <p class="rise rise-3 mt-5 max-w-[620px] text-[19px] sm:text-[22px] leading-[1.4] text-ink-secondary">
+      One router for every paid step your agents take, held to a spending cap.
+    </p>
+    <div class="rise rise-4 mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a href="#router" class="btn-primary h-12 px-5 text-[15px]">Try the router</a>
+      <a href="#app" class="btn-secondary h-12 px-5 text-[15px]">See how it routes</a>
+    </div>
+    <div class="rise rise-4 mt-6 inline-flex items-center gap-2 text-[13px] text-ink-muted">
+      <img src={`${basePath}/logos/airwallex.png`} alt="" class="w-4 h-4" />
+      Airwallex Agentic Banking Hackathon · Inference Sourcing track
+    </div>
+  </div>
+
+  <div class="relative pb-8">
+    <div class="relative overflow-hidden">
+      <div class="absolute left-0 inset-y-0 w-32 bg-gradient-to-r from-[#EEE9E2] to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 inset-y-0 w-32 bg-gradient-to-l from-[#EEE9E2] to-transparent z-10 pointer-events-none"></div>
+      <div class="animate-marquee items-center gap-12 px-6">
+        {brands.concat(brands).map((b) => (
+          <div class="flex items-center gap-2.5 shrink-0 text-[15px] font-semibold text-ink/65">
+            <img src={`${basePath}/logos/${b.logo}`} alt="" class="w-6 h-6 object-contain" loading="lazy" />
+            {b.name}
+          </div>
+        ))}
+      </div>
+    </div>
+    <a href="#app" class="mt-6 mx-auto flex w-10 h-10 items-center justify-center text-ink-secondary hover:text-ink" aria-label="Scroll down">
+      <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 9l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </div>
 </section>

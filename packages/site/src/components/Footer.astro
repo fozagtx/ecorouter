@@ -1,51 +1,30 @@
 ---
-import Logo from './Logo.astro';
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+import Logo from "./Logo.astro";
 const cols = [
-  { h: "Product", links: [["How it works", "#how"], ["Resources", "#resources"], ["Router", "#router"], ["Spending caps", "#caps"], ["Airwallex", "#airwallex"], ["FAQ", "#faq"]] },
-  { h: "Project", links: [["GitHub", "https://github.com/fozagtx/ecorouter"], ["Airwallex plan", "https://github.com/fozagtx/ecorouter/blob/main/plans/airwallex-integration.md"], ["Hackathon", "https://airwallex.hackerearth.com/"]] },
+  { h: "Product", links: [["How it works", "#how"], ["Router", "#router"], ["Spending caps", "#caps"], ["FAQ", "#faq"]] },
+  { h: "Project", links: [["Source code", "https://github.com/fozagtx/ecorouter"], ["Airwallex plan", "https://github.com/fozagtx/ecorouter/blob/main/plans/airwallex-integration.md"]] },
+  { h: "Hackathon", links: [["Agentic Banking Hackathon", "https://airwallex.hackerearth.com/"], ["Inference Sourcing track", "https://airwallex.hackerearth.com/"]] },
   { h: "Airwallex", links: [["Airwallex", "https://www.airwallex.com"], ["API docs", "https://www.airwallex.com/docs/api"], ["Issuing", "https://www.airwallex.com/docs/issuing/overview"]] },
 ];
 ---
 
-<footer class="border-t border-line bg-white">
-  <div class="max-w-[1180px] mx-auto px-5">
-    <div class="pt-16 pb-10 space-y-12">
-      <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
-        <div class="space-y-3 max-w-md">
-          <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-white"><Logo class="w-4 h-4 text-white" /></span>
-            <span class="font-semibold text-base tracking-tight text-ink">EcoRouter</span>
-          </div>
-          <p class="text-sm text-ink-secondary leading-relaxed">A unified resource router for agentic inference, based on spending caps. Hackathon build, not audited.</p>
+<footer class="bg-paper border-t border-line-strong">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8 pt-14 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 text-[15px]">
+      {cols.map((c) => (
+        <div>
+          <div class="font-semibold text-ink">{c.h}</div>
+          <ul class="mt-4 space-y-3">
+            {c.links.map(([label, href]) => (
+              <li><a href={href} class="text-ink-secondary hover:text-ink" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{label}</a></li>
+            ))}
+          </ul>
         </div>
-        <a href="#router" class="pill-cta h-11 text-[14px]">
-          Try the router
-          <span class="pill-cta-dot" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
-        {cols.map((c) => (
-          <div class="space-y-3">
-            <div class="eyebrow">{c.h}</div>
-            <ul class="space-y-2.5">
-              {c.links.map(([label, href]) => (
-                <li>
-                  <a href={href} class="text-ink-secondary hover:text-ink" {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-                    {label}{href.startsWith('http') && <span aria-hidden="true"> ↗</span>}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div class="pt-6 border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[13px] text-ink-muted">
-        <span>© {new Date().getFullYear()} EcoRouter contributors · Apache 2.0</span>
-        <a href="#top" class="hover:text-ink">Back to top ↑</a>
-      </div>
+      ))}
+    </div>
+    <div class="mt-14 flex items-center justify-between gap-4 text-[13px] text-ink-muted">
+      <span class="inline-flex items-center gap-2"><Logo class="w-4 h-4 text-ink" /> © {new Date().getFullYear()} EcoRouter contributors · Apache 2.0</span>
+      <a href="#top" class="hover:text-ink">Back to top ↑</a>
     </div>
   </div>
 </footer>

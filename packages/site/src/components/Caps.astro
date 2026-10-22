@@ -1,81 +1,38 @@
 ---
-const pipeline = [
-  { n: "01", stage: "Request", out: "step: scrape, urls: 8", body: "The agent asks for a capability. It never names a vendor or holds a provider key.", refuses: "unknown step kind" },
-  { n: "02", stage: "Cap", out: "$0.0120 left on run", body: "The router reads what is left on the run, the agent's period cap and its per-step ceiling.", refuses: "cap reached" },
-  { n: "03", stage: "Quote", out: "Firecrawl $0.0080 · 3.1s", body: "Live quotes for every allowed provider. A quote older than its freshness window is refetched.", refuses: "stale or missing quote" },
-  { n: "04", stage: "Route", out: "cheapest that fits", body: "Filter by budget, latency target and health, then take the cheapest. No fit means no call.", refuses: "nothing fits" },
-  { n: "05", stage: "Settle", out: "receipt + card spend", body: "The actual cost is recorded against the cap, and the provider is paid from the funding account.", refuses: "card or wallet declines" },
-];
-
 const checks = [
   ["Agent active", "the owner can pause any agent at once"],
   ["Step kind allowed", "an agent only uses the kinds it was given"],
   ["Provider allowlist", "only providers approved for this agent"],
   ["Per-step ceiling", "no single step above the ceiling"],
   ["Run budget left", "the whole run stays inside its cap"],
-  ["Period cap left", "daily or monthly spend per agent"],
+  ["Period cap left", "daily, weekly or monthly spend per agent"],
   ["Quote fresh", "prices older than the window are refetched"],
   ["Latency target", "slow providers are skipped, not waited on"],
   ["Provider healthy", "errors and timeouts take a provider out for a while"],
-  ["Call + meter", "the real cost replaces the quote on the receipt"],
+  ["Call and meter", "the real cost replaces the quote on the receipt"],
 ];
 ---
 
-<section id="caps" class="bg-surface-soft border-y border-line">
-  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
-      <div class="max-w-3xl space-y-3">
-        <div class="eyebrow">04 · Spending caps</div>
-        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-          The agent asks. The router decides what it can afford.
-        </h2>
-        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[640px]">
-          Agents do not hold provider keys or a card. Every step passes through the router, which checks the caps before it spends anything. A refusal is a normal answer the agent can act on, not a surprise on next month's invoice.
-        </p>
+<section id="caps" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>Spending caps</span><span class="rule"></span></div>
+    <div class="mt-14 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12">
+      <div>
+        <h2 class="font-display text-[36px] sm:text-[44px] leading-[1.08] font-medium tracking-[-0.035em] text-ink">The agent asks. The router decides what it can afford.</h2>
+        <p class="mt-5 max-w-[460px] text-[16px] leading-relaxed text-ink-secondary">Agents never hold provider keys or a card. Every step passes these checks in order, and the first one that fails stops the step before anything is spent. The agent gets a refusal it can act on.</p>
+        <p class="mt-6 text-[13px] text-ink-muted">Hackathon build. Not audited.</p>
       </div>
-
-      <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        {pipeline.map((p) => (
-          <li class="card p-4 flex flex-col gap-3 min-w-0">
-            <div class="flex items-center justify-between text-[12px] text-ink-muted">
-              <span>{p.n}</span>
-              <span class="text-ink">{p.stage}</span>
-            </div>
-            <div class="font-mono text-[12px] text-ink bg-surface-muted rounded-lg px-2.5 py-2 break-words">{p.out}</div>
-            <p class="text-[13px] text-ink-secondary leading-relaxed">{p.body}</p>
-            <div class="mt-auto text-[12px] text-destructive">Refuses: {p.refuses}</div>
+      <ol class="border-t border-ink">
+        {checks.map(([k, v], i) => (
+          <li class="py-3.5 border-b border-line-strong flex items-baseline gap-4">
+            <span class="num text-[12px] w-6 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+            <span class="flex-1 min-w-0 sm:flex sm:items-baseline sm:justify-between sm:gap-6">
+              <span class="block text-[16px] text-ink">{k}</span>
+              <span class="block text-[13px] text-ink-muted sm:text-right">{v}</span>
+            </span>
           </li>
         ))}
       </ol>
-
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-8 items-start">
-        <div class="space-y-5">
-          <div class="eyebrow">Before every provider call</div>
-          <h3 class="text-[22px] font-semibold text-ink tracking-[-0.03em] leading-snug">The same checks, in the same order, every step</h3>
-          <p class="text-sm text-ink-secondary leading-relaxed">
-            The first check that fails stops the step and nothing is spent. Caps are enforced at the router and, once Airwallex is wired in, again at the card: each provider gets its own virtual card with a limit that matches the agent's cap.
-          </p>
-          <div class="bg-white card p-4 space-y-2 text-sm text-ink-secondary leading-relaxed">
-            <div class="eyebrow">Honest status</div>
-            <p><span class="text-ink font-medium">Hackathon build. Not audited.</span> Prices on this page are examples. Airwallex settlement is in progress, see below.</p>
-          </div>
-        </div>
-
-        <div class="outer-technical-frame p-3 sm:p-5">
-          <div class="card overflow-hidden shadow-subtle">
-            <div class="px-4 py-3 border-b border-line bg-white text-ink font-mono text-[12px] font-medium break-words">route(agent, step, budget, latency)</div>
-            <ol class="divide-y divide-line">
-              {checks.map(([k, v], i) => (
-                <li class="px-4 py-2.5 flex items-baseline gap-3 text-[13px]">
-                  <span class="text-ink-muted w-5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                  <span class="flex-1 min-w-0 sm:flex sm:items-baseline sm:justify-between sm:gap-4">
-                    <span class="block text-ink">{k}</span>
-                    <span class="block text-[12px] text-ink-muted sm:text-right">{v}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </div>
+    </div>
   </div>
 </section>

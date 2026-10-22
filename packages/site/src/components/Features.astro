@@ -1,41 +1,86 @@
 ---
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-const kinds = [
-  { k: "Reasoning", title: "Model calls", body: "Planning, drafting and tool use. Routed by token price, context size and measured time to first token.", logos: ["anthropic.svg", "openai.svg", "groq.png", "mistralai.svg", "deepseek.png", "googlegemini.svg"] },
-  { k: "Search", title: "Web search", body: "Neural and keyword search for sources. Routed by price per query and how fast results come back.", logos: ["exa.png", "tavily.png", "perplexity.svg"] },
-  { k: "Scrape", title: "Crawl and extract", body: "Turn URLs into clean text or structured fields. Routed by price per page and success rate on recent calls.", logos: ["firecrawl.png", "context.png"] },
-  { k: "Context", title: "Company and brand data", body: "Logos, descriptions and firmographics for a domain. Routed by price per lookup and freshness.", logos: ["context.png"] },
-  { k: "Open models", title: "Hosted open weights", body: "Llama, Qwen and DeepSeek served by several hosts at different prices. The same model, the cheapest host that is up.", logos: ["together.png", "fireworks.png", "openrouter.png", "huggingface.svg"] },
-  { k: "Rerank", title: "Rerank and embed", body: "Score and filter what search returned before it reaches a model. Cheap steps that make the expensive ones smaller.", logos: ["cohere.png", "openai.svg"] },
+const models = [
+  ["Anthropic", "anthropic.svg"], ["OpenAI", "openai.svg"], ["Gemini", "googlegemini.svg"], ["Groq", "groq.png"],
+  ["Mistral", "mistralai.svg"], ["DeepSeek", "deepseek.png"], ["Together", "together.png"], ["Fireworks", "fireworks.png"],
+];
+const tools = [
+  ["Firecrawl", "firecrawl.png", "scrape"],
+  ["context.dev", "context.png", "context"],
+  ["Exa", "exa.png", "search"],
+  ["Tavily", "tavily.png", "search"],
+  ["Perplexity", "perplexity.svg", "answers"],
+  ["Cohere", "cohere.png", "rerank"],
+];
+const rails = [
+  ["Funding wallet", "balances"],
+  ["Card per provider", "issuing"],
+  ["FX on quotes", "fx"],
+  ["Card webhooks", "receipts"],
 ];
 ---
 
-<section id="resources" class="bg-surface-soft border-y border-line">
-  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
-      <div class="max-w-3xl space-y-3">
-        <div class="eyebrow">02 · Resources</div>
-        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-          Not just models. Every paid tool an agent touches.
-        </h2>
-        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[640px]">
-          An agent run is a chain of paid calls: a model plans, a search API finds pages, a scraper reads them, a context API fills in the company. EcoRouter prices and caps all of them in one place, so one budget covers the whole run.
-        </p>
+<section id="resources" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>What EcoRouter routes</span><span class="rule"></span></div>
+
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+      <!-- 01 -->
+      <div>
+        <div class="rule-label !text-[11px]"><span><span class="num">01</span>&nbsp;&nbsp;Models</span></div>
+        <div class="mt-4 window p-3 aspect-[10/9] grid grid-cols-4 grid-rows-2 gap-2">
+          {models.map(([n, l]) => (
+            <div class="w-cell flex flex-col items-center justify-center gap-2.5">
+              <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center"><img src={`${basePath}/logos/${l}`} alt="" class="w-5 h-5 object-contain" loading="lazy" /></span>
+              <span class="font-mono text-[9.5px] uppercase tracking-[0.05em] text-[#A3A099]">{n}</span>
+            </div>
+          ))}
+        </div>
+        <h3 class="mt-7 font-display text-[26px] font-medium tracking-[-0.03em] text-ink">Every model you use</h3>
+        <p class="mt-3 text-[16px] leading-relaxed text-ink-secondary">Frontier and open models behind one call. Routed by token price, context size and the time to first token we measured.</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {kinds.map((p) => (
-          <div class="card p-5 space-y-3 min-w-0 flex flex-col">
-            <div>
-              <span class="text-[12px] text-ink-secondary px-3 py-1 rounded-full bg-surface-muted">{p.k}</span>
+      <!-- 02 -->
+      <div>
+        <div class="rule-label !text-[11px]"><span><span class="num">02</span>&nbsp;&nbsp;Tools</span></div>
+        <div class="mt-4 window p-3 aspect-[10/9] flex flex-col gap-2">
+          {tools.map(([n, l, k]) => (
+            <div class="w-cell flex-1 flex items-center gap-3 px-3">
+              <span class="w-7 h-7 rounded-md bg-white flex items-center justify-center shrink-0"><img src={`${basePath}/logos/${l}`} alt="" class="w-4 h-4 object-contain" loading="lazy" /></span>
+              <span class="text-[13px] text-white">{n}</span>
+              <span class="ml-auto font-mono text-[10px] uppercase tracking-[0.05em] text-accent">{k}</span>
             </div>
-            <h3 class="text-[16px] font-semibold text-ink tracking-[-0.02em] leading-snug">{p.title}</h3>
-            <p class="text-sm text-ink-secondary leading-relaxed">{p.body}</p>
-            <div class="mt-auto pt-2 flex items-center gap-2">
-              {p.logos.map((l) => <img src={`${basePath}/logos/${l}`} alt="" class="w-5 h-5 object-contain" loading="lazy" />)}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <h3 class="mt-7 font-display text-[26px] font-medium tracking-[-0.03em] text-ink">Every tool your agents call</h3>
+        <p class="mt-3 text-[16px] leading-relaxed text-ink-secondary">Search, scraping, company context and reranking are paid steps too. They share the same cap as the model calls, so one budget covers the run.</p>
       </div>
+
+      <!-- 03 -->
+      <div>
+        <div class="rule-label !text-[11px]"><span><span class="num">03</span>&nbsp;&nbsp;Settlement</span></div>
+        <div class="mt-4 window p-3 aspect-[10/9] grid grid-cols-[1.25fr_1fr] gap-3 items-center">
+          <div class="flex flex-col gap-2">
+            {rails.map(([n, k], i) => (
+              <div class="w-cell px-3 py-2.5">
+                <div class="text-[12.5px] text-white">{n}</div>
+                <div class="flex justify-between font-mono text-[9.5px] uppercase tracking-[0.05em]">
+                  <span class="text-[#6F6C66]">{k}</span>
+                  <span class={i === 1 ? "text-[#E7A23B]" : "text-[#6F6C66]"}>{i === 1 ? "next" : "planned"}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="flex flex-col items-center gap-3">
+            <div class="tile tile-sm !w-[92px] !h-[92px] !rounded-[26px]" style="background:linear-gradient(150deg,#fff,#F6D2C4)">
+              <img src={`${basePath}/logos/airwallex.png`} alt="" class="relative z-10 w-10 h-10" loading="lazy" />
+            </div>
+            <span class="font-mono text-[10px] text-[#8D8A83] text-center">airwallex<br />sandbox</span>
+          </div>
+        </div>
+        <h3 class="mt-7 font-display text-[26px] font-medium tracking-[-0.03em] text-ink">Settled on Airwallex</h3>
+        <p class="mt-3 text-[16px] leading-relaxed text-ink-secondary">A funding wallet backs the caps and each provider gets its own virtual card with matching limits. In progress for the hackathon.</p>
+      </div>
+    </div>
   </div>
 </section>

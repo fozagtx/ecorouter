@@ -2,41 +2,26 @@
 import Logo from "./Logo.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const links = [
-  { href: "#how", label: "How it works" },
+  { href: "#app", label: "Product" },
   { href: "#router", label: "Router" },
-  { href: "#caps", label: "Caps" },
   { href: "#airwallex", label: "Airwallex" },
   { href: "#faq", label: "FAQ" },
 ];
 ---
 
-<header class="sticky top-0 z-50 w-full px-3 sm:px-5 pt-3 sm:pt-4 pointer-events-none">
-  <div class="pointer-events-auto max-w-[1180px] mx-auto h-14 pl-4 pr-1.5 flex items-center justify-between gap-4 rounded-full bg-white/80 backdrop-blur-xl border border-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_30px_rgba(0,0,0,0.05)]">
+<header class="relative z-30 w-full px-5 sm:px-8 pt-5">
+  <div class="max-w-[1120px] mx-auto h-12 flex items-center justify-between gap-4">
     <a href={`${basePath}/`} class="flex items-center gap-2 shrink-0">
-      <span class="w-7 h-7 rounded-full bg-ink flex items-center justify-center text-white">
-        <Logo class="w-3.5 h-3.5 text-white" />
-      </span>
-      <span class="font-semibold text-[15px] tracking-[-0.02em] text-ink">EcoRouter</span>
+      <Logo class="w-6 h-6 text-ink" />
+      <span class="font-display font-semibold text-[18px] tracking-[-0.03em] text-ink">EcoRouter</span>
     </a>
 
-    <nav class="hidden lg:flex items-center gap-8 text-[14px] text-ink-secondary">
-      {links.map((l) => <a href={l.href} class="hover:text-ink transition-colors">{l.label}</a>)}
-    </nav>
-
-    <div class="flex items-center gap-1.5">
-      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="pill-cta h-11 text-[14px]" aria-label="EcoRouter on GitHub">
-        GitHub
-        <span class="pill-cta-dot" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      </a>
-      <details class="lg:hidden relative group">
-        <summary class="list-none cursor-pointer w-11 h-11 inline-flex items-center justify-center rounded-full bg-surface-muted text-ink" aria-label="Open menu">
-          <svg class="w-4 h-4 group-open:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg>
-          <svg class="w-4 h-4 hidden group-open:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-        </summary>
-        <div class="absolute right-0 top-14 w-60 bg-white rounded-2xl border border-line shadow-float p-2 text-[14px]">
-          {links.map((l) => <a href={l.href} class="block px-3 py-2.5 rounded-xl text-ink-secondary hover:bg-surface-muted hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
-        </div>
-      </details>
+    <div class="flex items-center gap-1 sm:gap-2">
+      <nav class="hidden md:flex items-center gap-1 text-[15px] text-ink-secondary">
+        {links.map((l) => <a href={l.href} class="px-3 py-2 rounded-lg hover:text-ink">{l.label}</a>)}
+      </nav>
+      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex px-3 py-2 text-[15px] text-ink-secondary hover:text-ink">GitHub</a>
+      <a href="#router" class="inline-flex items-center h-9 px-4 rounded-full bg-ink text-white text-[14px] font-semibold hover:bg-accent">Try the router</a>
     </div>
   </div>
 </header>

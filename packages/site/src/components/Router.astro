@@ -1,157 +1,144 @@
 ---
-const input = "w-full h-10 bg-white border border-line rounded-xl px-3 text-[13px] text-ink focus:outline-none focus:border-line-strong focus:ring-4 focus:ring-ink/5";
-const label = "block text-[13px] text-ink-secondary font-medium mb-1.5";
-const presets = [
-  { label: "Plenty of budget", kind: "reasoning", left: "0.05", latency: "2", frontier: "1" },
-  { label: "Budget nearly gone", kind: "reasoning", left: "0.012", latency: "2", frontier: "1" },
-  { label: "Tight latency", kind: "search", left: "0.05", latency: "0.5", frontier: "0" },
-  { label: "Nothing fits", kind: "scrape", left: "0.005", latency: "2", frontier: "0" },
+const kinds = [
+  { id: "reasoning", label: "Reasoning" },
+  { id: "search", label: "Search" },
+  { id: "scrape", label: "Scrape" },
+  { id: "context", label: "Context" },
+];
+const breaks = [
+  { id: "price", label: "Price ×3" },
+  { id: "slow", label: "Latency ×5" },
+  { id: "down", label: "Offline" },
 ];
 ---
 
-<section id="router" class="bg-white">
-  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-10">
-      <div class="max-w-3xl space-y-3">
-        <div class="eyebrow">03 · Router</div>
-        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-          Route one step and watch it move
-        </h2>
-        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[640px]">
-          Pick a step, the budget left on the run and a latency target. Then break the current pick: raise its price, slow it down or take it offline. The router reroutes, or stops if nothing fits. Example quotes only; nothing is called here.
-        </p>
-      </div>
+<section id="router" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>Route a step</span><span class="rule"></span></div>
 
-      <div class="outer-technical-frame p-3 sm:p-5">
-        <div class="card p-4 sm:p-6 space-y-5 shadow-subtle">
-          <div class="flex flex-wrap gap-2" role="group" aria-label="Example scenarios">
-            {presets.map((p) => (
-              <button
-                type="button"
-                class="rt-preset h-8 px-3.5 rounded-full border border-line bg-white hover:bg-surface-muted text-[13px] text-ink cursor-pointer"
-                data-kind={p.kind}
-                data-left={p.left}
-                data-latency={p.latency}
-                data-frontier={p.frontier}
-              >{p.label}</button>
-            ))}
+    <div class="mt-10 border-t border-ink grid grid-cols-1 lg:grid-cols-2">
+      <!-- controls -->
+      <div class="pt-8 lg:pr-10 lg:border-r border-line-strong space-y-9">
+        <div>
+          <div class="flex items-baseline justify-between gap-4">
+            <span class="text-[15px] text-ink-secondary">Step</span>
+            <span id="rt-kind-label" class="font-display text-[24px] tracking-[-0.02em] text-ink">Reasoning</span>
           </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-            <div class="sm:col-span-4">
-              <label class={label} for="rt-kind">Step</label>
-              <select id="rt-kind" class={input}>
-                <option value="reasoning">Reasoning · model call</option>
-                <option value="search">Search · web query</option>
-                <option value="scrape">Scrape · 8 pages</option>
-                <option value="context">Context · company lookup</option>
-              </select>
-            </div>
-            <div class="sm:col-span-4">
-              <label class={label} for="rt-left">Budget left on this run (USD)</label>
-              <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-muted">$</span>
-                <input id="rt-left" class={`${input} pl-6`} type="text" inputmode="decimal" value="0.05" autocomplete="off" />
-              </div>
-            </div>
-            <div class="sm:col-span-4">
-              <label class={label} for="rt-latency">Latency target (seconds)</label>
-              <input id="rt-latency" class={input} type="text" inputmode="decimal" value="2" autocomplete="off" />
-            </div>
+          <div class="mt-3 grid grid-cols-4 gap-1.5" role="radiogroup" aria-label="Step kind">
+            {kinds.map((k, i) => <button type="button" class="rt-kind chip-tab !h-9 !normal-case !text-[12.5px]" data-kind={k.id} aria-selected={i === 0 ? "true" : "false"}>{k.label}</button>)}
           </div>
+        </div>
 
-          <div class="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-ink-secondary">
-            <label id="rt-frontier-wrap" class="inline-flex items-center gap-2 cursor-pointer select-none">
-              <input id="rt-frontier" type="checkbox" class="accent-ink w-3.5 h-3.5" checked />
-              Needs a frontier model
-            </label>
-            <span class="text-ink-muted">Break the current pick:</span>
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none"><input id="rt-price" type="checkbox" class="accent-ink w-3.5 h-3.5" /> price ×3</label>
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none"><input id="rt-slow" type="checkbox" class="accent-ink w-3.5 h-3.5" /> latency ×5</label>
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none"><input id="rt-down" type="checkbox" class="accent-ink w-3.5 h-3.5" /> offline</label>
+        <div>
+          <div class="flex items-baseline justify-between gap-4">
+            <label for="rt-left" class="text-[15px] text-ink-secondary">Budget left on the run</label>
+            <span id="rt-left-label" class="font-display text-[24px] tabular-nums tracking-[-0.02em] text-ink">$0.0500</span>
           </div>
+          <input id="rt-left" class="slider mt-3" type="range" min="1" max="50" step="1" value="50" />
+          <div class="flex justify-between font-mono text-[11px] text-ink-muted"><span>$0.001</span><span>$0.0125</span><span>$0.025</span><span>$0.0375</span><span>$0.05</span></div>
+        </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-4">
-            <div class="card overflow-hidden text-xs min-w-0">
-              <div class="px-4 py-3 bg-white border-b border-line flex items-center justify-between text-[13px]">
-                <span class="font-medium text-ink">Quotes for this step</span>
-                <span class="text-ink-muted">price · latency</span>
-              </div>
-              <ul id="rt-quotes" class="bg-white divide-y divide-line" aria-live="polite"></ul>
-            </div>
+        <div>
+          <div class="flex items-baseline justify-between gap-4">
+            <label for="rt-lat" class="text-[15px] text-ink-secondary">Latency target</label>
+            <span id="rt-lat-label" class="font-display text-[24px] tabular-nums tracking-[-0.02em] text-ink">2.0s</span>
+          </div>
+          <input id="rt-lat" class="slider mt-3" type="range" min="2" max="50" step="1" value="20" />
+          <div class="flex justify-between font-mono text-[11px] text-ink-muted"><span>0.2s</span><span>1.4s</span><span>2.6s</span><span>3.8s</span><span>5.0s</span></div>
+        </div>
 
-            <div class="space-y-4 min-w-0">
-              <div id="rt-result" class="border p-4 rounded-2xl space-y-2" aria-live="polite"></div>
-              <div class="card overflow-hidden text-xs">
-                <div class="px-4 py-3 bg-white border-b border-line flex items-center text-[13px]">
-                  <span class="font-medium text-ink">Rule</span>
-                </div>
-                <div class="bg-white p-3 text-[12px] text-ink-secondary leading-relaxed">
-                  Keep providers that are online, allowed for this agent, under the budget left and under the latency target. Take the cheapest. Ties go to the faster one. If none are left, stop before calling anyone.
-                </div>
-              </div>
+        <div class="space-y-3">
+          <label id="rt-frontier-wrap" class="flex items-center justify-between gap-4 cursor-pointer select-none">
+            <span class="text-[15px] text-ink-secondary">Needs a frontier model</span>
+            <input id="rt-frontier" type="checkbox" class="accent-ink w-4 h-4" checked />
+          </label>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-[15px] text-ink-secondary">Break the current pick</span>
+            <div class="flex gap-1.5">
+              {breaks.map((b) => <button type="button" class="rt-break chip-tab !normal-case !text-[12px]" data-break={b.id} aria-selected="false">{b.label}</button>)}
             </div>
           </div>
         </div>
+
+        <div class="pt-8 border-t border-line-strong grid grid-cols-2 gap-6 pb-8">
+          <div>
+            <div class="text-[14px] text-ink-secondary">Routed to</div>
+            <div id="rt-pick" class="mt-1 font-display text-[34px] sm:text-[40px] leading-tight tracking-[-0.03em] text-ink truncate">Gemini</div>
+            <div id="rt-why" class="mt-1 text-[13px] text-accent min-h-[20px]"></div>
+          </div>
+          <div>
+            <div class="text-[14px] text-ink-secondary">Cost · left after</div>
+            <div id="rt-cost" class="mt-1 font-display text-[34px] sm:text-[40px] leading-tight tabular-nums tracking-[-0.03em] text-ink">$0.0060</div>
+            <div id="rt-after" class="mt-1 text-[13px] text-ink-muted tabular-nums"></div>
+          </div>
+        </div>
       </div>
+
+      <!-- quote table -->
+      <div class="pt-8 lg:pl-10">
+        <div id="rt-title" class="font-display text-[18px] font-medium tracking-[-0.02em] text-ink">Quotes for a reasoning step</div>
+        <div class="mt-6 flex justify-between text-[13px] text-ink-muted pb-3 border-b border-line-strong">
+          <span>Provider</span><span>Price · latency</span>
+        </div>
+        <ul id="rt-quotes" class="divide-y divide-line-strong border-b border-line-strong" aria-live="polite"></ul>
+        <p class="mt-5 text-[13px] leading-relaxed text-ink-muted">
+          Keep providers that are online, allowed, under the budget left and under the latency target. Take the cheapest; ties go to the faster one. If none are left, stop before calling anyone. Example quotes, not live prices.
+        </p>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
   type Kind = "reasoning" | "search" | "scrape" | "context";
-  interface Quote { id: string; name: string; logo: string; price: number; secs: number; frontier?: boolean }
+  interface Quote { id: string; name: string; sub: string; price: number; secs: number; frontier?: boolean }
 
   // Example quotes per step. Not live prices.
   const QUOTES: Record<Kind, Quote[]> = {
     reasoning: [
-      { id: "anthropic", name: "Anthropic", logo: "anthropic.svg", price: 0.019, secs: 1.9, frontier: true },
-      { id: "openai", name: "OpenAI", logo: "openai.svg", price: 0.016, secs: 2.4, frontier: true },
-      { id: "gemini", name: "Google Gemini", logo: "googlegemini.svg", price: 0.006, secs: 1.4, frontier: true },
-      { id: "mistral", name: "Mistral AI", logo: "mistralai.svg", price: 0.004, secs: 1.1 },
-      { id: "groq", name: "Groq", logo: "groq.png", price: 0.0012, secs: 0.3 },
-      { id: "deepseek", name: "DeepSeek", logo: "deepseek.png", price: 0.0009, secs: 3.8 },
+      { id: "anthropic", name: "Anthropic", sub: "frontier", price: 0.019, secs: 1.9, frontier: true },
+      { id: "openai", name: "OpenAI", sub: "frontier", price: 0.016, secs: 2.4, frontier: true },
+      { id: "gemini", name: "Gemini", sub: "frontier", price: 0.006, secs: 1.4, frontier: true },
+      { id: "mistral", name: "Mistral AI", sub: "fast", price: 0.004, secs: 1.1 },
+      { id: "groq", name: "Groq", sub: "fast · open weights", price: 0.0012, secs: 0.3 },
+      { id: "deepseek", name: "DeepSeek", sub: "open weights", price: 0.0009, secs: 3.8 },
     ],
     search: [
-      { id: "exa", name: "Exa", logo: "exa.png", price: 0.005, secs: 0.6 },
-      { id: "tavily", name: "Tavily", logo: "tavily.png", price: 0.008, secs: 0.4 },
-      { id: "perplexity", name: "Perplexity", logo: "perplexity.svg", price: 0.012, secs: 2.6 },
+      { id: "exa", name: "Exa", sub: "neural search", price: 0.005, secs: 0.6 },
+      { id: "tavily", name: "Tavily", sub: "search for agents", price: 0.008, secs: 0.4 },
+      { id: "perplexity", name: "Perplexity", sub: "answer + sources", price: 0.012, secs: 2.6 },
     ],
     scrape: [
-      { id: "firecrawl", name: "Firecrawl", logo: "firecrawl.png", price: 0.008, secs: 3.1 },
-      { id: "contextdev", name: "context.dev", logo: "context.png", price: 0.011, secs: 2.2 },
+      { id: "firecrawl", name: "Firecrawl", sub: "8 pages to markdown", price: 0.008, secs: 3.1 },
+      { id: "contextdev", name: "context.dev", sub: "8 pages to markdown", price: 0.011, secs: 2.2 },
     ],
     context: [
-      { id: "contextdev", name: "context.dev", logo: "context.png", price: 0.004, secs: 0.4 },
-      { id: "firecrawl", name: "Firecrawl", logo: "firecrawl.png", price: 0.009, secs: 2.8 },
+      { id: "contextdev", name: "context.dev", sub: "brand + company lookup", price: 0.004, secs: 0.4 },
+      { id: "firecrawl", name: "Firecrawl", sub: "extract from homepage", price: 0.009, secs: 2.8 },
     ],
   };
 
-  const base = (document.querySelector('link[rel="icon"]') as HTMLLinkElement | null)?.getAttribute("href")?.replace(/\/logo\.svg$/, "") ?? "";
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
-  const kindEl = $<HTMLSelectElement>("rt-kind");
   const leftEl = $<HTMLInputElement>("rt-left");
-  const latEl = $<HTMLInputElement>("rt-latency");
+  const latEl = $<HTMLInputElement>("rt-lat");
   const frontierEl = $<HTMLInputElement>("rt-frontier");
   const frontierWrap = $<HTMLLabelElement>("rt-frontier-wrap");
-  const priceEl = $<HTMLInputElement>("rt-price");
-  const slowEl = $<HTMLInputElement>("rt-slow");
-  const downEl = $<HTMLInputElement>("rt-down");
-  const quotesEl = $<HTMLUListElement>("rt-quotes");
-  const resultEl = $<HTMLDivElement>("rt-result");
+  const kindBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".rt-kind"));
+  const breakBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".rt-break"));
+  let kind: Kind = "reasoning";
+  const broken = { price: false, slow: false, down: false };
 
   const usd = (n: number) => `$${n.toFixed(4)}`;
-  const num = (raw: string) => {
-    const v = Number(raw.trim().replace(/^\$/, ""));
-    return Number.isFinite(v) && v >= 0 ? v : null;
-  };
+  const fill = (el: HTMLInputElement) => el.style.setProperty("--fill", `${((+el.value - +el.min) / (+el.max - +el.min)) * 100}%`);
 
   interface Verdict { q: Quote; price: number; secs: number; down: boolean; reason: string | null }
 
-  function evaluate(quotes: Quote[], left: number, target: number, frontier: boolean, broken: string | null): Verdict[] {
-    return quotes.map((q) => {
-      const hit = q.id === broken;
-      const price = hit && priceEl.checked ? q.price * 3 : q.price;
-      const secs = hit && slowEl.checked ? q.secs * 5 : q.secs;
-      const down = hit && downEl.checked;
+  function evaluate(left: number, target: number, frontier: boolean, hitId: string | null): Verdict[] {
+    return QUOTES[kind].map((q) => {
+      const hit = q.id === hitId;
+      const price = hit && broken.price ? q.price * 3 : q.price;
+      const secs = hit && broken.slow ? q.secs * 5 : q.secs;
+      const down = hit && broken.down;
       let reason: string | null = null;
       if (down) reason = "offline";
       else if (frontier && !q.frontier) reason = "not frontier";
@@ -160,80 +147,67 @@ const presets = [
       return { q, price, secs, down, reason };
     });
   }
-
-  function pick(vs: Verdict[]) {
-    return vs.filter((v) => !v.reason).sort((a, b) => a.price - b.price || a.secs - b.secs)[0] ?? null;
-  }
+  const pick = (vs: Verdict[]) => vs.filter((v) => !v.reason).sort((a, b) => a.price - b.price || a.secs - b.secs)[0] ?? null;
 
   function run() {
-    const kind = kindEl.value as Kind;
+    const left = +leftEl.value / 1000;
+    const target = +latEl.value / 10;
+    fill(leftEl); fill(latEl);
+    $("rt-left-label").textContent = usd(left);
+    $("rt-lat-label").textContent = `${target.toFixed(1)}s`;
     frontierWrap.style.display = kind === "reasoning" ? "" : "none";
     const frontier = kind === "reasoning" && frontierEl.checked;
-    const left = num(leftEl.value);
-    const target = num(latEl.value);
 
-    if (left === null || target === null) {
-      quotesEl.innerHTML = "";
-      resultEl.className = "border p-4 rounded-2xl space-y-2 border-destructive/25 bg-destructive/5";
-      resultEl.innerHTML = `<div class="text-[13px] text-ink-muted">Result</div><div class="text-[15px] font-semibold text-destructive">Enter a budget and a latency target</div>`;
-      return;
-    }
+    const before = pick(evaluate(left, target, frontier, null));
+    const anyBreak = broken.price || broken.slow || broken.down;
+    const hitId = before && anyBreak ? before.q.id : null;
+    const vs = evaluate(left, target, frontier, hitId);
+    const chosen = pick(vs);
 
-    const quotes = QUOTES[kind];
-    const before = pick(evaluate(quotes, left, target, frontier, null));
-    const broken = before && (priceEl.checked || slowEl.checked || downEl.checked) ? before.q.id : null;
-    const verdicts = evaluate(quotes, left, target, frontier, broken);
-    const chosen = pick(verdicts);
+    $("rt-title").textContent = `Quotes for a ${kind} step`;
+    $("rt-kind-label").textContent = kind[0].toUpperCase() + kind.slice(1);
+    $("rt-quotes").innerHTML = vs.slice().sort((a, b) => a.price - b.price).map((v) => {
+      const isPick = chosen?.q.id === v.q.id;
+      const status = isPick ? `<span class="text-accent">${hitId && before && before.q.id !== chosen!.q.id ? "rerouted here" : "picked"}</span>` : v.reason ? `<span class="text-destructive">${v.reason}</span>` : `<span class="text-ink-muted">fits</span>`;
+      return `<li class="py-4 flex items-center justify-between gap-4 ${isPick ? "" : "opacity-80"}">
+        <div class="min-w-0">
+          <div class="text-[16px] ${isPick ? "font-semibold text-ink" : "text-ink"}">${v.q.name}${v.q.id === hitId ? ' <span class="font-mono text-[11px] text-warn">broken</span>' : ""}</div>
+          <div class="text-[12.5px] text-ink-muted">${v.q.sub} · ${status}</div>
+        </div>
+        <div class="text-right shrink-0 tabular-nums">
+          <div class="text-[16px] ${isPick ? "font-semibold text-ink" : "text-ink"}">${v.down ? "n/a" : usd(v.price)}</div>
+          <div class="text-[12.5px] ${v.reason === "too slow" ? "text-destructive" : "text-ink-muted"}">${v.down ? "n/a" : v.secs.toFixed(1) + "s"}</div>
+        </div>
+      </li>`;
+    }).join("");
 
-    quotesEl.innerHTML = verdicts
-      .slice()
-      .sort((a, b) => a.price - b.price)
-      .map((v) => {
-        const isPick = chosen && v.q.id === chosen.q.id;
-        const tag = isPick ? ["picked", "text-ok"] : v.reason ? [v.reason, "text-ink-muted"] : ["fits", "text-ink-secondary"];
-        const row = isPick ? "bg-ok/5" : v.q.id === broken ? "bg-warn-soft" : "";
-        const priceCls = v.reason === "over budget" ? "text-destructive" : "text-ink";
-        const secsCls = v.reason === "too slow" ? "text-destructive" : "text-ink-muted";
-        return `<li class="px-4 py-3 flex items-center gap-3 ${row}">
-          <img src="${base}/logos/${v.q.logo}" alt="" class="w-4 h-4 object-contain shrink-0" />
-          <span class="flex-1 min-w-0 text-[13px] text-ink truncate">${v.q.name}${v.q.id === broken ? ' <span class="text-[11px] text-warn">· broken</span>' : ""}</span>
-          <span class="text-right shrink-0 font-sans tabular-nums text-[12px]"><span class="block ${priceCls}">${v.down ? "n/a" : usd(v.price)}</span><span class="block ${secsCls}">${v.down ? "n/a" : v.secs.toFixed(1) + "s"}</span></span>
-          <span class="w-[86px] text-right text-[12px] font-medium shrink-0 ${tag[1]}">${tag[0]}</span>
-        </li>`;
-      })
-      .join("");
-
-    let tone: string, title: string, body: string;
     if (!chosen) {
-      tone = "border-destructive/25 bg-destructive/5";
-      title = `<span class="text-destructive">Stopped · no provider fits</span>`;
-      body = `Nothing was called and nothing was spent. The agent gets a refusal with the cheapest quote (${usd(Math.min(...verdicts.filter((v) => !v.down).map((v) => v.price)))}) so it can ask for more budget or drop the step.`;
-    } else if (broken && before && chosen.q.id !== before.q.id) {
-      tone = "border-warn/25 bg-warn-soft";
-      title = `<span class="text-warn">Rerouted · ${before.q.name} → ${chosen.q.name}</span>`;
-      body = `${chosen.q.name} serves this step for ${usd(chosen.price)} in ${chosen.secs.toFixed(1)}s. Budget left after: <b class="tabular-nums">${usd(left - chosen.price)}</b>.`;
+      $("rt-pick").textContent = "Stopped";
+      $("rt-why").textContent = "No provider fits. Nothing is called or spent.";
+      $("rt-why").className = "mt-1 text-[13px] text-destructive min-h-[20px]";
+      $("rt-cost").textContent = "$0.0000";
+      $("rt-after").textContent = `${usd(left)} left`;
     } else {
-      tone = "border-ok/25 bg-ok/5";
-      title = `<span class="text-ok">Routed to ${chosen.q.name}</span>`;
-      body = `Cheapest provider under ${usd(left)} and ${target}s. Costs ${usd(chosen.price)} in ${chosen.secs.toFixed(1)}s. Budget left after: <b class="tabular-nums">${usd(left - chosen.price)}</b>.`;
+      const rerouted = hitId && before && before.q.id !== chosen.q.id;
+      $("rt-pick").textContent = chosen.q.name;
+      $("rt-why").textContent = rerouted ? `Rerouted from ${before!.q.name}` : "Cheapest that fits";
+      $("rt-why").className = `mt-1 text-[13px] ${rerouted ? "text-warn" : "text-accent"} min-h-[20px]`;
+      $("rt-cost").textContent = usd(chosen.price);
+      $("rt-after").textContent = `${usd(left - chosen.price)} left · ${chosen.secs.toFixed(1)}s`;
     }
-    resultEl.className = `border p-4 rounded-2xl space-y-2 ${tone}`;
-    resultEl.innerHTML = `<div class="text-[13px] text-ink-muted">Result</div><div class="text-[15px] font-semibold">${title}</div><p class="text-[13px] text-ink-secondary leading-relaxed">${body}</p>`;
   }
 
-  [kindEl, leftEl, latEl, frontierEl, priceEl, slowEl, downEl].forEach((el) => {
-    el.addEventListener("input", run);
-    el.addEventListener("change", run);
-  });
-  document.querySelectorAll<HTMLButtonElement>(".rt-preset").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      kindEl.value = btn.dataset.kind!;
-      leftEl.value = btn.dataset.left!;
-      latEl.value = btn.dataset.latency!;
-      frontierEl.checked = btn.dataset.frontier === "1";
-      priceEl.checked = slowEl.checked = downEl.checked = false;
-      run();
-    });
-  });
+  kindBtns.forEach((b) => b.addEventListener("click", () => {
+    kind = b.dataset.kind as Kind;
+    kindBtns.forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+    run();
+  }));
+  breakBtns.forEach((b) => b.addEventListener("click", () => {
+    const id = b.dataset.break as keyof typeof broken;
+    broken[id] = !broken[id];
+    b.setAttribute("aria-selected", String(broken[id]));
+    run();
+  }));
+  [leftEl, latEl, frontierEl].forEach((el) => el.addEventListener("input", run));
   run();
 </script>

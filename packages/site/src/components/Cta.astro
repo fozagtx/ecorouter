@@ -1,29 +1,17 @@
 ---
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+import Logo from "./Logo.astro";
 ---
 
-<section class="bg-white">
-  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32">
-      <div class="relative overflow-hidden rounded-[32px] min-h-[960px] sm:min-h-[820px] lg:min-h-0 lg:aspect-[3/2] bg-[#FAF9F2] px-6 sm:px-12">
-        <img src={`${basePath}/assets/hero-hill.jpg`} alt="" class="absolute inset-x-0 bottom-0 h-[55%] w-full object-cover object-bottom lg:inset-0 lg:h-full" loading="lazy" />
-        <div class="absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-[#FAF9F2] via-[#FAF9F2]/90 to-transparent"></div>
-        <div class="relative z-10 mx-auto max-w-[720px] pt-10 sm:pt-12 lg:pt-12 space-y-6 text-center">
-          <h2 class="text-[40px] sm:text-[52px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-            Let your agents spend like they check the price first
-          </h2>
-          <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[540px] mx-auto">
-            Set a cap per agent, list the providers it may use, and let EcoRouter source every step at the best live price inside it.
-          </p>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="#router" class="pill-cta h-12 text-[15px]">
-              Try the router
-              <span class="pill-cta-dot w-9 h-9" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            </a>
-            <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="secondary-cta">
-              View on GitHub <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-      </div>
+<section class="relative overflow-hidden atmo border-t border-line-strong">
+  <div class="relative max-w-[1120px] mx-auto px-5 sm:px-8 py-28 sm:py-36 flex flex-col items-center text-center">
+    <div class="float">
+      <div class="tile tile-sm"><Logo class="relative z-10 w-14 h-14 text-ink" /></div>
+    </div>
+    <h2 class="mt-12 font-display text-[40px] sm:text-[56px] leading-[1.02] font-medium tracking-[-0.045em] text-ink">Let your agents check the price first.</h2>
+    <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a href="#router" class="btn-primary h-12 px-6 text-[15px] !rounded-full">Try the router</a>
+      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="btn-secondary h-12 px-6 text-[15px] !rounded-full">Read the code</a>
+    </div>
+    <p class="mt-4 text-[13px] text-ink-muted">Hackathon build · Airwallex settlement in progress</p>
   </div>
 </section>

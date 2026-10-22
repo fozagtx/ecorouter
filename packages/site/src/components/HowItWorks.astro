@@ -1,61 +1,22 @@
 ---
 const steps = [
-  {
-    n: "01",
-    tag: "Cap",
-    title: "Give every agent a spending cap",
-    body: "Set a budget per agent per period, a ceiling per step and the providers each agent may use. The cap is checked before any provider is called, not reconciled after the invoice arrives.",
-    rows: [["period cap", "$50 / day"], ["per step", "$0.40"], ["latency target", "2s"], ["providers", "6 allowed"]],
-  },
-  {
-    n: "02",
-    tag: "Quote",
-    title: "Price each step across providers",
-    body: "Every step has a kind: reasoning, search, scrape, context, rerank. The router keeps a live quote per provider for that kind, from published price sheets plus the latency it measured on recent calls.",
-    rows: [["step", "scrape · 8 pages"], ["Firecrawl", "$0.0080 · 3.1s"], ["context.dev", "$0.0110 · 2.2s"], ["fresh for", "60s"]],
-  },
-  {
-    n: "03",
-    tag: "Route",
-    title: "Pick, call, and reroute on change",
-    body: "The cheapest provider that meets the latency target and fits the remaining cap wins. If a price moves, a provider slows down or the cap runs low, the next step goes somewhere else.",
-    rows: [["picked", "Firecrawl"], ["cap left after", "$18.59"], ["on timeout", "next provider"], ["over cap", "stop"]],
-  },
+  { n: "01", tag: "Cap", title: "Give every agent a cap", body: "A budget per period, a ceiling per step and the providers it may use. Checked before any provider is called, not reconciled after the invoice." },
+  { n: "02", tag: "Quote", title: "Price the step everywhere", body: "Each step has a kind. The router keeps a quote per provider for that kind, from published prices plus the latency it measured on recent calls." },
+  { n: "03", tag: "Route", title: "Pick, call, reroute", body: "The cheapest provider under the latency target and the budget left wins. When a price moves, a provider slows down or the cap runs low, the next step goes elsewhere." },
 ];
 ---
 
-<section id="how" class="bg-white border-t border-line">
-  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
-      <div class="max-w-3xl space-y-3">
-        <div class="eyebrow">01 · How it works</div>
-        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-          One router between your agents and every provider
-        </h2>
-        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[620px]">
-          Agents ask for a capability, not a vendor. EcoRouter decides who serves each step, based on what it costs right now, how fast it is, and how much of the agent's budget is left.
-        </p>
-      </div>
-
-      <ol class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {steps.map((s) => (
-          <li class="card p-5 sm:p-6 flex flex-col gap-4 min-w-0">
-            <div class="flex items-center justify-between text-[13px] text-ink-muted">
-              <span>{s.n}</span>
-              <span class="text-ink px-3 py-1 rounded-full bg-surface-muted">{s.tag}</span>
-            </div>
-            <h3 class="text-[18px] font-semibold text-ink tracking-[-0.02em] leading-snug">{s.title}</h3>
-            <p class="text-sm text-ink-secondary leading-relaxed">{s.body}</p>
-            <div class="mt-auto bg-surface-muted rounded-xl p-3 text-[12px] space-y-2">
-              {s.rows.map(([k, v]) => (
-                <div class="flex justify-between gap-3">
-                  <span class="text-ink-muted">{k}</span>
-                  <span class={`font-medium truncate ${v === "stop" ? "text-destructive" : "text-ink"}`}>{v}</span>
-                </div>
-              ))}
-            </div>
-          </li>
-        ))}
-      </ol>
-      <p class="text-[12px] text-ink-muted">Figures on this page are examples to show the mechanics, not live quotes.</p>
+<section id="how" class="bg-paper pb-28 sm:pb-36">
+  <div class="max-w-[1120px] mx-auto px-5 sm:px-8">
+    <div class="rule-label"><span>How it works</span><span class="rule"></span></div>
+    <ol class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+      {steps.map((s) => (
+        <li class="border-t border-ink pt-6">
+          <div class="rule-label !text-[11px]"><span><span class="num">{s.n}</span>&nbsp;&nbsp;{s.tag}</span></div>
+          <h3 class="mt-5 font-display text-[26px] font-medium tracking-[-0.03em] text-ink">{s.title}</h3>
+          <p class="mt-3 text-[16px] leading-relaxed text-ink-secondary">{s.body}</p>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
