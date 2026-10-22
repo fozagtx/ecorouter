@@ -124,3 +124,4 @@ OPENROUTER_API_KEY=... ECOROUTER_OPENROUTER_MODELS="openai/gpt-4o-mini,meta-llam
 - Card limits mirror the period cap, not the per-step ceiling, because providers bill per invoice or top-up, not per API call.
 - The live site deploys from the committed `docs/` folder. Run `pnpm build:site` and commit `docs/` to publish changes.
 - Commits carry only the repo owner as author. No co-author lines.
+- `.wallets/` (gitignored) holds credentials: `float-key.json` (testnet private key), `rpc-url.txt` (the Metal RPC URL is itself the credential), and the clearing wallets for jobs and providers. Never commit or paste them.
