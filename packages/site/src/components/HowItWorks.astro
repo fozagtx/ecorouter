@@ -2,24 +2,24 @@
 const steps = [
   {
     n: "01",
-    tag: "Policy",
-    title: "An allowance for every spender",
-    body: "Add a person or an AI agent and give it its own policy: an allowance per period, a cap per payment, a maximum number of payments, an expiry date and the services it may pay. Pause or remove a spender at any time.",
-    rows: [["allowance", "$900 / month"], ["cap per payment", "$250"], ["payments", "20 / month"], ["expires", "Dec 31"]],
+    tag: "Cap",
+    title: "Give every agent a spending cap",
+    body: "Set a budget per agent per period, a ceiling per step and the providers each agent may use. The cap is checked before any provider is called, not reconciled after the invoice arrives.",
+    rows: [["period cap", "$50 / day"], ["per step", "$0.40"], ["latency target", "2s"], ["providers", "6 allowed"]],
   },
   {
     n: "02",
-    tag: "Registry",
-    title: "Only registered services get paid",
-    body: "Payments go to services in an on-chain registry, never to a pasted address. The pay function takes a service id. An id that is unknown or suspended reverts, so nobody can redirect money to an address they typed.",
-    rows: [["pay(…, service)", "\"inference-credits\""], ["resolves to", "G…Q7XK (payee)"], ["unknown id", "reverts"], ["suspended", "reverts"]],
+    tag: "Quote",
+    title: "Price each step across providers",
+    body: "Every step has a kind: reasoning, search, scrape, context, rerank. The router keeps a live quote per provider for that kind, from published price sheets plus the latency it measured on recent calls.",
+    rows: [["step", "scrape · 8 pages"], ["Firecrawl", "$0.0080 · 3.1s"], ["context.dev", "$0.0110 · 2.2s"], ["fresh for", "60s"]],
   },
   {
     n: "03",
-    tag: "Approval",
-    title: "Over the limit, the owner decides",
-    body: "A payment over a rule is held, not failed. Nothing moves. The spender asks for approval, and the owner sees the rule that caught it and how far over it was. Approving and paying are separate steps.",
-    rows: [["status", "held"], ["rule", "cap $250"], ["over by", "$70"], ["owner", "approve · decline"]],
+    tag: "Route",
+    title: "Pick, call, and reroute on change",
+    body: "The cheapest provider that meets the latency target and fits the remaining cap wins. If a price moves, a provider slows down or the cap runs low, the next step goes somewhere else.",
+    rows: [["picked", "Firecrawl"], ["cap left after", "$18.59"], ["on timeout", "next provider"], ["over cap", "stop"]],
   },
 ];
 ---
@@ -29,10 +29,10 @@ const steps = [
       <div class="max-w-3xl space-y-3">
         <div class="eyebrow">01 · How it works</div>
         <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
-          One account, a rule for every spender
+          One router between your agents and every provider
         </h2>
         <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[620px]">
-          The owner funds one team account in USDC. The money stays in a Soroban contract, and every payment out of it is checked against the spender's own policy before anything settles.
+          Agents ask for a capability, not a vendor. EcoRouter decides who serves each step, based on what it costs right now, how fast it is, and how much of the agent's budget is left.
         </p>
       </div>
 
@@ -49,12 +49,13 @@ const steps = [
               {s.rows.map(([k, v]) => (
                 <div class="flex justify-between gap-3">
                   <span class="text-ink-muted">{k}</span>
-                  <span class={`font-medium truncate ${v === "held" || v === "$70" ? "text-warn" : v === "reverts" ? "text-destructive" : "text-ink"}`}>{v}</span>
+                  <span class={`font-medium truncate ${v === "stop" ? "text-destructive" : "text-ink"}`}>{v}</span>
                 </div>
               ))}
             </div>
           </li>
         ))}
       </ol>
+      <p class="text-[12px] text-ink-muted">Figures on this page are examples to show the mechanics, not live quotes.</p>
   </div>
 </section>

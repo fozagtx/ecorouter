@@ -5,8 +5,8 @@ interface Props {
 }
 
 const {
-  title = "EcoRouter | Spending rules for teams and their AI agents, on Stellar",
-  description = "One shared USDC account for your team and its AI agents. Every person and every agent pays under its own allowance, per-payment cap and approved services, enforced by a Soroban contract on Stellar. The agent proposes. Only the contract authorizes."
+  title = "EcoRouter | A unified resource router for agentic inference",
+  description = "EcoRouter sources every AI step by live price and latency across model, search and scraping providers, and reroutes when a spending cap or speed target changes. Settlement on Airwallex is in progress."
 } = Astro.props;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || "https://ecorouter.xyz");
@@ -19,7 +19,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="keywords" content="team spending account, AI agent payments, spending policy, allowances, approvals, USDC, Stellar, Soroban, service registry, receipts" />
+    <meta name="keywords" content="inference routing, agentic inference, AI agent spending caps, LLM router, provider routing, live pricing, Firecrawl, context.dev, Exa, Airwallex" />
     <meta name="theme-color" content="#FFFFFF" />
     <link rel="canonical" href={canonicalUrl.href} />
 

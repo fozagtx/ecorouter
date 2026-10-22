@@ -1,0 +1,80 @@
+---
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const plan = [
+  { k: "Wallet", title: "One funding wallet", body: "The team funds an Airwallex wallet. Agent caps are budgets drawn from that balance, so the router never promises spend the account cannot cover.", api: "Balances API" },
+  { k: "Cards", title: "A virtual card per provider", body: "Each provider is paid with its own Airwallex virtual card. Its authorization controls mirror the agent's caps, so even a bug in the router cannot overspend at the card.", api: "Issuing · cards + authorization controls" },
+  { k: "FX", title: "Prices in any currency", body: "Providers bill in USD, EUR or others. Quotes are converted at the live Airwallex rate before routing, so caps compare like with like.", api: "FX · rates + conversions" },
+  { k: "Receipts", title: "Spend reconciled per step", body: "Card transactions are matched back to the router's receipts. A decline at the card reroutes the next step, the same way a slow provider does.", api: "Issuing transactions · webhooks" },
+];
+
+const status = [
+  ["Router, caps and quotes", "Designing in this repo", "text-ink"],
+  ["Airwallex sandbox: wallet balance", "Planned", "text-warn"],
+  ["Airwallex sandbox: per-provider virtual cards", "Planned", "text-warn"],
+  ["Airwallex FX on provider quotes", "Planned", "text-warn"],
+  ["Card transaction webhooks into receipts", "Planned", "text-warn"],
+  ["Metal testnet access (track setup)", "Requested", "text-ink-secondary"],
+];
+---
+
+<section id="airwallex" class="bg-white">
+  <div class="max-w-[1180px] mx-auto px-5 py-24 md:py-32 space-y-12">
+      <div class="max-w-3xl space-y-3">
+        <div class="eyebrow flex items-center gap-2">05 · Settlement on <img src={`${basePath}/logos/airwallex.png`} alt="" class="w-4 h-4 inline" /> Airwallex</div>
+        <h2 class="text-[40px] sm:text-[48px] leading-[1.05] font-semibold tracking-[-0.04em] text-ink">
+          Caps enforced twice: at the router and at the card
+        </h2>
+        <p class="text-[17px] sm:text-[18px] text-ink-secondary leading-relaxed max-w-[640px]">
+          Routing decides who should get paid. Airwallex is how they get paid. We are wiring EcoRouter to Airwallex so the budget the router enforces is the same money sitting in the account.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {plan.map((p) => (
+          <div class="card p-5 space-y-3 min-w-0 flex flex-col">
+            <div>
+              <span class="text-[12px] text-ink-secondary px-3 py-1 rounded-full bg-surface-muted">{p.k}</span>
+            </div>
+            <h3 class="text-[16px] font-semibold text-ink tracking-[-0.02em] leading-snug">{p.title}</h3>
+            <p class="text-sm text-ink-secondary leading-relaxed">{p.body}</p>
+            <div class="mt-auto pt-1 font-mono text-[11.5px] text-ink-muted">{p.api}</div>
+          </div>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-8 items-start">
+        <div class="outer-technical-frame p-3 sm:p-5">
+          <div class="card overflow-hidden shadow-subtle">
+            <div class="px-4 py-3 border-b border-line flex items-center justify-between gap-2 bg-white text-[13px]">
+              <span class="text-ink font-medium truncate font-mono">card(research-agent · firecrawl)</span>
+              <span class="text-[12px] text-ink-muted shrink-0">Planned shape</span>
+            </div>
+            <pre class="p-4 sm:p-5 font-mono text-[11.5px] leading-relaxed text-ink-secondary overflow-x-auto"><code><span class="text-accent">route</span>(agent, step) <span class="text-ink-muted">// picks Firecrawl, $0.0080</span>
+  ├─ cap.reserve(agent, <span class="text-ink">0.0080</span>)
+  ├─ provider.call(step)
+  ├─ airwallex.card(agent, <span class="text-ink">"firecrawl"</span>)
+  │    per_transaction_limits: agent.cap.step
+  │    allowed_merchant_categories  <span class="text-ink-muted">// provider only</span>
+  └─ webhook: issuing transaction
+       └─ cap.settle(actual) · receipt</code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="eyebrow">Where it stands</div>
+          <ul class="divide-y divide-line">
+            {status.map(([k, v, cls]) => (
+              <li class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 py-3.5">
+                <span class="text-sm text-ink">{k}</span>
+                <span class={`text-[13px] font-medium sm:text-right ${cls}`}>{v}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="text-sm text-ink-secondary leading-relaxed">
+            Nothing on this page moves real money yet. The integration plan lives in the repo, and this list will change as each piece lands in the Airwallex sandbox.
+          </p>
+        </div>
+      </div>
+  </div>
+</section>

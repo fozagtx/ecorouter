@@ -13,22 +13,22 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   <div class="relative max-w-[1180px] mx-auto px-5 pt-[116px] sm:pt-[140px] lg:pt-[150px] text-center">
     <h1 class="mx-auto max-w-[1040px] text-[40px] leading-[1.06] sm:text-[56px] lg:text-[66px] font-semibold tracking-[-0.045em] text-ink">
-      Give your agents a
+      Every agent step at the
       <span class="inline-flex align-middle items-center justify-center w-[0.9em] h-[0.9em] -mt-[0.12em] mx-[0.04em] rounded-full bg-ink text-white">
-        <svg viewBox="0 0 24 24" class="w-[0.48em] h-[0.48em]" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" class="w-[0.48em] h-[0.48em]" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h11l-3-3M20 17H9l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
-      <span class="font-light italic text-ink-secondary">budget</span>
+      <span class="font-light italic text-ink-secondary">right price</span>,
       <br class="hidden sm:block" />
-      &amp; keep the final say.
+      inside its spending cap.
     </h1>
 
-    <p class="mt-5 mx-auto max-w-[600px] text-[16px] sm:text-[18px] leading-[1.55] text-ink-secondary">
-      One shared USDC account for your people and AI agents. Allowances, per-payment caps and approved services, enforced by a Soroban contract on Stellar.
+    <p class="mt-5 mx-auto max-w-[620px] text-[16px] sm:text-[18px] leading-[1.55] text-ink-secondary">
+      EcoRouter is a unified resource router for agentic inference. Each model call, search and scrape goes to the provider with the best live price and speed, and gets rerouted the moment a budget or latency target changes.
     </p>
 
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-      <a href={`${basePath}/app/`} class="pill-cta h-12 text-[15px]">
-        Open the app
+      <a href="#router" class="pill-cta h-12 text-[15px]">
+        Try the router
         <span class="pill-cta-dot w-9 h-9" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </a>
       <a href="#how" class="inline-flex items-center gap-2 h-12 px-5 rounded-full bg-white/70 backdrop-blur border border-white text-[15px] text-ink hover:bg-white transition-colors">
@@ -36,6 +36,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         <svg viewBox="0 0 16 16" class="w-3 h-3" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg>
       </a>
     </div>
-    <p class="mt-4 text-[13px] text-ink-muted">Connect a Freighter wallet · Testnet only, not audited</p>
+    <p class="mt-4 text-[13px] text-ink-muted">Built for the Airwallex Agentic Banking Hackathon · Inference Sourcing track · Airwallex settlement in progress</p>
   </div>
 </section>

@@ -3,9 +3,9 @@ import Logo from "./Logo.astro";
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const links = [
   { href: "#how", label: "How it works" },
-  { href: "#agents", label: "Agents" },
-  { href: "#security", label: "Security" },
-  { href: `${basePath}/docs/`, label: "Docs" },
+  { href: "#router", label: "Router" },
+  { href: "#caps", label: "Caps" },
+  { href: "#airwallex", label: "Airwallex" },
   { href: "#faq", label: "FAQ" },
 ];
 ---
@@ -24,9 +24,8 @@ const links = [
     </nav>
 
     <div class="flex items-center gap-1.5">
-      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center h-11 px-4 rounded-full text-[14px] text-ink-secondary hover:text-ink" aria-label="EcoRouter on GitHub">GitHub</a>
-      <a href={`${basePath}/app/`} class="pill-cta h-11 text-[14px]">
-        Open the app
+      <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="pill-cta h-11 text-[14px]" aria-label="EcoRouter on GitHub">
+        GitHub
         <span class="pill-cta-dot" aria-hidden="true"><svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 11L11 5M6 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </a>
       <details class="lg:hidden relative group">
@@ -36,7 +35,6 @@ const links = [
         </summary>
         <div class="absolute right-0 top-14 w-60 bg-white rounded-2xl border border-line shadow-float p-2 text-[14px]">
           {links.map((l) => <a href={l.href} class="block px-3 py-2.5 rounded-xl text-ink-secondary hover:bg-surface-muted hover:text-ink" onclick="this.closest('details').removeAttribute('open')">{l.label}</a>)}
-          <a href="https://github.com/fozagtx/ecorouter" target="_blank" rel="noopener noreferrer" class="block px-3 py-2.5 rounded-xl text-ink-secondary hover:bg-surface-muted hover:text-ink">GitHub ↗</a>
         </div>
       </details>
     </div>
