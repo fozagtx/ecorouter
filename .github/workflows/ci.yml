@@ -23,5 +23,7 @@ jobs:
         run: pnpm --filter ecorouter typecheck
       - name: SDK tests
         run: pnpm --filter ecorouter test
+      - name: Kit 12 agent tests
+        run: pnpm --filter @ecorouter/kit12 typecheck && pnpm --filter @ecorouter/kit12 test
       - name: Landing page builds
         run: pnpm --filter @ecorouter/site exec astro build --outDir "$RUNNER_TEMP/site"

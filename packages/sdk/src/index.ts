@@ -11,3 +11,4 @@ export * from "./airwallex/client.js";
 export * from "./airwallex/webhook.js";
 export * from "./airwallex/settlement.js";
 export { FloatLedger, planRation, type Job, type JobNeed, type JobSettlement, type JobStatus, type RationAction } from "./jobs.js";
+export * from "./airwallex/holds.js";

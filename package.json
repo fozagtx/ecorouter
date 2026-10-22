@@ -7,8 +7,9 @@
     "build:site": "pnpm --filter @ecorouter/site build",
     "dev:site": "pnpm --filter @ecorouter/site dev",
     "router": "pnpm --filter ecorouter build && node packages/sdk/dist/cli.js",
-    "test": "pnpm --filter ecorouter test",
-    "typecheck": "pnpm --filter ecorouter typecheck"
+    "test": "pnpm --filter ecorouter test && pnpm --filter @ecorouter/kit12 test",
+    "typecheck": "pnpm --filter ecorouter typecheck && pnpm --filter @ecorouter/kit12 typecheck",
+    "demo": "pnpm --filter ecorouter build && pnpm --filter @ecorouter/kit12 demo"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

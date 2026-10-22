@@ -1,0 +1,33 @@
+{
+  "name": "@ecorouter/kit12",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Inference Sourcing Agent: x402 providers paid per step through Metal clearing, customer holds on Airwallex",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "pnpm build && node --test test/*.test.js",
+    "demo": "pnpm build && node dist/demo.js",
+    "providers": "pnpm build && node dist/serve.js"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=23.4.0"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@metalntwx/metal-pay": "0.3.2",
+    "@x402/core": "2.28.0",
+    "@x402/evm": "2.28.0",
+    "@x402/express": "2.28.0",
+    "@x402/fetch": "2.28.0",
+    "ecorouter": "workspace:*",
+    "express": "^5.3.0",
+    "viem": "^2.57.10"
+  }
+}

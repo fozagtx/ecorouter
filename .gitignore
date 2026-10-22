@@ -6,3 +6,5 @@ packages/sdk/dist/
 .env
 .env.local
 .playwright-mcp/
+.wallets/
+packages/kit12/dist/

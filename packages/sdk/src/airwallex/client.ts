@@ -175,7 +175,8 @@ export class AirwallexClient {
     return this.token.value;
   }
 
-  private async request<T>(method: "GET" | "POST", path: string, query?: Record<string, string | number | undefined>, body?: unknown): Promise<T> {
+  /** Authenticated call to any Airwallex endpoint (path starts with /api/v1). */
+  async request<T>(method: "GET" | "POST", path: string, query?: Record<string, string | number | undefined>, body?: unknown): Promise<T> {
     const url = new URL(path, this.host);
     for (const [k, v] of Object.entries(query ?? {})) if (v !== undefined) url.searchParams.set(k, String(v));
     const maxRetries = this.config.maxRetries ?? 3;

@@ -145,3 +145,41 @@ test("reconciler tracks card spend, ignores duplicates, and reroutes on a card d
   rec.transaction({ transaction_id: "t2", card_id: "card-1", status: "FAILED", transaction_type: "AUTHORIZATION", billing_amount: -80, failure_reason: "LIMIT_EXCEEDED" });
   assert.equal(health.healthy("exa"), false, "a card decline takes the provider out of routing");
 });
+
+import { AirwallexHolds } from "../dist/index.js";
+
+test("card hold: pre_auth confirm, increment sends the new total, capture once, cancel", async () => {
+  const s = sandbox({
+    "POST /api/v1/pa/payment_intents/create": () => [201, { id: "int_1", status: "REQUIRES_PAYMENT_METHOD", amount: 2.5, currency: "USD" }],
+    "POST /api/v1/pa/payment_intents/int_1/confirm": () => [200, { id: "int_1", status: "REQUIRES_CAPTURE", amount: 2.5, currency: "USD" }],
+    "POST /api/v1/pa/payment_intents/int_1/increment_authorization": (c) => [200, { id: "int_1", status: "REQUIRES_CAPTURE", amount: c.body.amount, currency: "USD" }],
+    "POST /api/v1/pa/payment_intents/int_1/capture": (c) => [200, { id: "int_1", status: "SUCCEEDED", amount: 4, captured_amount: c.body.amount, currency: "USD" }],
+    "POST /api/v1/pa/payment_intents/int_1/cancel": () => [200, { id: "int_1", status: "CANCELLED", amount: 4, currency: "USD" }],
+  });
+  const holds = new AirwallexHolds(new AirwallexClient({ clientId: "i", apiKey: "k", fetch: s.f }));
+
+  let h = await holds.place("job-a", usd(2.501));
+  const create = s.calls.find((x) => x.path.endsWith("/create")).body;
+  assert.equal(create.amount, 2.51, "rounded up to whole cents so the hold covers the budget");
+  const confirm = s.calls.find((x) => x.path.endsWith("/confirm")).body;
+  assert.deepEqual(confirm.payment_method_options, { card: { authorization_type: "pre_auth", auto_capture: false } });
+  assert.equal(confirm.payment_method.card.number, "4035501000000008");
+  assert.equal(h.held, usd(2.5));
+
+  h = await holds.increase(h, usd(4));
+  assert.equal(s.calls.find((x) => x.path.endsWith("/increment_authorization")).body.amount, 4, "new total, not the delta");
+  await assert.rejects(holds.capture(h, usd(4.01)), /above the hold/);
+  h = await holds.capture(h, usd(3.219));
+  assert.equal(s.calls.find((x) => x.path.endsWith("/capture")).body.amount, 3.21, "capture rounds down");
+  assert.equal(h.status, "captured");
+  await assert.rejects(holds.capture(h, usd(1)), /captured/);
+});
+
+test("a hold that is not authorized fails loudly", async () => {
+  const s = sandbox({
+    "POST /api/v1/pa/payment_intents/create": () => [201, { id: "int_2", status: "REQUIRES_PAYMENT_METHOD", amount: 1, currency: "USD" }],
+    "POST /api/v1/pa/payment_intents/int_2/confirm": () => [200, { id: "int_2", status: "REQUIRES_CUSTOMER_ACTION", amount: 1, currency: "USD" }],
+  });
+  const holds = new AirwallexHolds(new AirwallexClient({ clientId: "i", apiKey: "k", fetch: s.f }));
+  await assert.rejects(holds.place("job-b", usd(1)), /REQUIRES_CUSTOMER_ACTION/);
+});
